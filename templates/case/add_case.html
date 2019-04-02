@@ -1,0 +1,33 @@
+{% extends 'index.html' %}
+{% block page-content %}
+    <title>添加新case</title>
+    <style>
+        body {
+            background-color: #eeedef;
+        }
+    </style>
+
+{% if user.is_authenticated %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 col-md-offset-3">
+                <form action="" method="POST" NOVALIDATE class="form-horizontal" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="col-sm-8">
+                        <table>
+                        {{ add_case_obj }}
+                        </table>
+                        <input class="btn btn-success" value="提交" type="submit">
+                        <button class="btn btn-success" type="button"
+                                onclick="window.location.href='caseinfo'">返回
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <a href="/login/"><H4>please login!</H4></a>
+{% endif %}
+
+{% endblock %}

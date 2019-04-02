@@ -1,0 +1,50 @@
+{% block page-content %}
+    <title>信息修改</title>
+    <style>
+        body {
+            background-color: #eeedef;
+        }
+    </style>
+
+{% if user.is_authenticated %}
+
+
+{#    <div class="modal-content">#}
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+        </button>
+        <div class="modal-header">
+            <div class="modal-body">
+                {#        <div class="container">#}
+                <div class="row">
+{#                    <div class="col-md-5 col-md-offset-3">#}
+                        <form action="update_userinfo/{{ id }}" method="post" class="form-horizontal">
+                            {% csrf_token %}
+                            <div class="col-md-8 col-md-offset-3">
+                                <table>
+                                    {{ info_form }}
+                                    <script type="text/javascript">
+                                        $('#id_join_in_time').datetimepicker({
+                                            format: 'yyyy-mm-dd',
+                                            minView: "month",
+                                            todayBtn:  1,
+                                            autoclose: 1,
+                                        });
+                                    </script>
+                                    <tr><td>
+                                        <p><input class="btn btn-primary" value="提交" type="submit" >
+                                        <input type="button" class="btn btn-default" data-dismiss="modal" value="取消"></p>
+                                        <p class = "text-danger">{{ error }}</p>
+                                    </td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+{#    </div>#}
+{% else %}
+    <a href="/login/">please login!</a>
+{% endif %}
+{% endblock %}
+

@@ -1,0 +1,74 @@
+{% extends 'index.html' %}
+{% block page-content %}
+
+    <title>project control table</title>
+    <style>
+        body {
+            background-color: #eeedef;
+            padding-right:0!important;
+        }
+        table {
+            table-layout:  fixed;
+        }
+        .xtd {
+        {#white-space: nowrap; //不换行#}
+            text-overflow: ellipsis;
+            overflow: hidden; //超出隐藏
+
+        {#word-break:break-all;#}
+        {#word-wrap:break-word;#}
+        }
+
+    </style>
+
+
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary ">
+            <div class="panel-heading">
+                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
+            </div>
+            <div class="panel-body">
+{#                <form action="" method="POST">#}
+                    {% csrf_token %}
+                    <table class = "table table-striped table-bordered">
+                        <tr>
+                            <thead>
+                            <th width="10%">Test Sheet</th>
+                            <th>Description</th>
+                            <th>attend_time</th>
+                            <th>SKU No.</th>
+                            <th>Tester</th>
+                            <th>test result</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {# by ct content #}
+                            {% for sheets in content_list %}
+                                <tr>
+                                <td>{{ sheets.sheet_id.sheet_name }}</td>
+                                <td>{{ sheets.sheet_id.sheet_description }}</td>
+                                <td>之后加</td>
+                                <td>{{ sheets.sku_num }}</td>
+                                <td>{{ sheets.tester }}</td>
+                                <td>所有case的结果</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                    </table>
+                    {#                    <input class="btn btn-success" type="submit" value="提交">#}
+                    <button class="btn btn-success" type="button"
+                            onclick="window.location.href='{% url 'projects' %}'">返回
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
+
+
+    <br><br>
+{% endblock %}
+
+<!-- forloop.counter -->

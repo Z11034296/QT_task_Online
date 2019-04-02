@@ -1,0 +1,45 @@
+{% block page-content %}
+    <title>添加</title>
+    <style>
+        body {
+            background-color: #eeedef;
+        }
+    </style>
+{% if user.is_authenticated %}
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+            </button>
+            <form action="update_case/{{ id }}" method="POST" NOVALIDATE class="form-horizontal" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-md-8 ol-md-offset-3">
+                    <div class="col-sm-5">
+                        <table>
+                            {{ case_info_obj }}
+                        </table>
+                        <tr>
+                            <td>
+                                <input type="submit" value="提交修改" class="btn btn-success">
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="暂不修改">
+                            </td>
+                        </tr>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal-footer">
+        </div>
+    </div>
+
+
+
+
+
+{% else %}
+    <a href="/login/"><H4>please login!</H4></a>
+{% endif %}
+
+{% endblock %}

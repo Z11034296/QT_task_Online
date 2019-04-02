@@ -1,0 +1,119 @@
+{% extends 'index.html' %}
+{% block page-content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading "><h3 class="panel-title">Add Project</h3></div>
+        <div class="panel-body ">
+            <div class="row" style="margin-bottom: 15px">
+                <div class="col-md-4">
+
+                </div><!-- /.col-md-4 -->
+
+            </div><!-- /.row -->
+            <form action="add_project" method="post" class="form-horizontal" novalidate>
+                {% csrf_token %}
+                <div class="form-content col-sm-6">
+
+                    <div>
+                        <label for="{{ obj.project_id.id_for_label }}">Project_id:</label>
+                        <div>{{ obj.project_id }} {{ obj.project_id.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.project_name.id_for_label }}">project_name:</label>
+                        <div>{{ obj.project_name }} {{ obj.project_name.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.project_model.id_for_label }}">project_model:</label>
+                        <div>{{ obj.project_model }} {{ obj.project_model.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.test_leader_wzs_id.id_for_label }}">test_leader_wzs:</label>
+                        <div>{{ obj.test_leader_wzs_id }} {{ obj.test_leader_wzs_id.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.test_leader_whq_id.id_for_label }}">test_leader_whq:</label>
+                        <div>{{ obj.test_leader_whq_id }} {{ obj.test_leader_whq_id.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.schedule_start.id_for_label }}">schedule_start:</label>
+                        <div>{{ obj.schedule_start }} {{ obj.schedule_start.errors.0 }} </div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.schedule_end.id_for_label }}">schedule_end:</label>
+                        <div>{{ obj.schedule_end }} {{ obj.schedule_end.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.project_platform_id.id_for_label }}">project_platform:</label>
+                        <div>{{ obj.project_platform_id }} {{ obj.project_platform_id.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.project_type_id.id_for_label }}">project_type:</label>
+                        <div>{{ obj.project_type_id }} {{ obj.project_type_id.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.project_style_id.id_for_label }}">project_style:</label>
+                        <div>{{ obj.project_style_id }} {{ obj.project_style_id.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.project_sku_qty.id_for_label }}">project_sku_qty:</label>
+                        <div>{{ obj.project_sku_qty }} {{ obj.project_sku_qty.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.project_is_leading_project.id_for_label }}">project_is_leading_project:</label>
+                        <div>{{ obj.project_is_leading_project }} {{ obj.project_is_leading_project.errors.0 }}</div>
+
+                    </div>
+                    <div>
+
+                        <div>
+                            <input type="hidden" name="project_progress" class="form-control" required="" id="id_project_progress" value=0%>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div>
+                    <div class="col-sm-offset-6 col-sm-6">
+                        <input class="btn btn-success" type="submit" name="submit" id="Project_is_leading_project"
+                               placeholder="提交" value="提交">
+                        <button class="btn btn-success" data-toggle="modal" data-target="#myModal" type="button"
+                                onclick="window.location.href='projects'">返回
+                        </button>
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+    <script>
+        $('label').addClass("col-sm-5 control-label")
+        $('.form-content div').addClass("form-group")
+        $('.form-content div .form-group').addClass("col-sm-7")
+
+        $('#id_schedule_start,#id_schedule_end').datetimepicker({
+            format: 'yyyy-mm-dd',
+            weekStart: 1,
+            autoclose: true,
+            startView: 2,
+            minView: 2,
+            forceParse: false,
+            language: 'en'
+        });
+
+    </script>
+{% endblock %}
+

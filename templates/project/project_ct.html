@@ -1,0 +1,86 @@
+{% extends 'index.html' %}
+{% block page-content %}
+
+    <title>project control table</title>
+    <style>
+        body {
+            background-color: #eeedef;
+            padding-right:0!important;
+        }
+        table {
+            table-layout:  fixed;
+        }
+        .xtd {
+        {#white-space: nowrap; //不换行#}
+            text-overflow: ellipsis;
+            overflow: hidden; //超出隐藏
+
+        {#word-break:break-all;#}
+        {#word-wrap:break-word;#}
+        }
+
+    </style>
+
+
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary ">
+            <div class="panel-heading">
+                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
+            </div>
+            <div class="panel-body">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <table class = "table table-striped table-bordered">
+                        <thead>
+                        <tr>
+{#                            <th>Select</th>#}
+                            <th>Test Sheet</th>
+                            <th>Description</th>
+                            <th>Total Sub-item</th>
+                            <th>attend_time</th>
+                            {% for i in SKU_Num_list %}
+                                <th>SKU{{ i }}</th>
+                            {% endfor %}
+{#                            <th>SKU</th>#}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%  for sheets in sheets_list %}
+
+                            <tr>
+{#                            <td><label class="checkbox-inline" for="check_box_list"></label><input type="checkbox" value="{{ sheets.id }}" name="check_box_list" ></td>#}
+                            <td>{{ sheets.sheet_name }}</td>
+                            <td>{{ sheets.sheet_description }}</td>
+                            <td>{{ sheets.count }}</td>
+                            <td>后面再加</td>
+
+                            {% for i in SKU_Num_list %}
+                                <td><select class="form-control" style="width: 100px" name="{{ sheets.id }}-SKU{{ i }}" sku="{{ i }}">
+                                    {% for i in test_user %}
+                                        <option value="{{ i.id }}" selected="12">{{ i.job_name }}</option>
+                                    {% endfor %}
+                                    
+                                </select></td>
+                            {% endfor %}
+{#                            <td>空白</td>#}
+{#                            <td>空白</td>#}
+                        {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+                    <input class="btn btn-success" type="submit" value="提交">
+                    <button class="btn btn-success" type="button"
+                                onclick="window.location.href='{% url 'projects' %}'">返回
+                        </button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
+
+
+    <br><br>
+{% endblock %}
+
+<!-- forloop.counter -->

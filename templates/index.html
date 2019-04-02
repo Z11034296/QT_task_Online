@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                        aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">OnlineTestSystem</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{% url 'home' user.id %}"> 欢迎 {{ user.first_name }}</a></li>
+                    <li><a href="{% url 'set_password' %}">修改密码</a></li>
+                    <li><a href="{% url 'logout' %}">注销</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar" style="background-color: lightgray ">
+                <ul class="nav sidebar-nav">
+                    <p> <a href="{% url 'caseinfo' %}"><i class="fa fa-fw fa-folder"> </i>Testcase</a></p>
+                    <p> <a href="{% url 'projects' %}"><i class="fa fa-fw fa-folder"> </i>Projects</a></p>
+                    <p> <a href="{% url 'table_of_contents' %}"><i class="fa fa-fw fa-folder"> </i>Test Plan</a></p>
+                    <p> <a href="{% url 'userinfo' %}"><i class="fa fa-fw fa-folder"> </i>人员管理</a></p>
+
+                    {#                    {% for role in request.user.userprofile.role.all %}#}
+                    {#                        {% for menu in role.menu.all %}#}
+                    {#                            <li class=""><a href="{%  url menu.url_name %}">{{ menu.name }}</a></li>#}
+                    {#                        {% endfor %}#}
+                    {#                    {% endfor %}#}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+
+        {% block page-content %}
+            <h1 class="page-header">Dashboard</h1>
+
+            <div class="row placeholders">
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">
+                    <h4>Label</h4>
+                    <span class="text-muted">Something else</span>
+                </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">
+                    <h4>Label</h4>
+                    <span class="text-muted">Something else</span>
+                </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">
+                    <h4>Label</h4>
+                    <span class="text-muted">Something else</span>
+                </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">
+                    <h4>Label</h4>
+                    <span class="text-muted">Something else</span>
+                </div>
+            </div>
+
+            <h2 class="sub-header">Section title</h2>
+        {% endblock %}
+    </div>
+    </body>
+{% endblock %}

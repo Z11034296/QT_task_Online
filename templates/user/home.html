@@ -1,0 +1,78 @@
+{% extends 'index.html' %}
+{% block page-content %}
+    <style>
+        body {
+            background-color: #eeedef;
+        }
+    </style>
+
+
+
+{% if user.is_authenticated %}
+
+    <h3>{{ user.first_name }},工号{{ user.username }} 个人信息维护页</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 col-md-offset-3">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="col-sm-8">
+                        <table>
+                            <tbody>
+                            <p ><input name="id" type="hidden" value={{ userinfo.id }}></p>
+                            <tr>
+                                <th><label for="id_username">{{ info_form.username.label }}</label></th>
+                                <td>{{ info_form.username }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_name">{{ info_form.name.label }}</label></th>
+                                <td>{{ info_form.name }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_job_name">{{ info_form.job_name.label }}</label></th>
+                                <td>{{ info_form.job_name }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_gender">{{ info_form.gender.label }}</label></th>
+                                <td>{{ info_form.gender }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_belone_to_team_id">{{ info_form.belone_to_team_id.label }}</label></th>
+                                <td>{{ info_form.belone_to_team_id }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_join_in_time">{{ info_form.join_in_time.label }}</label></th>
+                                <td>{{ info_form.join_in_time }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_university">{{ info_form.university.label }}</label></th>
+                                <td>{{ info_form.university }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_major">{{ info_form.major.label }}</label></th>
+                                <td>{{ info_form.major }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_phone_number">{{ info_form.phone_number.label }}</label></th>
+                                <td>{{ info_form.phone_number }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_shot_number">{{ info_form.shot_number.label }}</label></th>
+                                <td>{{ info_form.shot_number }}</td>
+                            </tr>
+                            <tr><td>
+                                <p><input class="btn btn-primary" value="提交" type="submit" ></p>
+                                <p class = "text-danger">{{ error }}</p>
+                            </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <a href="/login/">please login!</a>
+{% endif %}
+{% endblock %}
+

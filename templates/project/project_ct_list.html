@@ -1,0 +1,71 @@
+{% extends 'index.html' %}
+{% block page-content %}
+
+    <title>project stage</title>
+    <style>
+        body {
+            background-color: #eeedef;
+            padding-right:0!important;
+        }
+        table {
+            table-layout:  fixed;
+        }
+        .xtd {
+        {#white-space: nowrap; //不换行#}
+            text-overflow: ellipsis;
+            overflow: hidden; //超出隐藏
+
+        {#word-break:break-all;#}
+        {#word-wrap:break-word;#}
+        }
+
+    </style>
+
+
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary ">
+            <div class="panel-heading">
+                <h2 class="panel-title">{{ pj.project_name }}'s Control Table</h2>
+            </div>
+            <div class="panel-body">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <table class = "table table-striped table-bordered">
+
+                        <tbody>
+                        <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ pj.id }}" readonly ></td></tr>
+                        <tr><th><label for="id_project_name">project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
+                        <tr><th><label for="id_project_stage">project_stage:</label></th><td><input type="text" name="project_stage" class="form-control" id="id_project_stage"></td></tr>
+                        <tr><th><label for="id_stage_begin">stage_begin:</label></th><td><input type="date" name="stage_begin" class="form-control" id="id_stage_begin" readonly></td></tr>
+                        <tr><th><label for="id_stage_end">stage_end:</label></th><td><input type="date" name="stage_end" class="form-control" id="id_stage_end" readonly></td></tr>
+                        </tbody>
+                    </table>
+
+                    <input class="btn btn-success" type="submit" value="提交">
+                    <button class="btn btn-success" type="button"
+                            onclick="window.location.href='{% url 'project_ct_info' pj.id %}'">返回
+                    </button>
+                    <p class = "text-center text-danger">{{error }}</p>
+                </form>
+            </div>
+        </div>
+
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
+    <script>
+        $('#id_stage_begin,#id_stage_end').datetimepicker({
+            format: 'yyyy-mm-dd',
+            weekStart: 1,
+            autoclose: true,
+            startView: 2,
+            minView: 2,
+            forceParse: false,
+            language: 'en'
+        });
+    </script>
+
+    <br><br>
+{% endblock %}
+
+<!-- forloop.counter -->
