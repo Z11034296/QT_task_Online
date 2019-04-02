@@ -263,9 +263,10 @@ class TestResult(models.Model):
         多对多：
             Issue
     """
-    control_table = models.ForeignKey('ControlTable', on_delete=models.CASCADE, default='')
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    control_table = models.ForeignKey('ControlTableList', on_delete=models.CASCADE, default='')
+    # project = models.ForeignKey('Project', on_delete=models.CASCADE)
     tester = models.ForeignKey(UserProfile.models.UserInfo, on_delete=models.CASCADE)
+    result_datetime = models.DateTimeField(auto_now_add=True, blank=True)
     test_case = models.ForeignKey(TestCase.models.TestCase, verbose_name='test case', on_delete=models.CASCADE)
     test_result_choice = (
         (0, 'Pass'),
@@ -276,11 +277,11 @@ class TestResult(models.Model):
     issue_id = models.ForeignKey('Issue', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        return str(self.project)
+        return str(self.test_case)
 
-    class Meta:
-        unique_together = ('project', 'test_case')
-        verbose_name_plural = "测试结果"
+    # class Meta:
+    #     unique_together = ('project', 'test_case')
+    #     verbose_name_plural = "测试结果"
 
 
 class ControlTableContent(models.Model):
