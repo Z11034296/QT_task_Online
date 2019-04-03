@@ -204,8 +204,38 @@ def project_ct_content(request,lid):
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
     content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
+    new_list=[]
+    new_dic={}
+
+    a=0
+    count=0
+    for i in content_list:
+
+        count+=1
+        print("循环开始:", new_list)
+        print(i.sheet_id_id,count)
+        # if i.sheet_id_id !=a:
+
+            # a = i.sheet_id_id
+        new_dic.update({'sheet':i.sheet_id,'sheet_name':i.sheet_id.sheet_name,
+                        'sheet_description':i.sheet_id.sheet_description})
+        new_dic.update({'sku'+str(count % int(pj['project_sku_qty'])):i.tester})
+    # else:
+    #     new_dic.update({'sku'+str(count % int(pj['project_sku_qty'])):i.tester})
+        if count % int(pj['project_sku_qty']) == 0:
+            new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester})
+            print("添加前:",new_list)
+            #new_list.append(new_dic)
+            new_list.append(dict(new_dic))
+            print("添加后:",new_list)
+
+    # new_list.SKUNo=pj['project_sku_qty']
+
+
+
+
+
     ziplist=zip(sheets_list,content_list)
     return render(request, 'Project/project_ct_content.html', {"pj": pj, "plist": plist,
                                                        "SKU_Num_list": SKU_Num_list,
-                                                       "sheets_list": sheets_list,
-                                                       "content_list":content_list,"ziplist":ziplist})
+                                                       "new_list":new_list})
