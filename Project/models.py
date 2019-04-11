@@ -263,17 +263,13 @@ class TestResult(models.Model):
         多对多：
             Issue
     """
-    control_table = models.ForeignKey('ControlTableList', on_delete=models.CASCADE, default='')
+    ControlTableList = models.ForeignKey('ControlTableList', on_delete=models.CASCADE, default='')
     # project = models.ForeignKey('Project', on_delete=models.CASCADE)
     tester = models.ForeignKey(UserProfile.models.UserInfo, on_delete=models.CASCADE)
     result_datetime = models.DateTimeField(auto_now_add=True, blank=True)
     test_case = models.ForeignKey(TestCase.models.TestCase, verbose_name='test case', on_delete=models.CASCADE)
-    test_result_choice = (
-        (0, 'Pass'),
-        (1, 'Fail'),
-        (2, 'N/A')
-    )
-    test_result = models.SmallIntegerField(choices=test_result_choice)
+    test_result = models.CharField(max_length=16,blank=True, null=True, default="")
+    sku_num = models.CharField(max_length=16, blank=True, null=True, default="")
     issue_id = models.ForeignKey('Issue', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
@@ -301,7 +297,7 @@ class ControlTableList(models.Model):
     stage_end = models.DateField(verbose_name="结束日期")
 
     def __str__(self):
-        return self.project
+        return self.project_stage
 
     class Meta:
         unique_together = ('project', 'project_stage',)

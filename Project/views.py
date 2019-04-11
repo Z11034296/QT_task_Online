@@ -83,7 +83,7 @@ def create_project_info(request):
 def test(request):
     return HttpResponse("Hello")
 
-
+# ct == control table
 def project_ct(request,lid):
     if request.method == "GET":
         # 通过 Control table list id取到相关联project 信息
@@ -204,6 +204,7 @@ def project_ct_content(request,lid):
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
     content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
+
     new_list=[]
     new_dic={}
 
@@ -212,7 +213,7 @@ def project_ct_content(request,lid):
     for i in content_list:
         count+=1
 
-        new_dic.update({'sheet':i.sheet_id,'sheet_name':i.sheet_id.sheet_name,
+        new_dic.update({'sheet_id':i.sheet_id_id,'sheet_name':i.sheet_id.sheet_name,
                         'sheet_description':i.sheet_id.sheet_description})
         new_dic.update({'sku'+str(count % int(pj['project_sku_qty'])):i.tester})
 
@@ -221,7 +222,84 @@ def project_ct_content(request,lid):
 
             #new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
-
     return render(request, 'Project/project_ct_content.html', {"pj": pj, "plist": plist,
                                                        "SKU_Num_list": SKU_Num_list,
                                                        "new_list":new_list})
+
+
+
+
+def test_result(request,nid,lid,skunum):# lid:Controltable_list_id , nid:sheet_id,
+    if request.method == "GET":
+        plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+        cases = T.TestCase.objects.filter(sheet_id=nid)
+        name = T.Sheet.objects.filter(id=nid).values().first()['sheet_name']
+        return render(request, "Project/test_result.html", {"case_list": cases,"name":name,"pj":pj,"plist":plist,"skunum":skunum})
+    else:
+        # case_id_list=request.POST.getlist('case_id')
+        # result_list=request.POST.get('test_result')
+        # for i in case_id_list:
+        #     print(i,type(i))
+        #     models.TestResult.objects.create(ControlTableList_id=lid,skunum=skunum,test_case_id=int(i),
+        #                                      test_result=request.POST.get('test_result'),
+        #                                                               )
+        return HttpResponse('POST')
+
+
+def task_table(request,lid):
+    plist = models.ControlTableList.objects.filter(id=lid).values().first()
+    pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+    sheets_list = T.Sheet.objects.all()
+    case_list = T.TestCase.objects.all()
+    SKU_Num_list = []
+    num = 1
+    while num <= int(pj['project_sku_qty']):
+        SKU_Num_list.append(num)
+        num += 1
+
+    # 计算case_list中每个sheet有多少个case
+    sheet_list = []
+    for cases in case_list:
+        sheet_list.append(cases.sheet.sheet_name)
+    cout = Counter(sheet_list)
+
+    # 每个sheet中的case个数填入sheets_list
+    for sheets in sheets_list:
+        sheets.count = cout[sheets.sheet_name]
+    content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
+    new_list = []
+    new_dic = {}
+
+    # 将每个sheet所有SKU信息整合到同个字典中方便使用
+    count = 0
+    for i in content_list:
+        count += 1
+
+        new_dic.update({'sheet_id': i.sheet_id_id, 'sheet_name': i.sheet_id.sheet_name,
+                        'sheet_description': i.sheet_id.sheet_description})
+        new_dic.update({'sku' + str(count % int(pj['project_sku_qty'])): i.tester})
+
+        if count % int(pj['project_sku_qty']) == 0:
+            new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester})
+
+            # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
+            new_list.append(dict(new_dic))
+
+
+
+    return render(request, 'Project/task_table.html', {"pj": pj, "plist": plist,
+                                                               "SKU_Num_list": SKU_Num_list,
+                                                               "new_list": new_list})
+
+def task_list(request):
+    CT_lists=[]
+    CT = models.ControlTableContent.objects.filter(tester_id=request.user.id).values_list('ControlTable_List_id_id',flat=True).distinct()
+    for i in CT:
+        CT_list=models.ControlTableList.objects.filter(id=i).values().first()
+        CT_lists.append(CT_list)
+    for i in CT_lists:
+        project = models.Project.objects.filter(id=i['project_id']).values().first()
+        i['project']=project
+    return render(request,'Project/task_list.html',{"CT_list":CT_lists})
+    # return HttpResponse("OK")

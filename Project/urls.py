@@ -19,7 +19,6 @@ from Project import views
 urlpatterns = [
     path('', views.index, name='index'),
 
-
     path('projects', views.projects, name='projects'),
     path('add_project', views.add_project, name='add_projects'),
     path('edit_project/<int:nid>/', views.edit_project, name='edit_projects'),
@@ -31,6 +30,8 @@ urlpatterns = [
     path('project_ct_info/<int:nid>', views.project_ct_info, name='project_ct_info'),
     path('project_ct_list/<nid>', views.project_ct_list, name='project_ct_list'),
     path('project_ct_content/<lid>', views.project_ct_content, name='project_ct_content'),
-
+    path('test_result/<lid>-<nid>-<skunum>', views.test_result, name='test_result'),
+    path('task_table/<lid>', views.task_table, name='task_table'),
+    path('task_list', views.task_list, name='task_list'),
 
 ]

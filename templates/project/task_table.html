@@ -1,0 +1,123 @@
+{% extends 'index.html' %}
+{% block page-content %}
+
+    <title>project control table</title>
+    <style>
+        body {
+            background-color: #eeedef;
+            padding-right:0!important;
+        }
+        table {
+            table-layout:  fixed;
+        }
+        .xtd {
+        {#white-space: nowrap; //不换行#}
+            text-overflow: ellipsis;
+            overflow: hidden; //超出隐藏
+
+        {#word-break:break-all;#}
+        {#word-wrap:break-word;#}
+        }
+
+    </style>
+
+
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary ">
+            <div class="panel-heading">
+                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
+            </div>
+            <div class="panel-body">
+                {#                <form action="" method="POST">#}
+                {% csrf_token %}
+                <table class = "table table-striped table-bordered">
+
+                    <thead>
+                    <th width="10%">Test Sheet</th>
+                    <th>Description</th>
+                    <th>attend_time</th>
+                    {% for j in SKU_Num_list %}
+                        <th>SKU{{ j }}</th>
+                    {% endfor %}
+                    <th>test result</th>
+
+                    </thead>
+                    <tbody>
+
+                    {# by ct content #}
+                    {% for i in new_list %}
+                        <tr>
+                            <td>{{ i.sheet_name }}</td>
+                            <td>{{ i.sheet_description }}</td>
+                            <td>之后加</td>
+                            {% for j in SKU_Num_list %}
+                                {% if j == 1 %}
+                                    {% if i.sku1.first_name == user.first_name %}
+                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1.first_name }}</a></td>
+                                    {% else %}
+                                        <td><h6>{{ i.sku1.first_name }}</h6></td>
+                                    {% endif %}
+                                {% elif j == 2 %}
+                                    {% if i.sku2.first_name == user.first_name %}
+                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku2.first_name }}</a></td>
+                                    {% else %}
+                                        <td><h6>{{ i.sku2.first_name }}</h6></td>
+                                    {% endif %}
+                                {% elif j == 3 %}
+                                    {% if i.sku3.first_name == user.first_name %}
+                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku3.first_name }}</a></td>
+                                    {% else %}
+                                        <td><h6>{{ i.sku3.first_name }}</h6></td>
+                                    {% endif %}
+                                {% elif j == 4 %}
+                                    {% if i.sku4.first_name == user.first_name %}
+                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4.first_name }}</a></td>
+                                    {% else %}
+                                        <td><h6>{{ i.sku4.first_name }}</h6></td>
+                                    {% endif %}
+                                {% elif j == 5 %}
+                                    {% if i.sku5.first_name == user.first_name %}
+                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5.first_name }}</a></td>
+                                    {% else %}
+                                        <td><h6>{{ i.sku5.first_name }}</h6></td>
+                                    {% endif %}
+                                {% elif j == 6 %}
+                                    {% if i.sku6.first_name == user.first_name %}
+                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6.first_name }}</a></td>
+                                    {% else %}
+                                        <td><h6>{{ i.sku6.first_name }}</h6></td>
+                                    {% endif %}
+                                {% elif j == 7 %}
+                                    {% if i.sku7.first_name == user.first_name %}
+                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7.first_name }}</a></td>
+                                    {% else %}
+                                        <td><h6>{{ i.sku7.first_name }}</h6></td>
+                                    {% endif %}
+                                {% elif j == 8 %}
+                                    {% if i.sku8.first_name == user.first_name %}
+                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8.first_name }}</a></td>
+                                    {% else %}
+                                        <td><h6>{{ i.sku8.first_name }}</h6></td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            <td>所有case的结果</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {#                    <input class="btn btn-success" type="submit" value="提交">#}
+                <button class="btn btn-success" type="button"
+                        onclick="window.location.href='{% url 'projects' %}'">返回
+                </button>
+            </div>
+        </div>
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
+
+
+    <br><br>
+{% endblock %}
+
+<!-- forloop.counter -->

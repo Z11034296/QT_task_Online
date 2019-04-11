@@ -38,6 +38,14 @@ class UserForm(Form):
         widget=widgets.Select(attrs={'class': 'form-control'}),
     )
 
+    site_id = fields.IntegerField(
+        # max_length=16,
+        label="site",
+        widget=widgets.Select(choices=models.Site.objects.values_list('id', 'name'),
+                              attrs={'class': 'form-control'}),
+        required=False
+    )
+
     belone_to_team_id = fields.IntegerField(
         # max_length=16,
         label="组别",
@@ -195,6 +203,14 @@ class UpdateUserForm(Form):
         # max_length=11,
         label="手机号",
         widget=widgets.TextInput(attrs={'class': 'form-control'}),
+        required=False
+    )
+
+    site_id = fields.IntegerField(
+        # max_length=16,
+        label="site",
+        widget=widgets.Select(choices=models.Site.objects.values_list('id', 'name'),
+                              attrs={'class': 'form-control'}),
         required=False
     )
 

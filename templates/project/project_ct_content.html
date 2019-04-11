@@ -47,26 +47,26 @@
                         {# by ct content #}
                         {% for i in new_list %}
                             <tr>
-                                <td >{{ i.sheet_name }}</td>
+                                <td>{{ i.sheet_name }}</td>
                                 <td>{{ i.sheet_description }}</td>
                                 <td>之后加</td>
                                 {% for j in SKU_Num_list %}
                                     {% if j == 1 %}
-                                        <td>{{ i.sku1 }}</td>
+                                        <td>{{ i.sku1.first_name }}</td>
                                     {% elif j == 2 %}
-                                        <td>{{ i.sku2 }}</td>
+                                        <td>{{ i.sku2.first_name }}</td>
                                     {% elif j == 3 %}
-                                        <td>{{ i.sku3 }}</td>
+                                        <td>{{ i.sku3.first_name }}</td>
                                     {% elif j == 4 %}
-                                        <td>{{ i.sku4 }}</td>
+                                        <td>{{ i.sku4.first_name }}</td>
                                     {% elif j == 5 %}
-                                        <td>{{ i.sku5 }}</td>
+                                        <td>{{ i.sku5.first_name }}</td>
                                     {% elif j == 6 %}
-                                        <td>{{ i.sku6 }}</td>
+                                        <td>{{ i.sku6.first_name }}</td>
                                     {% elif j == 7 %}
-                                        <td>{{ i.sku7 }}</td>
+                                        <td>{{ i.sku7.first_name }}</td>
                                     {% elif j == 8 %}
-                                        <td>{{ i.sku8 }}</td>
+                                        <td>{{ i.sku8.first_name }}</td>
                                     {% endif %}
                                 {% endfor %}
                                 <td>所有case的结果</td>
@@ -78,7 +78,6 @@
                 <button class="btn btn-success" type="button"
                         onclick="window.location.href='{% url 'projects' %}'">返回
                 </button>
-                </form>
             </div>
         </div>
     {% else %}
