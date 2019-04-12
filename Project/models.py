@@ -265,6 +265,7 @@ class TestResult(models.Model):
     """
     ControlTableList = models.ForeignKey('ControlTableList', on_delete=models.CASCADE, default='')
     # project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    sheet=models.ForeignKey(TestCase.models.Sheet,on_delete=models.CASCADE,default='')
     tester = models.ForeignKey(UserProfile.models.UserInfo, on_delete=models.CASCADE)
     result_datetime = models.DateTimeField(auto_now_add=True, blank=True)
     test_case = models.ForeignKey(TestCase.models.TestCase, verbose_name='test case', on_delete=models.CASCADE)

@@ -200,6 +200,26 @@ def project_ct_content(request,lid):
         sheet_list.append(cases.sheet.sheet_name)
     cout = Counter(sheet_list)
 
+    # sheet的测试结果，若都Pass则Pass ，有一个fail则结果显示fail，若全部N/A 才写N/A，若有没有填结果的case则显示为空
+    res_list = models.TestResult.objects.filter(ControlTableList_id=lid).values('sheet_id', 'test_result')
+    sheet_result_list = {}
+
+    for i in sheets_list:
+        re_list = []
+        final_result = ''
+        for j in res_list:
+            if i.id == int(j['sheet_id']):
+                re_list.append(j['test_result'])
+                print(re_list)
+                if 'Fail' in re_list:
+                    final_result = 'Fail'
+                elif re_list == []:
+                    final_result = ''
+                else:
+                    final_result = 'Pass'
+
+        sheet_result_list[i.sheet_name] = final_result
+
     # 每个sheet中的case个数填入sheets_list
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
@@ -218,15 +238,12 @@ def project_ct_content(request,lid):
         new_dic.update({'sku'+str(count % int(pj['project_sku_qty'])):i.tester})
 
         if count % int(pj['project_sku_qty']) == 0:
-            new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester})
+            new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name]})
 
             #new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
     return render(request, 'Project/project_ct_content.html', {"pj": pj, "plist": plist,
-                                                       "SKU_Num_list": SKU_Num_list,
-                                                       "new_list":new_list})
-
-
+                                                       "SKU_Num_list": SKU_Num_list,"new_list":new_list,})
 
 
 def test_result(request,nid,lid,skunum):# lid:Controltable_list_id , nid:sheet_id,
@@ -237,14 +254,14 @@ def test_result(request,nid,lid,skunum):# lid:Controltable_list_id , nid:sheet_i
         name = T.Sheet.objects.filter(id=nid).values().first()['sheet_name']
         return render(request, "Project/test_result.html", {"case_list": cases,"name":name,"pj":pj,"plist":plist,"skunum":skunum})
     else:
-        # case_id_list=request.POST.getlist('case_id')
-        # result_list=request.POST.get('test_result')
-        # for i in case_id_list:
-        #     print(i,type(i))
-        #     models.TestResult.objects.create(ControlTableList_id=lid,skunum=skunum,test_case_id=int(i),
-        #                                      test_result=request.POST.get('test_result'),
-        #                                                               )
-        return HttpResponse('POST')
+        # case id 与 result组成字典后加到数据库
+        case_id_list=request.POST.getlist('case_id')
+        result_list=request.POST.getlist('test_result')
+        result=dict(zip(case_id_list,result_list))
+        for i in result:
+            models.TestResult.objects.create(ControlTableList_id=lid,sku_num=skunum,test_case_id=int(i),
+                                             test_result=result[i],tester_id=request.user.id,sheet_id=nid)
+        return redirect('task_table',lid=lid)
 
 
 def task_table(request,lid):
@@ -264,6 +281,26 @@ def task_table(request,lid):
         sheet_list.append(cases.sheet.sheet_name)
     cout = Counter(sheet_list)
 
+    # sheet的测试结果，若都Pass则Pass ，有一个fail则结果显示fail，若全部N/A 才写N/A，若有没有填结果的case则显示为空
+    res_list = models.TestResult.objects.filter(ControlTableList_id=lid).values('sheet_id', 'test_result')
+    sheet_result_list = {}
+
+    for i in sheets_list:
+        re_list = []
+        final_result = ''
+        for j in res_list:
+            if i.id == int(j['sheet_id']):
+                re_list.append(j['test_result'])
+                print(re_list)
+                if 'Fail' in re_list:
+                    final_result='Fail'
+                elif re_list==[]:
+                    final_result=''
+                else:
+                    final_result='Pass'
+
+        sheet_result_list[i.sheet_name] = final_result
+
     # 每个sheet中的case个数填入sheets_list
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
@@ -281,16 +318,26 @@ def task_table(request,lid):
         new_dic.update({'sku' + str(count % int(pj['project_sku_qty'])): i.tester})
 
         if count % int(pj['project_sku_qty']) == 0:
-            new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester})
+            new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name]})
 
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
 
+     # 检测result结果中该list中此case此sku有无结果
+    done_reuslt_list={}
+    sku_list=[]
+    done_result_sku = models.TestResult.objects.filter(ControlTableList_id=lid).values('sku_num').distinct()
+    for i in done_result_sku:
+        sku_list.append(int(i['sku_num']))
+    for k in sku_list:
+        sh_list = []
+        done_result_sheet = models.TestResult.objects.filter(ControlTableList_id=lid).values('sheet','sku_num').distinct()
+        for i in done_result_sheet:
+            if int(i['sku_num'])==k:
+                sh_list.append(i['sheet'])
+        done_reuslt_list[k]=sh_list
 
-
-    return render(request, 'Project/task_table.html', {"pj": pj, "plist": plist,
-                                                               "SKU_Num_list": SKU_Num_list,
-                                                               "new_list": new_list})
+    return render(request, 'Project/task_table.html', {"pj": pj, "plist": plist,"SKU_Num_list": SKU_Num_list,"new_list": new_list,"done_reuslt_list":done_reuslt_list})
 
 def task_list(request):
     CT_lists=[]
@@ -302,4 +349,3 @@ def task_list(request):
         project = models.Project.objects.filter(id=i['project_id']).values().first()
         i['project']=project
     return render(request,'Project/task_list.html',{"CT_list":CT_lists})
-    # return HttpResponse("OK")
