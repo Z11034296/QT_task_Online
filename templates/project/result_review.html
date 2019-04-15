@@ -1,0 +1,139 @@
+{% extends 'index.html' %}
+{% block page-content %}
+
+    <title>Test_Result</title>
+    <style>
+        body {
+            background-color: #eeedef;
+            padding-right:0!important;
+        }
+        {#table {#}
+        {#    table-layout:  fixed;#}
+        {#}#}
+        .xtd {
+        {#white-space: nowrap; //不换行#}
+            text-overflow: ellipsis;
+            overflow: hidden; //超出隐藏
+
+        {#word-break:break-all;#}
+        {#word-wrap:break-word;#}
+        }
+
+    </style>
+
+
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary ">
+            <form action="#" class="navbar-right navbar-form">
+                {#            <div class="form-group has-feedback">#}
+                {#                <!--has-feedback样式/反馈控制/ form-control-feedback 增加这两个样式后，span代表的放大镜就可以放在搜索栏里面-->#}
+                {#                <label for="search" class="sr-only">搜索关键字</label>#}
+                {#                <input type="search" placeholder="按照case_name搜索" id="search" class="form-control" title="输入关键字后按enter">#}
+                {#                <span class="glyphicon glyphicon-search  form-control-feedback"></span>#}
+                {#            </div>#}
+            </form>
+            <div class="panel-heading">
+                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table -> {{ name }} -> SKU{{ skunum }}</h2>
+            </div>
+            <form action="" method="post">
+             {% csrf_token %}
+            <div class="panel-body">
+                <table border="" class = "table table-striped">
+                    <thead >
+                    <tr>
+
+                        <th width="200px">case_id</th>
+                        <th>case_name</th>
+                        <th>procedure</th>
+                        <th>pass_critearia</th>
+                        <th width="80px">SKU{{ skunum }}</th>
+                        <th width="120px">更改</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {%  for i in result_list %}
+                        <tr>
+                        <input type="hidden" value="{{ i.test_case.id }}" name="case_id">
+                        <td >{{ i.test_case.case_id }}</td>
+                        <td style="white-space:pre-wrap; word-break:break-all"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ i.test_case.case_name }}</a></td>
+                        <td>{{ i.test_case.procedure }}</td>
+                        <td>{{ i.test_case.pass_criteria }}</td>
+                        <th>{{ i.test_result }}</th>
+                        <th><select class="form form-control" style="width: 100px" name="test_result">
+                            <option value="Pass">Pass</option>
+                            <option value="Fail">Fail</option>
+                            <option value="N/A">N/A</option>
+                            <option selected="selected"  style='display: none' value=''></option>
+                        </select></th>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <input class="btn btn-success" type="submit" value="提交">
+                <button class="btn btn-success" type="button"
+                        onclick="window.location.href='{% url 'task_table' plist.id %}'">返回
+                </button>
+
+            </div>
+            </form>
+            {#        <nav aria-label="Page navigation">#}
+            {#            <ul class="pagination">#}
+            {#                {% if case_list.has_previous %}#}
+            {#                    <li>#}
+            {#                        <a href="?page={{ case_list.previous_page_number }}" aria-label="Previous">#}
+            {#                            <span aria-hidden="true">&laquo;</span>#}
+            {#                        </a>#}
+            {#                    </li>#}
+            {#                {% endif %}#}
+            {#                {% for pg in case_list.paginator.page_range %}#}
+            {#                    {% circle_page case_list.number pg %}#}
+            {#                    {% if case_list.number == pg %}#}
+            {#                        <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>#}
+            {#                    {% else %}#}
+            {#                        <li><a href="?page={{ pg }}">{{ pg }}</a></li>#}
+            {#                    {% endif %}#}
+            {#                {% endfor %}#}
+            {##}
+            {#                {% if case_list.has_next %}#}
+            {#                    <li>#}
+            {#                        <a href="?page={{ case_list.next_page_number }}" aria-label="Next">#}
+            {#                            <span aria-hidden="true">&raquo;</span>#}
+            {#                        </a>#}
+            {#                    </li>#}
+            {#                {% endif %}#}
+            {#            </ul>#}
+            {#        </nav>#}
+        </div>
+
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="case_moreinfo" tabindex="-1" role="dialog" aria-labelledby="case_moreinfoLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:700px">
+                <div class="modal-content">
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <script>
+            {#模态框#}
+            $(function() {
+                {#模态框#}
+                $('#link .mymodel').modal('toggle')
+            })
+
+            {# 关闭窗口时刷新页面以便重新加载js#}
+            $(function () { $('#case_moreinfo').on('hide.bs.modal', function () {
+                window.location.reload();
+            })
+            });
+
+        </script>
+
+
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
+
+
+{% endblock %}
+
+<!-- forloop.counter -->

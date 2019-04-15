@@ -54,7 +54,7 @@
                                 {% if j == 1 %}
                                     {% if i.sku1.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.1 %}
-                                            <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'><i class="glyphicon glyphicon-saved"></i>{{ i.sku1.first_name }}</a></td>
+                                            <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku1.first_name }}<i class="glyphicon glyphicon-saved"></i></a></td>
                                         {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1.first_name }}</a></td>
                                         {% endif %}
@@ -64,7 +64,7 @@
                                 {% elif j == 2 %}
                                     {% if i.sku2.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.2 %}
-                                            <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'><i class="glyphicon glyphicon-saved"></i>{{ i.sku2.first_name }}</a></td>
+                                            <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku2.first_name }}<i class="glyphicon glyphicon-saved"></i></a></td>
                                         {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku2.first_name }}</a></td>
                                         {% endif %}
@@ -74,7 +74,7 @@
                                 {% elif j == 3 %}
                                     {% if i.sku3.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.3 %}
-                                            <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'><i class="glyphicon glyphicon-saved"></i>{{ i.sku3.first_name }}</a></td>
+                                            <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku3.first_name }}<i class="glyphicon glyphicon-saved"></i></a></td>
                                         {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku3.first_name }}</a></td>
                                         {% endif %}
@@ -84,7 +84,7 @@
                                 {% elif j == 4 %}
                                     {% if i.sku4.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.4 %}
-                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'><i class="glyphicon glyphicon-saved"></i>{{ i.sku4.first_name }}</a></td>
+                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku4.first_name }}<i class="glyphicon glyphicon-saved"></i></a></td>
                                     {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4.first_name }}</a></td>
                                         {% endif %}
@@ -94,7 +94,7 @@
                                 {% elif j == 5 %}
                                     {% if i.sku5.first_name == user.first_name %}
                                          {% if i.sheet_id in done_reuslt_list.5 %}
-                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'><i class="glyphicon glyphicon-saved"></i>{{ i.sku5.first_name }}</a></td>
+                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku5.first_name }}<i class="glyphicon glyphicon-saved"></i></a></td>
                                     {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5.first_name }}</a></td>
                                         {% endif %}
@@ -104,7 +104,7 @@
                                 {% elif j == 6 %}
                                     {% if i.sku6.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.6 %}
-                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'><i class="glyphicon glyphicon-saved"></i>{{ i.sku6.first_name }}</a></td>
+                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku6.first_name }}<i class="glyphicon glyphicon-saved"></i></a></td>
                                     {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6.first_name }}</a></td>
                                         {% endif %}
@@ -114,7 +114,7 @@
                                 {% elif j == 7 %}
                                     {% if i.sku7.first_name == user.first_name %}
                                          {% if i.sheet_id in done_reuslt_list.7 %}
-                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'><i class="glyphicon glyphicon-saved"></i>{{ i.sku7.first_name }}</a></td>
+                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku7.first_name }}<i class="glyphicon glyphicon-saved"></i></a></td>
                                     {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7.first_name }}</a></td>
                                         {% endif %}
@@ -124,7 +124,7 @@
                                 {% elif j == 8 %}
                                     {% if i.sku8.first_name == user.first_name %}
                                          {% if i.sheet_id in done_reuslt_list.8 %}
-                                        <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'><i class="glyphicon glyphicon-saved"></i>{{ i.sku8.first_name }}</a></td>
+                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku8.first_name }}<i class="glyphicon glyphicon-saved"></i></a></td>
                                     {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8.first_name }}</a></td>
                                         {% endif %}
@@ -140,7 +140,7 @@
                 </table>
                 {#                    <input class="btn btn-success" type="submit" value="提交">#}
                 <button class="btn btn-success" type="button"
-                        onclick="window.location.href='{% url 'projects' %}'">返回
+                        onclick="window.location.href='{% url 'task_list' %}'">返回
                 </button>
             </div>
         </div>

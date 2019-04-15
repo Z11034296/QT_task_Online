@@ -14,7 +14,7 @@ def index(request):
 
 def projects(request):
     result = models.Project.objects.all()
-    #搜索此project是否已经有了Control table
+    # 搜索此project是否已经有了Control table
     CT_lists = models.ControlTableList.objects.values('project_id')
     CT_list=[]
     for i in CT_lists:
@@ -83,6 +83,7 @@ def create_project_info(request):
 def test(request):
     return HttpResponse("Hello")
 
+
 # ct == control table
 def project_ct(request,lid):
     if request.method == "GET":
@@ -131,7 +132,7 @@ def project_ct(request,lid):
                 name = '{}-SKU{}'.format(sheets.id, i)
                 tester=U.UserInfo.objects.filter(id=request.POST.get(name)).values().first()
                 models.ControlTableContent.objects.create(sku_num=i,ControlTable_List_id_id=lid,
-                                                               sheet_id_id=sheets.id,tester_id=tester["id"])
+                                                          sheet_id_id=sheets.id,tester_id=tester["id"])
         return redirect('projects')
 
 
@@ -210,7 +211,6 @@ def project_ct_content(request,lid):
         for j in res_list:
             if i.id == int(j['sheet_id']):
                 re_list.append(j['test_result'])
-                print(re_list)
                 if 'Fail' in re_list:
                     final_result = 'Fail'
                 elif re_list == []:
@@ -240,27 +240,28 @@ def project_ct_content(request,lid):
         if count % int(pj['project_sku_qty']) == 0:
             new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name]})
 
-            #new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
+            # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
     return render(request, 'Project/project_ct_content.html', {"pj": pj, "plist": plist,
-                                                       "SKU_Num_list": SKU_Num_list,"new_list":new_list,})
+                                                               "SKU_Num_list": SKU_Num_list,"new_list":new_list,})
 
 
-def test_result(request,nid,lid,skunum):# lid:Controltable_list_id , nid:sheet_id,
+def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet_id,
     if request.method == "GET":
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
         pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
-        cases = T.TestCase.objects.filter(sheet_id=nid)
-        name = T.Sheet.objects.filter(id=nid).values().first()['sheet_name']
+        cases = T.TestCase.objects.filter(sheet_id=sid)
+        name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
         return render(request, "Project/test_result.html", {"case_list": cases,"name":name,"pj":pj,"plist":plist,"skunum":skunum})
     else:
+        print("1111111111111111111")
         # case id 与 result组成字典后加到数据库
         case_id_list=request.POST.getlist('case_id')
         result_list=request.POST.getlist('test_result')
         result=dict(zip(case_id_list,result_list))
         for i in result:
             models.TestResult.objects.create(ControlTableList_id=lid,sku_num=skunum,test_case_id=int(i),
-                                             test_result=result[i],tester_id=request.user.id,sheet_id=nid)
+                                             test_result=result[i],tester_id=request.user.id,sheet_id=sid)
         return redirect('task_table',lid=lid)
 
 
@@ -286,18 +287,20 @@ def task_table(request,lid):
     sheet_result_list = {}
 
     for i in sheets_list:
+
         re_list = []
         final_result = ''
         for j in res_list:
             if i.id == int(j['sheet_id']):
                 re_list.append(j['test_result'])
-                print(re_list)
-                if 'Fail' in re_list:
-                    final_result='Fail'
-                elif re_list==[]:
-                    final_result=''
-                else:
-                    final_result='Pass'
+        if 'Fail' in re_list:
+            final_result='Fail'
+        elif re_list==[]:
+            final_result=''
+        elif re_list != [] and 'Pass' not in re_list and 'Fail' not in re_list :
+            final_result = 'N/A'
+        else:
+            final_result='Pass'
 
         sheet_result_list[i.sheet_name] = final_result
 
@@ -323,7 +326,7 @@ def task_table(request,lid):
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
 
-     # 检测result结果中该list中此case此sku有无结果
+    # 检测result结果中该list中此case此sku有无结果
     done_reuslt_list={}
     sku_list=[]
     done_result_sku = models.TestResult.objects.filter(ControlTableList_id=lid).values('sku_num').distinct()
@@ -349,3 +352,24 @@ def task_list(request):
         project = models.Project.objects.filter(id=i['project_id']).values().first()
         i['project']=project
     return render(request,'Project/task_list.html',{"CT_list":CT_lists})
+
+
+def result_review(request,lid,sid,skunum):
+    if request.method == 'GET':
+        plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+        name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
+        result_list=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=sid,sku_num=skunum)
+        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"skunum":skunum,"name":name})
+    else:
+
+        case_id_list = request.POST.getlist('case_id')
+        result_list = request.POST.getlist('test_result')
+        result = dict(zip(case_id_list, result_list))
+        for i in result:
+            if result[i] =="":
+                continue
+            else:
+                models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i])
+
+        return redirect('task_table', lid=lid)
