@@ -254,7 +254,7 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
         name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
         return render(request, "Project/test_result.html", {"case_list": cases,"name":name,"pj":pj,"plist":plist,"skunum":skunum})
     else:
-        print("1111111111111111111")
+
         # case id 与 result组成字典后加到数据库
         case_id_list=request.POST.getlist('case_id')
         result_list=request.POST.getlist('test_result')
@@ -359,8 +359,20 @@ def result_review(request,lid,sid,skunum):
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
         pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
         name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
-        result_list=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=sid,sku_num=skunum)
-        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"skunum":skunum,"name":name})
+        cases = T.TestCase.objects.filter(sheet_id=sid)
+        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=sid,sku_num=skunum,)
+
+        result_list=[]
+
+        for j in cases:
+            result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
+                          'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
+
+            for i in result:
+                if i.test_case.id == j.id:
+                    result_dic['result']=i.test_result
+            result_list.append(result_dic)
+        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name})
     else:
 
         case_id_list = request.POST.getlist('case_id')
@@ -370,6 +382,12 @@ def result_review(request,lid,sid,skunum):
             if result[i] =="":
                 continue
             else:
-                models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i])
+                if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
+                    models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i])
+                else:
+                    models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
+                                                     test_result=result[i], tester_id=request.user.id, sheet_id=sid)
+
+
 
         return redirect('task_table', lid=lid)

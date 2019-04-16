@@ -47,7 +47,7 @@ def add_user(request):
         add_user_obj = forms.UserForm(request.POST)
         if add_user_obj.is_valid():
             add_user_obj.cleaned_data.pop("re_password")
-            UserInfo.objects.create_user(**add_user_obj.cleaned_data, first_name=request.POST.get('name'))
+            UserInfo.objects.create_user(**add_user_obj.cleaned_data, first_name=request.POST.get('name'),last_name=request.POST.get('job_name'))
             return redirect("userinfo")
         return render(request, 'user/add_user.html', {'add_user_obj': add_user_obj})
     else:
@@ -78,7 +78,7 @@ def update_userinfo(request, id):
             update_obj = forms.UpdateUserForm(request.POST)
             if update_obj.is_valid():
                 UserInfo.objects.filter(id=id).update(**update_obj.cleaned_data,
-                                                      first_name=request.POST.get('name'))
+                                                      first_name=request.POST.get('name'),last_name=request.POST.get('job_name'))
                 return redirect("userinfo")
             else:
                 return HttpResponse("error")
@@ -146,7 +146,7 @@ def home(request, id):
             # 获取修改信息
             update_obj = forms.UpdateUserForm(request.POST)
             if update_obj.is_valid():
-                UserInfo.objects.filter(id=id).update(**update_obj.cleaned_data,first_name=request.POST.get('name'))
+                UserInfo.objects.filter(id=id).update(**update_obj.cleaned_data,first_name=request.POST.get('name'),last_name=request.POST.get('job_name'))
                 return redirect("userinfo")
             else:
                 return HttpResponse("error")

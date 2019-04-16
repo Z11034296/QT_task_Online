@@ -133,7 +133,7 @@ class ProjectInfoForm(Form):
     # )
 
     project_bios = fields.CharField(
-        widget=widgets.TextInput(attrs={'class': 'form-control'}),
+        widget=widgets.TextInput(attrs={'class': 'form-control',}),
     )
     project_mb = fields.CharField(
         widget=widgets.TextInput(attrs={'class': 'form-control'}),

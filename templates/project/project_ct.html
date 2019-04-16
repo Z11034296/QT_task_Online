@@ -55,9 +55,13 @@
                             <td>后面再加</td>
 
                             {% for i in SKU_Num_list %}
-                                <td><select class="form-control" style="width: 100px" name="{{ sheets.id }}-SKU{{ i }}" sku="{{ i }}">
+                                <td><select class="form-control" style="width: 120px" name="{{ sheets.id }}-SKU{{ i }}" sku="{{ i }}">
                                     {% for i in test_user %}
-                                        <option value="{{ i.id }}" selected="12">{{ i.job_name }}</option>
+                                        {% if i.last_name == 'N/A' %}
+                                            <option value="{{ i.id }}" selected>{{ i.last_name }}</option>
+                                        {% else  %}
+                                            <option value="{{ i.id }}">{{ i.last_name }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                     
                                 </select></td>

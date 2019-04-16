@@ -21,7 +21,7 @@
             <h1 class="text-center">请登录</h1>
             <form class="form-horizontal" method="post">
                 {% csrf_token %}
-                <p class = "text-center text-danger">{{error }}</p>
+                <p class = "text-center text-danger">{{ error }}</p>
                 <div class="form-group">
                     <label for="input_username" class="col-sm-2 control-label"></label>
                     <div class="input-group col-sm-8">
