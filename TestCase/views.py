@@ -160,7 +160,7 @@ def case_moreinfo(request, id):
 
 
 def table_of_contents(request):
-    i=[1,2,3,4]
+    j=[1,2,3,4]
     sheets_list = Sheet.objects.all()
     case_list = TestCase.objects.all()
     # 计算case_list中每个sheet有多少个case
@@ -169,8 +169,19 @@ def table_of_contents(request):
         sheet_list.append(cases.sheet.sheet_name)
     cout=Counter(sheet_list)
     # 每个sheet中的case个数填入sheets_list
+    attend_time_dic = {}
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
+
+        # 计算每个Sheet的attend time
+        cases_by_sheet = TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+        attend_time_sum = 0
+        for i in cases_by_sheet:
+            attend_time_sum += int(i['attend_time'])*4
+        attend_time_dic.update({sheets: attend_time_sum})
+        sheets.attend_time = attend_time_dic[sheets]
+
+
     # paginator = Paginator(case_list_org, 9, 1)  # 每页10条结果，少于2条合并到上一页
     #
     #     # page = request.GET.get('page')
@@ -182,7 +193,7 @@ def table_of_contents(request):
     #     # except EmptyPage:
     #     #     # If page is out of range (e.g. 9999), deliver last page of results.
     #     #     case_list = paginator.page(paginator.num_pages)
-    return render(request, "case/table_of_contents.html", {"sheets_list": sheets_list,"i":i})
+    return render(request, "case/table_of_contents.html", {"sheets_list": sheets_list,"j":j,"attend_time_dic":attend_time_dic})
 
 
 def sheet_detail(request, sid):

@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+import Project.views
+
 
 urlpatterns = [
 
@@ -11,5 +13,6 @@ urlpatterns = [
     path('change_status/<id>', views.change_status, name='change_status'),
     path('set_password', views.set_password, name='set_password'),
     path('home/<id>', views.home, name='home'),
+    path('task_list',  Project.views.task_list, name='task_list'),
 
 ]

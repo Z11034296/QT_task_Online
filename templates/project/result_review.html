@@ -48,6 +48,7 @@
                         <th>pass_critearia</th>
                         <th width="80px">SKU{{ skunum }}</th>
                         <th width="120px">更改</th>
+                        <th>remark</th>
 
                     </tr>
                     </thead>
@@ -60,13 +61,14 @@
                         <td style="white-space:pre-wrap; word-break:break-all"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ i.case_name }}</a></td>
                         <td>{{ i.procedure }}</td>
                         <td>{{ i.pass_criteria }}</td>
-                        <th>{{ i.result }}</th>
-                        <th><select class="form form-control" style="width: 100px" name="test_result">
+                        <td>{{ i.result }}</td>
+                        <td><select class="form form-control" style="width: 100px" name="test_result">
                             <option value="Pass">Pass</option>
                             <option value="Fail">Fail</option>
                             <option value="N/A">N/A</option>
                             <option selected="selected"  style='display: none' value=''></option>
-                        </select></th>
+                        </select></td>
+                         <td>{{ i.remark }}</td>
                     {% endfor %}
                     </tbody>
                 </table>

@@ -49,7 +49,7 @@
                         <tr>
                             <td>{{ i.sheet_name }}</td>
                             <td>{{ i.sheet_description }}</td>
-                            <td>之后加</td>
+                            <td>{{ i.attend_time }}</td>
                             {% for j in SKU_Num_list %}
                                 {% if j == 1 %}
                                     {% if i.sku1.first_name == user.first_name %}

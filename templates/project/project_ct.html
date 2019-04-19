@@ -52,7 +52,7 @@
                             <td>{{ sheets.sheet_name }}</td>
                             <td>{{ sheets.sheet_description }}</td>
                             <td>{{ sheets.count }}</td>
-                            <td>后面再加</td>
+                            <td>{{ sheets.attend_time }}</td>
 
                             {% for i in SKU_Num_list %}
                                 <td><select class="form-control" style="width: 120px" name="{{ sheets.id }}-SKU{{ i }}" sku="{{ i }}">

@@ -35,6 +35,7 @@
                     <tr>
                         <th>project name</th>
                         <th>project stage</th>
+                        <th>stage sku qty</th>
                         <th>stage start</th>
                         <th>stage end</th>
                     </tr>
@@ -44,6 +45,7 @@
                         <tr>
                             <td>{{ i.project }}</td>
                             <td>{{ i.project_stage }}</td>
+                            <td>{{ i.stage_sku_qty }}</td>
                             <td>{{ i.stage_begin|date:'Y-m-d' }}</td>
                             <td>{{ i.stage_end|date:'Y-m-d' }}</td>
                             {% if i.id in ct_list_distinct %}

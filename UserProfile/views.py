@@ -19,7 +19,7 @@ def login(request):
             # 用户名密码正确
             # 给用户做登录
             auth.login(request, user)
-            return redirect("userinfo")
+            return redirect("task_list")
         else:
             # 用户名密码错误
             error_msg = "用户名或密码错误"

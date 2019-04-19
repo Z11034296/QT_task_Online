@@ -43,7 +43,7 @@
                     <th >Description</th>
                     <th >Total Sub-item</th>
                     <th >attend time</th>
-                    {% for i in i %}
+                    {% for i in j %}
                     <th>SKU{{ i }}</th>
                     {% endfor %}
                 </tr>
@@ -54,8 +54,8 @@
                         <td ><a href="sheet_detail/{{ sheets.id }}">{{ sheets.sheet_name }}</a></td>
                         <td>{{ sheets.sheet_description }}</td>
                         <td>{{ sheets.count }}</td>
-                        <td>暂时没做</td>
-                        {% for i in i %}
+                        <td>{{ sheets.attend_time }}</td>
+                        {% for i in j %}
                             <td><input class="form-control" style="width: 80px" type="text" name="{{ sheets }}-SKU{{ i }}"></td>
                         {% endfor %}
                     </tr>

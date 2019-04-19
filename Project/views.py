@@ -98,7 +98,7 @@ def project_ct(request,lid):
         test_user = U.UserInfo.objects.filter(site_id="1")
         SKU_Num_list = []
         num = 1
-        while num <= int(pj['project_sku_qty']):
+        while num <= int(plist['stage_sku_qty']):
             SKU_Num_list.append(num)
             num += 1
 
@@ -109,12 +109,22 @@ def project_ct(request,lid):
         cout = Counter(sheet_list)
 
         # 每个sheet中的case个数填入sheets_list
+        attend_time_dic={}
         for sheets in sheets_list:
+
             sheets.count = cout[sheets.sheet_name]
 
+        # 计算每个Sheet的attend time
+            cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+            attend_time_sum = 0
+            for i in cases_by_sheet:
+
+                attend_time_sum+=int(i['attend_time'])
+            attend_time_dic.update({sheets:attend_time_sum * int(plist['stage_sku_qty'])})
+            sheets.attend_time=attend_time_dic[sheets]
         return render(request,'Project/project_ct.html',{"pj":pj,"plist":plist,
                                                          "SKU_Num_list":SKU_Num_list,
-                                                         "sheets_list":sheets_list,"test_user":test_user})
+                                                         "sheets_list":sheets_list,"test_user":test_user,'attend_time_dic':attend_time_dic})
     else:
 
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
@@ -122,17 +132,20 @@ def project_ct(request,lid):
 
         SKU_Num_list = []
         num = 1
-        while num <= int(pj['project_sku_qty']):
+        while num <= int(plist['stage_sku_qty']):
             SKU_Num_list.append(num)
             num += 1
 
         sheets_list = T.Sheet.objects.all()
+
         for sheets in sheets_list:
             for i in SKU_Num_list:
                 name = '{}-SKU{}'.format(sheets.id, i)
                 tester=U.UserInfo.objects.filter(id=request.POST.get(name)).values().first()
                 models.ControlTableContent.objects.create(sku_num=i,ControlTable_List_id_id=lid,
                                                           sheet_id_id=sheets.id,tester_id=tester["id"])
+
+
         return redirect('projects')
 
 
@@ -173,14 +186,15 @@ def project_ct_list(request,nid):
     else:
         result= request.POST
         pj = models.Project.objects.filter(id=nid).values().first()
-        result_list = list(models.ControlTableList.objects.values_list('project_id', 'project_stage'))
+        result_list = list(models.ControlTableList.objects.values_list('project_id', 'project_stage','stage_sku_qty'))
         project_id = request.POST.get("project_id")
         project_stage = request.POST.get("project_stage")
+        stage_sku = request.POST.get("stage_sku_qty")
         if (int(project_id),project_stage) in result_list:
             error='该project已经有这个stage了'
             return render(request, 'Project/project_ct_list.html', {"pj":pj,'error':error})
         models.ControlTableList.objects.create(project_stage=result["project_stage"],project_id=result["project_id"],
-                                               stage_begin=result["stage_begin"],stage_end=result["stage_end"])
+                                               stage_sku_qty=stage_sku,stage_begin=result["stage_begin"],stage_end=result["stage_end"])
         return redirect('projects')
 
 
@@ -191,7 +205,7 @@ def project_ct_content(request,lid):
     case_list = T.TestCase.objects.all()
     SKU_Num_list = []
     num = 1
-    while num <= int(pj['project_sku_qty']):
+    while num <= int(plist['stage_sku_qty']):
         SKU_Num_list.append(num)
         num += 1
 
@@ -221,8 +235,16 @@ def project_ct_content(request,lid):
         sheet_result_list[i.sheet_name] = final_result
 
     # 每个sheet中的case个数填入sheets_list
+    attend_time_dic={}
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
+
+        cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+        attend_time_sum = 0
+        for i in cases_by_sheet:
+            attend_time_sum += int(i['attend_time'])
+        attend_time_dic.update({sheets.id: attend_time_sum * int(plist['stage_sku_qty']) })
+
     content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
 
     new_list=[]
@@ -233,12 +255,12 @@ def project_ct_content(request,lid):
     for i in content_list:
         count+=1
 
-        new_dic.update({'sheet_id':i.sheet_id_id,'sheet_name':i.sheet_id.sheet_name,
+        new_dic.update({'sheet_id':i.sheet_id_id,'sheet_name':i.sheet_id.sheet_name,'attend_time':attend_time_dic[i.sheet_id_id],
                         'sheet_description':i.sheet_id.sheet_description})
-        new_dic.update({'sku'+str(count % int(pj['project_sku_qty'])):i.tester})
+        new_dic.update({'sku'+str(count % int(plist['stage_sku_qty'])):i.tester})
 
-        if count % int(pj['project_sku_qty']) == 0:
-            new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name]})
+        if count % int(plist['stage_sku_qty']) == 0:
+            new_dic.update({'sku' + str(int(plist['stage_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name]})
 
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
@@ -256,12 +278,18 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
     else:
 
         # case id 与 result组成字典后加到数据库
+        project = models.Project.objects.filter(id=lid).values('id').first()
         case_id_list=request.POST.getlist('case_id')
         result_list=request.POST.getlist('test_result')
+        remark_list=request.POST.getlist('remark')
         result=dict(zip(case_id_list,result_list))
+        remark_result=dict(zip(case_id_list,remark_list))
+        result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
         for i in result:
             models.TestResult.objects.create(ControlTableList_id=lid,sku_num=skunum,test_case_id=int(i),
-                                             test_result=result[i],tester_id=request.user.id,sheet_id=sid)
+                                             test_result=result[i],tester_id=request.user.id,sheet_id=sid,
+                                             remark=remark_result[i],result_info_id = result_info_id['id'])
+            # result_info_id = result_info_id['id']
         return redirect('task_table',lid=lid)
 
 
@@ -272,7 +300,7 @@ def task_table(request,lid):
     case_list = T.TestCase.objects.all()
     SKU_Num_list = []
     num = 1
-    while num <= int(pj['project_sku_qty']):
+    while num <= int(plist['stage_sku_qty']):
         SKU_Num_list.append(num)
         num += 1
 
@@ -282,7 +310,7 @@ def task_table(request,lid):
         sheet_list.append(cases.sheet.sheet_name)
     cout = Counter(sheet_list)
 
-    # sheet的测试结果，若都Pass则Pass ，有一个fail则结果显示fail，若全部N/A 才写N/A，若有没有填结果的case则显示为空
+    # sheet的测试结果，若都Pass则Pass ，有一个fail则结果显示fail，若全部N/A,才写N/A，若有没有填结果的case则显示为空
     res_list = models.TestResult.objects.filter(ControlTableList_id=lid).values('sheet_id', 'test_result')
     sheet_result_list = {}
 
@@ -300,13 +328,22 @@ def task_table(request,lid):
         elif re_list != [] and 'Pass' not in re_list and 'Fail' not in re_list :
             final_result = 'N/A'
         else:
-            final_result='Pass'
+            final_result = 'Pass'
 
         sheet_result_list[i.sheet_name] = final_result
 
     # 每个sheet中的case个数填入sheets_list
+    attend_time_dic={}
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
+
+        cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+        attend_time_sum = 0
+        for i in cases_by_sheet:
+            attend_time_sum += int(i['attend_time'])
+        attend_time_dic.update({sheets.id: attend_time_sum * int(plist['stage_sku_qty'])})
+        attend_time_dic.update({sheets.id: attend_time_sum}) # 每个sheet总的attend time
+
     content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
     new_list = []
     new_dic = {}
@@ -316,12 +353,12 @@ def task_table(request,lid):
     for i in content_list:
         count += 1
 
-        new_dic.update({'sheet_id': i.sheet_id_id, 'sheet_name': i.sheet_id.sheet_name,
+        new_dic.update({'sheet_id': i.sheet_id_id, 'sheet_name': i.sheet_id.sheet_name,'attend_time':attend_time_dic[i.sheet_id_id],
                         'sheet_description': i.sheet_id.sheet_description})
-        new_dic.update({'sku' + str(count % int(pj['project_sku_qty'])): i.tester})
+        new_dic.update({'sku' + str(count % int(plist['stage_sku_qty'])): i.tester})
 
-        if count % int(pj['project_sku_qty']) == 0:
-            new_dic.update({'sku' + str(int(pj['project_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name]})
+        if count % int(plist['stage_sku_qty']) == 0:
+            new_dic.update({'sku' + str(int(plist['stage_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name]})
 
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
@@ -341,6 +378,7 @@ def task_table(request,lid):
         done_reuslt_list[k]=sh_list
 
     return render(request, 'Project/task_table.html', {"pj": pj, "plist": plist,"SKU_Num_list": SKU_Num_list,"new_list": new_list,"done_reuslt_list":done_reuslt_list})
+
 
 def task_list(request):
     CT_lists=[]
@@ -370,8 +408,10 @@ def result_review(request,lid,sid,skunum):
 
             for i in result:
                 if i.test_case.id == j.id:
-                    result_dic['result']=i.test_result
+                    result_dic['result'] = i.test_result
+                    result_dic['remark'] = i.remark
             result_list.append(result_dic)
+
         return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name})
     else:
 
@@ -387,7 +427,4 @@ def result_review(request,lid,sid,skunum):
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                      test_result=result[i], tester_id=request.user.id, sheet_id=sid)
-
-
-
         return redirect('task_table', lid=lid)

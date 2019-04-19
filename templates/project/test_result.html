@@ -48,7 +48,7 @@
                         <th>pass_critearia</th>
                         <th>附件</th>
                         <th>SKU{{ skunum }}</th>
-
+                        <th>remark</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -63,12 +63,13 @@
                         <td>{% if cases.test_plan_pic_path %}
                             <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
                         {% endif %}</td>
-                        <th><select class="form form-control" style="width: 100px" name="test_result">
+                        <td><select class="form form-control" style="width: 100px" name="test_result">
                             <option value="Pass">Pass</option>
                             <option value="Fail">Fail</option>
                             <option value="N/A">N/A</option>
                             <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
-                        </select></th>
+                        </select></td>
+                        <td><input type="text" class="form form-control" name="remark"></td>
                     {% endfor %}
                     </tbody>
                 </table>
