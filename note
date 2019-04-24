@@ -2,7 +2,7 @@
 *************************************
 *************需要进行就优化的部分*******
 1.SKU 数量不能由project决定，应该由project stage定，——————————project stage list增加sku数量字段 ->done
-2.添加progress到controltable content中  ——————————————————通过完成后的attend time与sheet总的attent time做比对
+2.添加progress到controltable content中  ——————————————————通过完成后的attend time与sheet总的attent time做比对 -> done
 3.给test result添加备注   ——————————————————————————testresult表添加 result_note字段 -> done
 4.controltable content 需要by sheet有 note来填写N/A原因之类 ——————————————————————待解决
 5.test result关联版本信息  ——————————————testresult表添加外键关联projectinfo      -> done

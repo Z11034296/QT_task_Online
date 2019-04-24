@@ -236,6 +236,7 @@ def project_ct_content(request,lid):
 
     # 每个sheet中的case个数填入sheets_list
     attend_time_dic={}
+    attend_time_dic_persheet={}
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
 
@@ -243,7 +244,15 @@ def project_ct_content(request,lid):
         attend_time_sum = 0
         for i in cases_by_sheet:
             attend_time_sum += int(i['attend_time'])
-        attend_time_dic.update({sheets.id: attend_time_sum * int(plist['stage_sku_qty']) })
+        attend_time_dic_persheet.update({sheets.id: attend_time_sum})
+        attend_time_dic.update({sheets.id: attend_time_sum * int(plist['stage_sku_qty'])})
+
+
+    # progress_sheet=models.TestResult.objects.filter(ControlTableList_id=lid).values("sheet_id").distinct()
+    # for i in progress_sheet:
+    #     result_case_time=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i['sheet_id'])
+    #     for j in result_case_time:
+
 
     content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
 
@@ -253,14 +262,26 @@ def project_ct_content(request,lid):
     # 将每个sheet所有SKU信息整合到同个字典中方便使用
     count=0
     for i in content_list:
+        # 计算test result的progress
+        time_result = models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.sheet_id_id)
+        finished_attent_time_dic={"sku0":0}
+        for k in SKU_Num_list:
+            finished_attend_time = 0
+            for j in time_result:
+                if int(k) == int(j.sku_num):
+                    finished_attend_time+= int(j.test_case.attend_time)
+            if attend_time_dic[i.sheet_id_id] != 0:
+                finished_attent_time_dic.update({"sku"+str(k):'{:.0%}'.format(finished_attend_time / attend_time_dic_persheet[i.sheet_id_id]) })
+            else:
+                finished_attent_time_dic.update({"sku" + str(k): '0%' })
+        # ******************************************************************************************
         count+=1
-
         new_dic.update({'sheet_id':i.sheet_id_id,'sheet_name':i.sheet_id.sheet_name,'attend_time':attend_time_dic[i.sheet_id_id],
                         'sheet_description':i.sheet_id.sheet_description})
-        new_dic.update({'sku'+str(count % int(plist['stage_sku_qty'])):i.tester})
+        new_dic.update({'sku'+str(count % int(plist['stage_sku_qty'])):i.tester,'sku'+str(count % int(plist['stage_sku_qty']))+'_progress':finished_attent_time_dic['sku'+str(count % int(plist['stage_sku_qty']))]})
 
         if count % int(plist['stage_sku_qty']) == 0:
-            new_dic.update({'sku' + str(int(plist['stage_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name]})
+            new_dic.update({'sku' + str(int(plist['stage_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name],'sku'+plist['stage_sku_qty']+'_progress':finished_attent_time_dic['sku'+plist['stage_sku_qty']]})
 
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
@@ -280,15 +301,21 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
         # case id 与 result组成字典后加到数据库
         project = models.Project.objects.filter(id=lid).values('id').first()
         case_id_list=request.POST.getlist('case_id')
+
         result_list=request.POST.getlist('test_result')
+
         remark_list=request.POST.getlist('remark')
         result=dict(zip(case_id_list,result_list))
+
         remark_result=dict(zip(case_id_list,remark_list))
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
         for i in result:
-            models.TestResult.objects.create(ControlTableList_id=lid,sku_num=skunum,test_case_id=int(i),
-                                             test_result=result[i],tester_id=request.user.id,sheet_id=sid,
-                                             remark=remark_result[i],result_info_id = result_info_id['id'])
+            if result[i] != "":
+                models.TestResult.objects.create(ControlTableList_id=lid,sku_num=skunum,test_case_id=int(i),
+                                                 test_result=result[i],tester_id=request.user.id,sheet_id=sid,
+                                                 remark=remark_result[i],result_info_id = result_info_id['id'])
+            else:
+                pass
             # result_info_id = result_info_id['id']
         return redirect('task_table',lid=lid)
 
@@ -342,7 +369,7 @@ def task_table(request,lid):
         for i in cases_by_sheet:
             attend_time_sum += int(i['attend_time'])
         attend_time_dic.update({sheets.id: attend_time_sum * int(plist['stage_sku_qty'])})
-        attend_time_dic.update({sheets.id: attend_time_sum}) # 每个sheet总的attend time
+        # attend_time_dic.update({sheets.id: attend_time_sum}) # 每个sheet总的attend time
 
     content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
     new_list = []

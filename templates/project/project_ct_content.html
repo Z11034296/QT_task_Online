@@ -33,14 +33,16 @@
                 <table class = "table table-striped table-bordered">
 
                         <thead>
+                        <tr>
+
                         <th width="10%">Test Sheet</th>
                         <th>Description</th>
                         <th>attend_time</th>
                         {% for j in SKU_Num_list %}
-                            <th>SKU{{ j }}</th>
+                            <th colspan="2" align="center">SKU{{ j }}</th>
                         {% endfor %}
                         <th>test result</th>
-
+                        </tr>
                         </thead>
                         <tbody>
 
@@ -52,21 +54,21 @@
                                 <td>{{ i.attend_time }}</td>
                                 {% for j in SKU_Num_list %}
                                     {% if j == 1 %}
-                                        <td>{{ i.sku1.last_name }}</td>
+                                        <td>{{ i.sku1.last_name }}</td><td>{{ i.sku1_progress }}</td>
                                     {% elif j == 2 %}
-                                        <td>{{ i.sku2.last_name }}</td>
+                                        <td>{{ i.sku2.last_name }}</td><td>{{ i.sku2_progress }}</td>
                                     {% elif j == 3 %}
-                                        <td>{{ i.sku3.last_name }}</td>
+                                        <td>{{ i.sku3.last_name }}</td><td>{{ i.sku3_progress }}</td>
                                     {% elif j == 4 %}
-                                        <td>{{ i.sku4.last_name }}</td>
+                                        <td>{{ i.sku4.last_name }}</td><td>{{ i.sku4_progress }}</td>
                                     {% elif j == 5 %}
-                                        <td>{{ i.sku5.last_name }}</td>
+                                        <td>{{ i.sku5.last_name }}</td><td>{{ i.sku5_progress }}</td>
                                     {% elif j == 6 %}
-                                        <td>{{ i.sku6.last_name }}</td>
+                                        <td>{{ i.sku6.last_name }}</td><td>{{ i.sku6_progress }}</td>
                                     {% elif j == 7 %}
-                                        <td>{{ i.sku7.last_name }}</td>
+                                        <td>{{ i.sku7.last_name }}</td><td>{{ i.sku7_progress }}</td>
                                     {% elif j == 8 %}
-                                        <td>{{ i.sku8.last_name }}</td>
+                                        <td>{{ i.sku8.last_name }}</td><td>{{ i.sku8_progress }}</td>
                                     {% endif %}
                                 {% endfor %}
                                 <td>{{ i.test_result }}</td>
