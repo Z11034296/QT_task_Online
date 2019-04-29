@@ -454,4 +454,84 @@ def result_review(request,lid,sid,skunum):
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                      test_result=result[i], tester_id=request.user.id, sheet_id=sid)
-        return redirect('task_table', lid=lid)
+
+        # plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+        # name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
+        # cases = T.TestCase.objects.filter(sheet_id=sid)
+        # result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
+        #
+        # result_list = []
+        # for j in cases:
+        #     result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
+        #                   'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
+        #
+        #     for i in result:
+        #         if i.test_case.id == j.id:
+        #             result_dic['result'] = i.test_result
+        #             result_dic['remark'] = i.remark
+        #     result_list.append(result_dic)
+        # return render(request, 'Project/result_review.html',
+        #                   {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases, "skunum": skunum,
+        #                    "name": name})
+
+        return redirect("task_table",lid=lid)
+
+
+def result_check(request,lid,sid,skunum):
+    if request.method == 'GET':
+        plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+        name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
+        cases = T.TestCase.objects.filter(sheet_id=sid)
+        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=sid,sku_num=skunum,)
+
+        result_list=[]
+
+        for j in cases:
+            result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
+                          'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
+
+            for i in result:
+                if i.test_case.id == j.id:
+                    result_dic['result'] = i.test_result
+                    result_dic['remark'] = i.remark
+            result_list.append(result_dic)
+
+        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name})
+    else:
+
+        case_id_list = request.POST.getlist('case_id')
+        result_list = request.POST.getlist('test_result')
+        result = dict(zip(case_id_list, result_list))
+        for i in result:
+            if result[i] =="":
+                continue
+            else:
+                if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
+                    models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i])
+                else:
+                    models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
+                                                     test_result=result[i], tester_id=request.user.id, sheet_id=sid)
+
+        # plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+        # name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
+        # cases = T.TestCase.objects.filter(sheet_id=sid)
+        # result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
+        #
+        # result_list = []
+        # for j in cases:
+        #     result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
+        #                   'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
+        #
+        #     for i in result:
+        #         if i.test_case.id == j.id:
+        #             result_dic['result'] = i.test_result
+        #             result_dic['remark'] = i.remark
+        #     result_list.append(result_dic)
+        # return render(request, 'Project/result_review.html',
+        #                   {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases, "skunum": skunum,
+        #                    "name": name})
+
+        return redirect("project_ct_content",lid=lid)

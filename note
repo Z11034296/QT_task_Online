@@ -6,3 +6,5 @@
 3.给test result添加备注   ——————————————————————————testresult表添加 result_note字段 -> done
 4.controltable content 需要by sheet有 note来填写N/A原因之类 ——————————————————————待解决
 5.test result关联版本信息  ——————————————testresult表添加外键关联projectinfo      -> done
+
+project table中去掉sku数量，换成该project最新stage
