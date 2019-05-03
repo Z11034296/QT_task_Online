@@ -190,11 +190,12 @@ def project_ct_list(request,nid):
         project_id = request.POST.get("project_id")
         project_stage = request.POST.get("project_stage")
         stage_sku = request.POST.get("stage_sku_qty")
+        stage_note = request.POST.get("stage_note")
         if (int(project_id),project_stage) in result_list:
             error='该project已经有这个stage了'
             return render(request, 'Project/project_ct_list.html', {"pj":pj,'error':error})
         models.ControlTableList.objects.create(project_stage=result["project_stage"],project_id=result["project_id"],
-                                               stage_sku_qty=stage_sku,stage_begin=result["stage_begin"],stage_end=result["stage_end"])
+                                               stage_sku_qty=result["stage_sku_qty"],stage_note=result["stage_note"],stage_begin=result["stage_begin"],stage_end=result["stage_end"])
         return redirect('projects')
 
 
@@ -427,6 +428,7 @@ def result_review(request,lid,sid,skunum):
         cases = T.TestCase.objects.filter(sheet_id=sid)
         result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=sid,sku_num=skunum,)
 
+
         result_list=[]
 
         for j in cases:
@@ -441,7 +443,8 @@ def result_review(request,lid,sid,skunum):
 
         return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name})
     else:
-
+        project = models.Project.objects.filter(id=lid).values('id').first()
+        result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
         case_id_list = request.POST.getlist('case_id')
         result_list = request.POST.getlist('test_result')
         result = dict(zip(case_id_list, result_list))
@@ -450,10 +453,10 @@ def result_review(request,lid,sid,skunum):
                 continue
             else:
                 if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
-                    models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i])
+                    models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i],result_info_id=result_info_id['id'],tester_id=request.user.id,)
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
-                                                     test_result=result[i], tester_id=request.user.id, sheet_id=sid)
+                                                     test_result=result[i], tester_id=request.user.id, sheet_id=sid,result_info_id=result_info_id['id'])
 
         # plist = models.ControlTableList.objects.filter(id=lid).values().first()
         # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
@@ -500,7 +503,8 @@ def result_check(request,lid,sid,skunum):
 
         return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name})
     else:
-
+        project = models.Project.objects.filter(id=lid).values('id').first()
+        result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
         case_id_list = request.POST.getlist('case_id')
         result_list = request.POST.getlist('test_result')
         result = dict(zip(case_id_list, result_list))
@@ -508,11 +512,13 @@ def result_check(request,lid,sid,skunum):
             if result[i] =="":
                 continue
             else:
-                if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
-                    models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i])
+                if models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
+                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum).update(
+                        test_result=result[i], result_info_id=result_info_id['id'], tester_id=request.user.id, )
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
-                                                     test_result=result[i], tester_id=request.user.id, sheet_id=sid)
+                                                     test_result=result[i], tester_id=request.user.id, sheet_id=sid,
+                                                     result_info_id=result_info_id['id'])
 
         # plist = models.ControlTableList.objects.filter(id=lid).values().first()
         # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
@@ -535,3 +541,25 @@ def result_check(request,lid,sid,skunum):
         #                    "name": name})
 
         return redirect("project_ct_content",lid=lid)
+
+
+def stage_update(request,lid):
+    if request.method == "GET":
+        plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+        info = models.ControlTableList.objects.filter(id=lid).values().first()
+        return render(request,'Project/stage_update.html',{'info':info,'pj':pj})
+    else:
+        print(request.POST)
+        models.ControlTableList.objects.filter(id=lid).update(project_stage=request.POST.get("project_stage"),stage_sku_qty=request.POST.get("stage_sku_qty"),stage_begin=request.POST.get("stage_begin"),stage_end=request.POST.get("stage_end"),stage_note=request.POST.get("stage_note"),)
+        # plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+        CT_list = models.ControlTableList.objects.filter(project_id=request.POST.get("project_id"))
+        pj = models.Project.objects.filter(id=request.POST.get("project_id")).values().first()
+        ct_list = models.ControlTableContent.objects.values("ControlTable_List_id_id").distinct()
+        ct_list_distinct = []
+        for i in ct_list:
+            ct_list_distinct.append(i["ControlTable_List_id_id"])
+
+        return render(request, 'Project/project_ct_info.html',
+                      {"CT_list": CT_list, "pj": pj, "ct_list_distinct": ct_list_distinct})

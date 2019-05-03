@@ -25,7 +25,7 @@
     <p>{% if user.is_authenticated %}
         <div class="panel panel-primary ">
             <div class="panel-heading">
-                <h2 class="panel-title">{{ pj.project_name }}'s Control Table</h2>
+                <h2 class="panel-title">stage update</h2>
             </div>
             <div class="panel-body">
                 <form action="" method="POST">
@@ -35,11 +35,11 @@
                         <tbody>
                         <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ pj.id }}" readonly ></td></tr>
                         <tr><th><label for="id_project_name">project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
-                        <tr><th><label for="id_project_stage">project_stage:</label></th><td><input type="text" name="project_stage" class="form-control" id="id_project_stage"></td></tr>
-                        <tr><th><label for="id_stage_sku_qty">stage_sku_qty:</label></th><td><input type="text" name="stage_sku_qty" class="form-control" id="id_stage_sku_qty"></td></tr>
-                        <tr><th><label for="id_stage_begin">stage_begin:</label></th><td><input type="date" name="stage_begin" class="form-control" id="id_stage_begin" readonly></td></tr>
-                        <tr><th><label for="id_stage_end">stage_end:</label></th><td><input type="date" name="stage_end" class="form-control" id="id_stage_end" readonly></td></tr>
-                        <tr><th><label for="id_stage_note">stage_note:</label></th><td><input type="text" name="stage_note" class="form-control" id="id_stage_note" placeholder="多个model不同sku，在这里说明，如:SKU1,SKU2,SKU3为TC-330,SKU4为XC-330"></td></tr>
+                        <tr><th><label for="id_project_stage">project_stage:</label></th><td><input type="text" name="project_stage" class="form-control" id="id_project_stage" value="{{ info.project_stage }}"></td></tr>
+                        <tr><th><label for="id_stage_sku_qty">stage_sku_qty:</label></th><td><input type="text" name="stage_sku_qty" class="form-control" id="id_stage_sku_qty" value="{{ info.stage_sku_qty }}"></td></tr>
+                        <tr><th><label for="id_stage_begin">stage_begin:</label></th><td><input type="text" name="stage_begin" class="form-control" id="id_stage_begin" value="{{ info.stage_begin |date:'Y-m-d' }}" readonly></td></tr>
+                        <tr><th><label for="id_stage_end">stage_end:</label></th><td><input type="text" name="stage_end" class="form-control" id="id_stage_end" value="{{ info.stage_end |date:'Y-m-d' }}" readonly></td></tr>
+                        <tr><th><label for="id_stage_note">stage_note:</label></th><td><input type="text" name="stage_note" class="form-control" id="id_stage_note" placeholder="多个model不同sku，在这里说明，如:SKU1,SKU2,SKU3为TC-330,SKU4为XC-330" value="{{ info.stage_note }}"></td></tr>
                         </tbody>
                     </table>
 

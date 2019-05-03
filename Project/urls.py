@@ -35,4 +35,5 @@ urlpatterns = [
     path('task_list', views.task_list, name='task_list'),
     path('result_review/<lid>-<sid>-<skunum>', views.result_review, name='result_review'),
     path('result_check/<lid>-<sid>-<skunum>', views.result_check, name='result_check'),
+    path('stage_update/<lid>', views.stage_update, name='stage_update'),
 ]

@@ -27,6 +27,7 @@
             <div class="panel-heading">
                 <h2 class="panel-title">{{ pj.name }} {{ plist.project_stage }}'s Control Table</h2>
             </div>
+            <h4 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h4>
             <div class="panel-body">
                 {#                <form action="" method="POST">#}
                 {% csrf_token %}
@@ -140,7 +141,7 @@
                 </table>
                 {#                    <input class="btn btn-success" type="submit" value="提交">#}
             <div class="col-md-1 pull-right">
-                <button class="btn btn-success " type="button"
+                <button class="btn btn-success pull-right" type="button"
                         onclick="window.location.href='{% url 'task_list' %}'">返回
                 </button>
             </div>
