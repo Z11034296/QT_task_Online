@@ -43,13 +43,12 @@
                         </tbody>
                     </table>
 
-                    <input class="btn btn-success" type="submit" value="提交">
-                    <button class="btn btn-success" type="button"
-                            onclick="window.location.href='{% url 'project_ct_info' pj.id %}'">返回
-                    </button>
-                    <p class = "text-center text-danger">{{error }}</p>
-                </form>
-            </div>
+                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                    <input class="btn btn-success pull-right" type="submit" value="提交">
+
+        <p class = "text-center text-danger">{{error }}</p>
+        </form>
+        </div>
         </div>
 
     {% else %}

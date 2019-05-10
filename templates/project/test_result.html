@@ -36,48 +36,46 @@
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table -> {{ name }}</h2>
             </div>
             <form action="" method="post">
-             {% csrf_token %}
-            <div class="panel-body">
-                <table border="" class = "table table-striped">
-                    <thead >
-                    <tr>
-
-                        <th>case_id</th>
-                        <th>case_name</th>
-                        <th>procedure</th>
-                        <th>pass_critearia</th>
-                        <th>附件</th>
-                        <th>SKU{{ skunum }}</th>
-                        <th>remark</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    {%  for cases in case_list %}
+                {% csrf_token %}
+                <div class="panel-body">
+                    <table border="" class = "table table-striped">
+                        <thead >
                         <tr>
-                        <input type="hidden" value="{{ cases.id }}" name="case_id">
-                        <td >{{ cases.case_id }}</td>
-                        <td style="white-space:pre-wrap; word-break:break-all"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
-                        <td>{{ cases.procedure }}</td>
-                        <td>{{ cases.pass_criteria }}</td>
-                        <td>{% if cases.test_plan_pic_path %}
-                            <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
-                        {% endif %}</td>
-                        <td><select class="form form-control" style="width: 100px" name="test_result">
-                            <option value="Pass">Pass</option>
-                            <option value="Fail">Fail</option>
-                            <option value="N/A">N/A</option>
-                            <option selected="selected"  style='display: none' value=''></option>
-                        </select></td>
-                        <td><input type="text" class="form form-control" name="remark"></td>
-                    {% endfor %}
-                    </tbody>
-                </table>
-             <button class="btn btn-success pull-right" type="button"
-                        onclick="window.location.href='{% url 'task_table' plist.id %}'">返回
-                </button>
-                <input class="btn btn-success pull-right" type="submit" value="提交">
-            </div>
+
+                            <th>case_id</th>
+                            <th>case_name</th>
+                            <th>procedure</th>
+                            <th>pass_critearia</th>
+                            <th>附件</th>
+                            <th>SKU{{ skunum }}</th>
+                            <th>remark</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {%  for cases in case_list %}
+                            <tr>
+                            <input type="hidden" value="{{ cases.id }}" name="case_id">
+                            <td >{{ cases.case_id }}</td>
+                            <td style="white-space:pre-wrap; word-break:break-all"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
+                            <td>{{ cases.procedure }}</td>
+                            <td>{{ cases.pass_criteria }}</td>
+                            <td>{% if cases.test_plan_pic_path %}
+                                <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
+                            {% endif %}</td>
+                            <td><select class="form form-control" style="width: 100px" name="test_result">
+                                <option value="Pass">Pass</option>
+                                <option value="Fail">Fail</option>
+                                <option value="N/A">N/A</option>
+                                <option selected="selected"  style='display: none' value=''></option>
+                            </select></td>
+                            <td><input type="text" class="form form-control" name="remark"></td>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                    <input class="btn btn-success pull-right" type="submit" value="提交">
+                </div>
             </form>
             {#        <nav aria-label="Page navigation">#}
             {#            <ul class="pagination">#}

@@ -1,5 +1,11 @@
 {% extends 'index.html' %}
 {% block page-content %}
+    <style>
+        table{
+            table-layout: auto;
+        }
+
+    </style>
     <div class="panel panel-primary">
         <div class="panel-heading "><h2 class="panel-title">Projects</h2></div>
         <div class="panel-body ">
@@ -39,6 +45,7 @@
                         <th>进度</th>
                         <th>维护版本信息</th>
                         <th>Project status</th>
+                        <th>bug list</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -64,13 +71,13 @@
                             <td><a  title="编辑软件版本"  href="edit_project_info/{{ i.id }}" >维护
                                     <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                                 </a>
-
                             </td>
                             {% if i.id in CT_list %}
-                                <td><a href="project_ct_info/{{ i.id }}">Checked</a></td>
+                                <td><a href="project_ct_info/{{ i.id }}">查看</a></td>
                             {% else %}
-                                <td><a href="project_ct_list/{{ i.id }}">Checked</a></td>
+                                <td><a href="project_ct_list/{{ i.id }}">查看</a></td>
                             {% endif %}
+                            <td><a href="{% url 'issue_list' i.id %}">查看</a></td>
                             </tr>
                     {% endfor %}
                     </tbody>

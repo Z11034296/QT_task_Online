@@ -59,12 +59,9 @@
                 </table>
 
                 {#                    <input class="btn btn-success" type="submit" value="提交">#}
-
-                <button class="btn btn-success" type="button"
+                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                <button class="btn btn-success pull-right" type="button"
                         onclick="window.location.href='{% url 'project_ct_list' pj.id %}'">新增stage
-                </button>
-                <button class="btn btn-success" type="button"
-                        onclick="window.location.href='{% url 'projects' %}'">返回
                 </button>
             </div>
         </div>

@@ -56,8 +56,7 @@
                                 <td style="text-align: center">{{ i.attend_time }}</td>
                                 {% for j in SKU_Num_list %}
                                     {% if j == 1 %}
-                                        <td style="text-align: center">{{ i.sku1.last_name }}</td><td style="text-align: center">
-                                        <a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku1_progress }}</a></td>
+                                        <td style="text-align: center">{{ i.sku1.last_name }}</td><td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku1_progress }}</a></td>
                                     {% elif j == 2 %}
                                         <td style="text-align: center">{{ i.sku2.last_name }}</td><td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku2_progress }}</a></td>
                                     {% elif j == 3 %}
@@ -80,9 +79,7 @@
                         </tbody>
                 </table>
                 {#                    <input class="btn btn-success" type="submit" value="提交">#}
-                <button class="btn btn-success pull-right" type="button"
-                        onclick="window.location.href='{% url 'projects' %}'">返回
-                </button>
+                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
             </div>
         </div>
     {% else %}

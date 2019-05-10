@@ -427,20 +427,15 @@ def result_review(request,lid,sid,skunum):
         name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
         cases = T.TestCase.objects.filter(sheet_id=sid)
         result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=sid,sku_num=skunum,)
-
-
         result_list=[]
-
         for j in cases:
             result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
                           'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
-
             for i in result:
                 if i.test_case.id == j.id:
                     result_dic['result'] = i.test_result
                     result_dic['remark'] = i.remark
             result_list.append(result_dic)
-
         return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name})
     else:
         project = models.Project.objects.filter(id=lid).values('id').first()
@@ -550,7 +545,6 @@ def stage_update(request,lid):
         info = models.ControlTableList.objects.filter(id=lid).values().first()
         return render(request,'Project/stage_update.html',{'info':info,'pj':pj})
     else:
-        print(request.POST)
         models.ControlTableList.objects.filter(id=lid).update(project_stage=request.POST.get("project_stage"),stage_sku_qty=request.POST.get("stage_sku_qty"),stage_begin=request.POST.get("stage_begin"),stage_end=request.POST.get("stage_end"),stage_note=request.POST.get("stage_note"),)
         # plist = models.ControlTableList.objects.filter(id=lid).values().first()
         # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
@@ -563,3 +557,95 @@ def stage_update(request,lid):
 
         return render(request, 'Project/project_ct_info.html',
                       {"CT_list": CT_list, "pj": pj, "ct_list_distinct": ct_list_distinct})
+
+def issue_list(request,pid):
+    pj = models.Project.objects.filter(id=pid).values().first()
+    issue_list=models.Issue.objects.filter(project_id=pid)
+    return render(request,'Project/issue_list.html',{"pj":pj,"issue_list":issue_list})
+
+
+def add_issue(request,pid):
+    if request.method == "GET":
+        pj = models.Project.objects.filter(id=pid).values().first()
+        return render(request, 'Project/add_issue.html', {"pj": pj})
+    else:
+        if models.Issue.objects.filter(project_id=pid):
+            issue=models.Issue.objects.filter(project_id=pid).values().last()
+            issue_id=issue["issue_id"]+1
+        else:
+            issue_id = 1
+
+        controltablelist_id=models.ControlTableList.objects.filter(project_id=pid).values().last()
+        models.Issue.objects.create(
+            project_id=pid,
+            ControlTableList_id=controltablelist_id["id"],
+            submitter_id=request.user.id,
+            issue_id=issue_id,
+            bugzilla_id=request.POST.get("bugzilla_id"),
+            TRID=request.POST.get("TRID"),
+            category=request.POST.get("category"),
+            attribute=request.POST.get("attribute"),
+            attribute_name=request.POST.get("attribute_name"),
+            severity=request.POST.get("severity"),
+            description=request.POST.get("description"),
+            procedure=request.POST.get("procedure"),
+            comment=request.POST.get("comment"),
+            root_cause="",
+            solution="",
+            status=request.POST.get("status"),
+            # solving_type=request.POST.get("solving_type"),
+            open_date=request.POST.get("open_date"),
+            # verify_date=request.POST.get("verify_date"),
+            # close_date=request.POST.get("close_date"),
+            owner=request.POST.get("owner"),
+            motherboard_version=request.POST.get("motherboard_version"),
+            bios_version=request.POST.get("bios_version"),
+            os_version=request.POST.get("os_version"),
+            remark=request.POST.get("remark"),
+        )
+        pj = models.Project.objects.filter(id=pid).values().first()
+        issue_list = models.Issue.objects.filter(project_id=pid)
+        return render(request,"Project/issue_list.html",{"pj":pj,"issue_list":issue_list})
+
+
+def issue_update(request,pid,bid):
+    if request.method == "GET":
+        pj = models.Project.objects.filter(id=pid).values().first()
+        issue=models.Issue.objects.filter(project_id=pid,id=bid).values().first()
+        return render(request,"Project/issue_update.html",{"pj":pj,"issue":issue})
+    else:
+
+        models.Issue.objects.filter(project_id=pid, id=bid).update(
+            bugzilla_id=request.POST.get("bugzilla_id"),
+            TRID=request.POST.get("TRID"),
+            category=request.POST.get("category"),
+            attribute=request.POST.get("attribute"),
+            attribute_name=request.POST.get("attribute_name"),
+            severity=request.POST.get("severity"),
+            description=request.POST.get("description"),
+            procedure=request.POST.get("procedure"),
+            comment=request.POST.get("comment"),
+            root_cause=request.POST.get("root_cause"),
+            solution=request.POST.get("solution"),
+            status=request.POST.get("status"),
+            solving_type=request.POST.get("solving_type"),
+            open_date=request.POST.get("open_date"),
+            # verify_date=request.POST.get("verify_date"),
+            # close_date=request.POST.get("close_date"),
+            owner=request.POST.get("owner"),
+            motherboard_version=request.POST.get("motherboard_version"),
+            bios_version=request.POST.get("bios_version"),
+            os_version=request.POST.get("os_version"),
+            remark=request.POST.get("remark"),
+        )
+        if request.POST.get("verify_date") != "":
+            models.Issue.objects.filter(project_id=pid, id=bid).update(
+                verify_date=request.POST.get("verify_date"),
+            )
+        if request.POST.get("close_date") != "":
+            models.Issue.objects.filter(project_id=pid, id=bid).update(
+                close_date=request.POST.get("close_date"),
+            )
+        pj = models.Project.objects.filter(id=pid).values().first()
+        issue_list = models.Issue.objects.filter(project_id=pid)
+        return render(request, "Project/issue_list.html", {"pj": pj, "issue_list": issue_list})

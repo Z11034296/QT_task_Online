@@ -85,28 +85,28 @@
                                 {% elif j == 4 %}
                                     {% if i.sku4.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.4 %}
-                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
-                                    {% else %}
+                                            <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                        {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }}</a></td>
                                         {% endif %}
-                                        {% else %}
+                                    {% else %}
                                         <td><h6>{{ i.sku4.last_name }}</h6></td>
                                     {% endif %}
                                 {% elif j == 5 %}
                                     {% if i.sku5.first_name == user.first_name %}
-                                         {% if i.sheet_id in done_reuslt_list.5 %}
-                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
-                                    {% else %}
+                                        {% if i.sheet_id in done_reuslt_list.5 %}
+                                            <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                        {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }}</a></td>
                                         {% endif %}
-                                         {% else %}
+                                    {% else %}
                                         <td><h6>{{ i.sku5.last_name }}</h6></td>
                                     {% endif %}
                                 {% elif j == 6 %}
                                     {% if i.sku6.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.6 %}
-                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
-                                    {% else %}
+                                            <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                        {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
@@ -114,22 +114,22 @@
                                     {% endif %}
                                 {% elif j == 7 %}
                                     {% if i.sku7.first_name == user.first_name %}
-                                         {% if i.sheet_id in done_reuslt_list.7 %}
-                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
-                                    {% else %}
+                                        {% if i.sheet_id in done_reuslt_list.7 %}
+                                            <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                        {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }}</a></td>
                                         {% endif %}
-                                         {% else %}
+                                    {% else %}
                                         <td><h6>{{ i.sku7.last_name }}</h6></td>
                                     {% endif %}
                                 {% elif j == 8 %}
                                     {% if i.sku8.first_name == user.first_name %}
-                                         {% if i.sheet_id in done_reuslt_list.8 %}
-                                        <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
-                                    {% else %}
+                                        {% if i.sheet_id in done_reuslt_list.8 %}
+                                            <td><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                        {% else %}
                                             <td><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }}</a></td>
                                         {% endif %}
-                                         {% else %}
+                                    {% else %}
                                         <td><h6>{{ i.sku8.last_name }}</h6></td>
                                     {% endif %}
                                 {% endif %}
@@ -140,11 +140,9 @@
                     </tbody>
                 </table>
                 {#                    <input class="btn btn-success" type="submit" value="提交">#}
-            <div class="col-md-1 pull-right">
-                <button class="btn btn-success pull-right" type="button"
-                        onclick="window.location.href='{% url 'task_list' %}'">返回
-                </button>
-            </div>
+                <div class="col-md-1 pull-right">
+                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                </div>
             </div>
         </div>
     {% else %}

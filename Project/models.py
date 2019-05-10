@@ -133,112 +133,114 @@ class Issue(models.Model):
             TestLeader
     """
     project = models.ForeignKey('Project', on_delete=models.CASCADE, default="")
-    issue_id = models.IntegerField(auto_created=True)
-    bugzilla_id = models.CharField(max_length=32, blank=True, null=True)
-    category_choices = (
-        (0, 'HW'),
-        (1, 'Key_Component'),
-        (2, 'FW'),
-        (3, 'Driver'),
-        (4, 'SW'),
-        (5, 'ME'),
-    )
-    category = models.SmallIntegerField(choices=category_choices, verbose_name='Category')
-    attribute_choices = (
-        (0, '[HW]Main Board'),
-        (1, '[HW]Daughter Board'),
-        (2, '[HW]Signal Integrity'),
-        (3, '[HW]Antenna'),
-        (4, '[HW]EMC/Safety'),
-        (5, '[HW]Thermal'),
-        (6, '[HW]Acoustic'),
-        (7, '[HW]Others'),
-        (8, '[KC]Chipset'),
-        (9, '[KC]CPU/APU'),
-        (10, '[KC]VGA'),
-        (11, '[KC]Memory'),
-        (12, '[KC]HDD/SDD/mSATA'),
-        (13, '[KC]ODD'),
-        (14, '[KC]Panel'),
-        (15, '[KC]Touch Panel'),
-        (16, '[KC]Camera'),
-        (17, '[KC]Card Reader'),
-        (18, '[KC]LAN'),
-        (19, '[KC]WLAN'),
-        (20, '[KC]BlueTooth'),
-        (21, '[KC]Micphone'),
-        (22, '[KC]KB/Mouse'),
-        (23, '[KC]Remote Control'),
-        (24, '[KC]Adapter/PSU'),
-        (25, '[KC]USB'),
-        (26, '[KC]Audio'),
-        (27, '[KC]Speaker'),
-        (28, '[KC]Sensor'),
-        (29, '[KC]NFC'),
-        (30, '[KC]TPM'),
-        (31, '[KC]Others'),
-        (32, '[FW]BIOS'),
-        (33, '[FW]EC'),
-        (34, '[FW]Inter ME'),
-        (35, '[FW]Others'),
-        (36, '[Driver]Chipset'),
-        (37, '[Driver]CPU/APU'),
-        (38, '[Driver]VGA'),
-        (39, '[Driver]Touch Panel'),
-        (40, '[Driver]Camera'),
-        (41, '[Driver]Card Reader'),
-        (42, '[Driver]LAN'),
-        (43, '[Driver]WLAN'),
-        (44, '[Driver]BlueTooth'),
-        (45, '[Driver]Hot Key'),
-        (46, '[Driver]Audio'),
-        (47, '[Driver]Sensor'),
-        (48, '[Driver]Others'),
-        (49, '[SW]OS'),
-        (50, '[SW]Application'),
-        (51, '[SW]Preload'),
-        (52, '[ME]Structure'),
-        (53, '[ME]Cosmetic'),
-        (54, '[ME]Cable'),
-        (55, '[ME]Parts'),
-        (56, '[ME]Packing'),
-        (57, '[ME]ID'),
-        (58, '[ME]Others'),
-    )
-    attribute = models.SmallIntegerField(choices=attribute_choices, verbose_name='attribute')
-    attribute_name = models.CharField(max_length=32, blank=True, null=True, verbose_name='manufacturer')
-    severity_choices = (
-        (0, '1'),
-
-        (1, '2'),
-        (2, '3'),
-        (3, '4'),
-    )
-    severity = models.SmallIntegerField(choices=severity_choices, verbose_name='severity')
+    ControlTableList =models.ForeignKey('ControlTableList', on_delete=models.CASCADE, default="",blank=True, null=True,)
+    issue_id = models.IntegerField()
+    TRID = models.CharField(max_length=32, blank=True, null=True, default='')
+    bugzilla_id = models.CharField(max_length=32, blank=True, null=True,default='')
+    # category_choices = (
+    #     (0, 'HW'),
+    #     (1, 'Key_Component'),
+    #     (2, 'FW'),
+    #     (3, 'Driver'),
+    #     (4, 'SW'),
+    #     (5, 'ME'),
+    # )
+    category = models.CharField(max_length=255, verbose_name='Category',default='',blank=True, null=True,)
+    # attribute_choices = (
+    #     (0, '[HW]Main Board'),
+    #     (1, '[HW]Daughter Board'),
+    #     (2, '[HW]Signal Integrity'),
+    #     (3, '[HW]Antenna'),
+    #     (4, '[HW]EMC/Safety'),
+    #     (5, '[HW]Thermal'),
+    #     (6, '[HW]Acoustic'),
+    #     (7, '[HW]Others'),
+    #     (8, '[KC]Chipset'),
+    #     (9, '[KC]CPU/APU'),
+    #     (10, '[KC]VGA'),
+    #     (11, '[KC]Memory'),
+    #     (12, '[KC]HDD/SDD/mSATA'),
+    #     (13, '[KC]ODD'),
+    #     (14, '[KC]Panel'),
+    #     (15, '[KC]Touch Panel'),
+    #     (16, '[KC]Camera'),
+    #     (17, '[KC]Card Reader'),
+    #     (18, '[KC]LAN'),
+    #     (19, '[KC]WLAN'),
+    #     (20, '[KC]BlueTooth'),
+    #     (21, '[KC]Micphone'),
+    #     (22, '[KC]KB/Mouse'),
+    #     (23, '[KC]Remote Control'),
+    #     (24, '[KC]Adapter/PSU'),
+    #     (25, '[KC]USB'),
+    #     (26, '[KC]Audio'),
+    #     (27, '[KC]Speaker'),
+    #     (28, '[KC]Sensor'),
+    #     (29, '[KC]NFC'),
+    #     (30, '[KC]TPM'),
+    #     (31, '[KC]Others'),
+    #     (32, '[FW]BIOS'),
+    #     (33, '[FW]EC'),
+    #     (34, '[FW]Inter ME'),
+    #     (35, '[FW]Others'),
+    #     (36, '[Driver]Chipset'),
+    #     (37, '[Driver]CPU/APU'),
+    #     (38, '[Driver]VGA'),
+    #     (39, '[Driver]Touch Panel'),
+    #     (40, '[Driver]Camera'),
+    #     (41, '[Driver]Card Reader'),
+    #     (42, '[Driver]LAN'),
+    #     (43, '[Driver]WLAN'),
+    #     (44, '[Driver]BlueTooth'),
+    #     (45, '[Driver]Hot Key'),
+    #     (46, '[Driver]Audio'),
+    #     (47, '[Driver]Sensor'),
+    #     (48, '[Driver]Others'),
+    #     (49, '[SW]OS'),
+    #     (50, '[SW]Application'),
+    #     (51, '[SW]Preload'),
+    #     (52, '[ME]Structure'),
+    #     (53, '[ME]Cosmetic'),
+    #     (54, '[ME]Cable'),
+    #     (55, '[ME]Parts'),
+    #     (56, '[ME]Packing'),
+    #     (57, '[ME]ID'),
+    #     (58, '[ME]Others'),
+    # )
+    attribute = models.CharField(max_length=255, verbose_name='attribute',default='',blank=True, null=True,)
+    attribute_name = models.CharField(max_length=32, blank=True, null=True, verbose_name='attribute_name')
+    # severity_choices = (
+    #     (0, '1'),
+    #
+    #     (1, '2'),
+    #     (2, '3'),
+    #     (3, '4'),
+    # )
+    severity = models.CharField(max_length=32, verbose_name='severity',default='',blank=True, null=True,)
     description = models.TextField(max_length=2048, blank=True, null=True)
     procedure = models.TextField(max_length=2048, blank=True, null=True)
     comment = models.TextField(max_length=2048, blank=True, null=True)
     root_cause = models.TextField(max_length=2048, blank=True, null=True)
     solution = models.TextField(max_length=2048, blank=True, null=True)
-    status_choice = (
-        (0, 'Open'),
-        (1, 'Closed'),
-        (2, 'Verify'),
-        (3, 'Limitation'),
-    )
-    status = models.SmallIntegerField(choices=status_choice, verbose_name='status')
-    solving_type_choices = (
-        (0, 'Fixed'),
-        (1, 'Spec Changed'),
-        (2, 'Design'),
-        (3, 'Limitation'),
-        (4, 'Deferred'),
-        (5, 'Withdraw'),
-        (6, 'Duplicated'),
-        (7, 'Cannot Duplicated'),
-    )
-    solving_type = models.SmallIntegerField(choices=solving_type_choices, blank=True, null=True)
-    open_date = models.DateField()
+    # status_choice = (
+    #     (0, 'Open'),
+    #     (1, 'Closed'),
+    #     (2, 'Verify'),
+    #     (3, 'Limitation'),
+    # )
+    status = models.CharField(max_length=32, verbose_name='status',default='',blank=True, null=True,)
+    # solving_type_choices = (
+    #     (0, 'Fixed'),
+    #     (1, 'Spec Changed'),
+    #     (2, 'Design'),
+    #     (3, 'Limitation'),
+    #     (4, 'Deferred'),
+    #     (5, 'Withdraw'),
+    #     (6, 'Duplicated'),
+    #     (7, 'Cannot Duplicated'),
+    # )
+    solving_type = models.CharField(max_length=32, blank=True, null=True,default='')
+    open_date = models.DateField(blank=True, null=True)
     verify_date = models.DateField(blank=True, null=True)
     close_date = models.DateField(blank=True, null=True)
     owner = models.CharField(max_length=64, blank=True, null=True)
