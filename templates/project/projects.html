@@ -38,11 +38,9 @@
                         <th>开始日期</th>
                         <th>结束日期</th>
                         <th>Platform</th>
-                        <th>sku数量</th>
                         <th>project type</th>
                         <th>project style</th>
                         <th>是否Leading</th>
-                        <th>进度</th>
                         <th>维护版本信息</th>
                         <th>Project status</th>
                         <th>bug list</th>
@@ -63,11 +61,9 @@
                             <td>{{ i.schedule_start|date:'Y-m-d' }}</td>
                             <td>{{ i.schedule_end|date:'Y-m-d' }}</td>
                             <td>{{ i.project_platform }}</td>
-                            <td>{{ i.project_sku_qty }}</td>
                             <td>{{ i.project_type }}</td>
                             <td>{{ i.project_style }}</td>
                             <td>{{ i.project_is_leading_project }}</td>
-                            <td>{{ i.project_progress }}</td>
                             <td><a  title="编辑软件版本"  href="edit_project_info/{{ i.id }}" >维护
                                     <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                                 </a>

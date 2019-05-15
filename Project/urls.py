@@ -25,7 +25,6 @@ urlpatterns = [
     path('project_info/<int:nid>/', views.project_info, name='project_info'),
     path('add_project_info/<int:nid>/', views.add_project_info, name='add_project_info'),
     path('edit_project_info/<int:nid>/', views.edit_project_info, name='edit_project_info'),
-    path('test', views.test, name='test'),
     path('project_ct/<lid>', views.project_ct, name='project_ct'),
     path('project_ct_info/<int:nid>', views.project_ct_info, name='project_ct_info'),
     path('project_ct_list/<nid>', views.project_ct_list, name='project_ct_list'),
@@ -39,4 +38,5 @@ urlpatterns = [
     path('issue_list/<pid>', views.issue_list, name='issue_list'),
     path('add_issue/<pid>', views.add_issue, name='add_issue'),
     path('issue_update/<pid>-<bid>', views.issue_update, name='issue_update'),
+    path('change_tester/<lid>-<sid>-<skunum>', views.change_tester, name='change_tester'),
 ]

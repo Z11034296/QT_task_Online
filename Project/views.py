@@ -151,14 +151,48 @@ def project_ct(request,lid):
 
 def project_ct_info(request,nid):
 
+    # 计算progress
+    sheets_list = T.Sheet.objects.all()
+
+
     CT_list = models.ControlTableList.objects.filter(project_id=nid)
     pj = models.Project.objects.filter(id=nid).values().first()
     ct_list = models.ControlTableContent.objects.values("ControlTable_List_id_id").distinct()
     ct_list_distinct=[]
+    progress={}
     for i in ct_list:
         ct_list_distinct.append(i["ControlTable_List_id_id"])
 
-    return render(request, 'Project/project_ct_info.html', {"CT_list":CT_list, "pj":pj,"ct_list_distinct":ct_list_distinct})
+        attend_time_dic = {}
+        attend_time_dic_persheet = {}
+        test_sku_num_list = {}
+        for sheets in sheets_list:
+            # *******计算非N/A的SKU的sku数量*********
+            test_sku_num = 0
+            x = models.ControlTableContent.objects.filter(sheet_id=sheets.id,ControlTable_List_id=i["ControlTable_List_id_id"])
+            for j in x:
+                if j.tester.name != "N/A":
+                    test_sku_num += 1
+            test_sku_num_list.update({sheets.id: test_sku_num})
+            # 计算每个sheet的case attend time之和
+            cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+            attend_time_sum = 0
+            for k in cases_by_sheet:
+                attend_time_sum += int(k['attend_time'])
+            attend_time_dic_persheet.update({sheets.id: attend_time_sum})
+            attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
+        y=models.TestResult.objects.filter(ControlTableList_id=i["ControlTable_List_id_id"]).values("test_case_id")
+        attend_time_finished=0
+        for k in y:
+            attend_time_finished += int(T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
+        progress.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:'{:.0%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
+        # models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']
+    for i in CT_list:
+        if i.project_stage in progress.keys():
+            i.progressed = progress[i.project_stage]
+        else:
+            i.progressed="未开始"
+    return render(request, 'Project/project_ct_info.html', {"CT_list":CT_list, "pj":pj,"ct_list_distinct":ct_list_distinct,"progress":progress})
 
     # pj = models.Project.objects.filter(id=nid).values().first()
     # # 从control table库中查找关联project的sheet list
@@ -195,7 +229,11 @@ def project_ct_list(request,nid):
             error='该project已经有这个stage了'
             return render(request, 'Project/project_ct_list.html', {"pj":pj,'error':error})
         models.ControlTableList.objects.create(project_stage=result["project_stage"],project_id=result["project_id"],
-                                               stage_sku_qty=result["stage_sku_qty"],stage_note=result["stage_note"],stage_begin=result["stage_begin"],stage_end=result["stage_end"])
+                                               stage_sku_qty=result["stage_sku_qty"],stage_note=result["stage_note"])
+        if request.POST.get("stage_begin") != "":
+            models.ControlTableList.objects.update(stage_begin=result["stage_begin"])
+        elif request.POST.get("stage_end") != "":
+            models.ControlTableList.objects.update(stage_end=result["stage_end"])
         return redirect('projects')
 
 
@@ -238,16 +276,23 @@ def project_ct_content(request,lid):
     # 每个sheet中的case个数填入sheets_list
     attend_time_dic={}
     attend_time_dic_persheet={}
+    test_sku_num_list={}
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
-
+        # *******计算非N/A的SKU的sku数量*********
+        test_sku_num=0
+        x=models.ControlTableContent.objects.filter(ControlTable_List_id=lid,sheet_id=sheets.id)
+        for j in x:
+            if j.tester.name != "N/A":
+                test_sku_num +=1
+        test_sku_num_list.update({sheets.id:test_sku_num})
+        # 计算每个sheet的case attend time之和
         cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
         attend_time_sum = 0
         for i in cases_by_sheet:
             attend_time_sum += int(i['attend_time'])
         attend_time_dic_persheet.update({sheets.id: attend_time_sum})
-        attend_time_dic.update({sheets.id: attend_time_sum * int(plist['stage_sku_qty'])})
-
+        attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
 
     # progress_sheet=models.TestResult.objects.filter(ControlTableList_id=lid).values("sheet_id").distinct()
     # for i in progress_sheet:
@@ -286,6 +331,8 @@ def project_ct_content(request,lid):
 
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
+
+
     return render(request, 'Project/project_ct_content.html', {"pj": pj, "plist": plist,
                                                                "SKU_Num_list": SKU_Num_list,"new_list":new_list,})
 
@@ -608,7 +655,7 @@ def add_issue(request,pid):
         return render(request,"Project/issue_list.html",{"pj":pj,"issue_list":issue_list})
 
 
-def issue_update(request,pid,bid):
+def issue_update(request,pid,bid):  # bid:issue表中的id
     if request.method == "GET":
         pj = models.Project.objects.filter(id=pid).values().first()
         issue=models.Issue.objects.filter(project_id=pid,id=bid).values().first()
@@ -649,3 +696,15 @@ def issue_update(request,pid,bid):
         pj = models.Project.objects.filter(id=pid).values().first()
         issue_list = models.Issue.objects.filter(project_id=pid)
         return render(request, "Project/issue_list.html", {"pj": pj, "issue_list": issue_list})
+
+
+def change_tester(request,lid,sid,skunum):
+    if request.method == "GET":
+        test_user = U.UserInfo.objects.filter(site_id="1")
+        plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        return render(request,"Project/change_tester.html",{"test_user":test_user,"lid":lid,"sid":sid,"skunum":skunum})
+    else:
+        models.ControlTableContent.objects.filter(ControlTable_List_id_id=lid,sheet_id_id=sid,sku_num=skunum).update(
+            tester=request.POST.get("changed_tester")
+        )
+        return redirect("project_ct_content",lid)

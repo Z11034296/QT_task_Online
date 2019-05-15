@@ -298,8 +298,8 @@ class ControlTableContent(models.Model):
 class ControlTableList(models.Model):
     project = models.ForeignKey("Project",on_delete=models.CASCADE,unique=False)
     project_stage = models.CharField(max_length=255, unique=False, verbose_name="Project_stage")
-    stage_begin = models.DateField(verbose_name="开始日期")
-    stage_end = models.DateField(verbose_name="结束日期")
+    stage_begin = models.DateField(verbose_name="开始日期",blank=True, null=True)
+    stage_end = models.DateField(verbose_name="结束日期",blank=True, null=True)
     stage_sku_qty = models.CharField(verbose_name="sku 数量", max_length=255, blank=True, null=True,default="")
     stage_note = models.CharField(max_length=255, unique=False, verbose_name="Project_stage",default="")
 

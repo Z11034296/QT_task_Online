@@ -38,6 +38,7 @@
                         <th>stage sku qty</th>
                         <th>stage start</th>
                         <th>stage end</th>
+                        <th>test progress</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -48,6 +49,7 @@
                             <td>{{ i.stage_sku_qty }}</td>
                             <td>{{ i.stage_begin|date:'Y-m-d' }}</td>
                             <td>{{ i.stage_end|date:'Y-m-d' }}</td>
+                            <td>{{ i.progressed }}</td>
                             {% if i.id in ct_list_distinct %}
                                 <td><a class="btn btn-info" href="{% url 'project_ct_content' i.id %}">查看control table</a></td>
                             {% else %}
