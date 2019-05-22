@@ -1,0 +1,41 @@
+
+{% block page-content %}
+    <body class="container">
+    {% if user.is_authenticated %}
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    asign bug
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-8 ol-md-offset-3">
+                    <div class="col-sm-5">
+                        <form action="{% url 'asign_bug' pid lid cid sid skunum %}" method="POST">
+                            {% csrf_token %}
+                            <table>
+                                <tbody>
+                                    <tr><th width="50%"><label for="id_asign_bug">填入bug_ID:</label></th><td><input  type="text" name="asign_bug" class="form-control" id="id_asign_bug"></td></tr>
+                                    <tr><td >
+                                        <input type="submit" value="确认" class="btn btn-primary">
+                                    <input type="button" class="btn btn-default" data-dismiss="modal" value="取消">
+                                </td></tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+        <script type="text/javascript">
+        </script>
+        </body>
+    {% else %}
+        <a href="/login/">please login!</a>
+    {% endif %}
+{% endblock %}

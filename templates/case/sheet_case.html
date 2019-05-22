@@ -27,9 +27,9 @@
         <form action="#" class="navbar-right navbar-form">
             <div class="form-group has-feedback">
                 <!--has-feedback样式/反馈控制/ form-control-feedback 增加这两个样式后，span代表的放大镜就可以放在搜索栏里面-->
-                <label for="search" class="sr-only">搜索关键字</label>
-                <input type="search" placeholder="按照case_name搜索" id="search" class="form-control" title="输入关键字后按enter">
-                <span class="glyphicon glyphicon-search  form-control-feedback"></span>
+{#                <label for="search" class="sr-only">搜索关键字</label>#}
+{#                <input type="search" placeholder="按照case_name搜索" id="search" class="form-control" title="输入关键字后按enter">#}
+{#                <span class="glyphicon glyphicon-search  form-control-feedback"></span>#}
             </div>
         </form>
         <div class="panel-heading">
@@ -79,6 +79,8 @@
 
                 </tbody>
             </table>
+                        <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+
         </div>
 {#        <nav aria-label="Page navigation">#}
 {#            <ul class="pagination">#}

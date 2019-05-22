@@ -18,6 +18,10 @@
         {#word-break:break-all;#}
         {#word-wrap:break-word;#}
         }
+        th{
+            text-align: center
+        }
+
 
     </style>
 
@@ -33,49 +37,57 @@
                 {#            </div>#}
             </form>
             <div class="panel-heading">
-                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table -> {{ name }} -> SKU{{ skunum }}</h2>
+                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table {{ iss_id }} -> {{ name }} -> SKU{{ skunum }}</h2>
             </div>
             <form action="" method="post">
-             {% csrf_token %}
-            <div class="panel-body">
-                <table border="" class = "table table-striped">
-                    <thead >
-                    <tr>
-
-                        <th width="200px">case_id</th>
-                        <th>case_name</th>
-                        <th>procedure</th>
-                        <th>pass_critearia</th>
-                        <th width="80px">SKU{{ skunum }}</th>
-                        <th width="120px">更改</th>
-                        <th>remark</th>
-
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    {%  for i in result_list %}
+                {% csrf_token %}
+                <div class="panel-body">
+                    <table border="" class = "table table-striped">
+                        <thead >
                         <tr>
-                        <input type="hidden" value="{{ i.case_id }}" name="case_id">
-                        <td >{{ i.test_case_id }}</td>
-                        <td style="white-space:pre-wrap; word-break:break-all">{{ i.case_name }}</td>
-                        <td>{{ i.procedure }}</td>
-                        <td>{{ i.pass_criteria }}</td>
-                        <td>{{ i.result }}</td>
-                        <td><select class="form form-control" style="width: 100px" name="test_result">
-                            <option value="Pass">Pass</option>
-                            <option value="Fail">Fail</option>
-                            <option value="N/A">N/A</option>
-                            <option selected="selected"  style='display: none' value=''></option>
-                        </select></td>
-                         <td>{{ i.remark }}</td>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                <input class="btn btn-success pull-right" type="submit" value="提交">
 
-            </div>
+                            <th width="200px">case_id</th>
+                            <th>case_name</th>
+                            <th>procedure</th>
+                            <th>pass_critearia</th>
+                            <th width="80px"  style="text-align: center">SKU{{ skunum }}</th>
+                            <th width="120px"  style="text-align: center">更改</th>
+                            <th  style="text-align: center">remark</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {%  for i in result_list %}
+                            <tr>
+                            <input type="hidden" value="{{ i.case_id }}" name="case_id">
+                            <td >{{ i.test_case_id }}</td>
+                            <td style="white-space:pre-wrap; word-break:break-all">{{ i.case_name }}</td>
+                            <td>{{ i.procedure }}</td>
+                            <td>{{ i.pass_criteria }}</td>
+                            {% if i.result == 'Fail' %}
+                                <td bgcolor="red" style="text-align: center"><a href="{% url 'asign_bug' pj.id plist.id i.case_id sid skunum %}" data-toggle="modal" data-target="#asign_bug">{{ i.result }}</a></td>
+                                {#                            data-toggle="modal" data-target="#asign_bug"#}
+                            {% else %}
+                                <td  style="text-align: center">{{ i.result }}</td>
+                            {% endif %}
+                            <td><select class="form form-control" style="width: 100px" name="test_result">
+                                <option value="Pass">Pass</option>
+                                <option value="Fail">Fail</option>
+                                <option value="N/A">N/A</option>
+                                <option selected="selected"  style='display: none' value=''></option>
+                            </select></td>
+                            {% if "refer to bug " in i.remark %}
+                                <td><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
+                            {% else %}
+                                <td>{{ i.remark }}</td>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                    <input class="btn btn-success pull-right" type="submit" value="提交">
+                </div>
             </form>
             {#        <nav aria-label="Page navigation">#}
             {#            <ul class="pagination">#}
@@ -107,26 +119,30 @@
         </div>
 
         <!-- 模态框（Modal） -->
-        <div class="modal fade" id="case_moreinfo" tabindex="-1" role="dialog" aria-labelledby="case_moreinfoLabel" aria-hidden="true">
+        <div class="modal fade" id="asign_bug" tabindex="-1" role="dialog" aria-labelledby="statusLabel" aria-hidden="true">
             <div class="modal-dialog" style="width:700px">
                 <div class="modal-content">
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
         <script>
-            {#模态框#}
-            $(function() {
-                {#模态框#}
-                $('#link .mymodel').modal('toggle')
-            })
+
 
             {# 关闭窗口时刷新页面以便重新加载js#}
-            $(function () { $('#case_moreinfo').on('hide.bs.modal', function () {
-                window.location.reload();
-            })
+            $(function () {
+                $('#asign_bug11').on('hide.bs.modal')
+
+
             });
 
         </script>
+        {% if messages %}
+            <script>
+                {% for msg in messages %}
+                    alert('{{ msg.message }}');
+                {% endfor %}
+            </script>
+        {% endif %}
 
 
     {% else %}

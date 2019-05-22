@@ -17,11 +17,12 @@
         {#        <div class="panel panel-primary ">#}
         {#            <div class="panel-heading">#}
         <h2>{{ pj.project_name }}'s bug list</h2>
-        <button type=button id="id_hide" class="btn pull-right">隐藏</button>
-        <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-        <button class="btn btn-success pull-right" type="button"
+        <button type=button id="id_hide" class="btn">隐藏</button>
+        <button class="btn btn-success " type="button"
                 onclick="window.location.href='{% url 'add_issue' pj.id %}'">新增
         </button>
+        <input class="btn btn-success " type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+
         {#            </div>#}
         <div class="panel-body">
 

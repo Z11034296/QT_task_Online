@@ -36,7 +36,9 @@ urlpatterns = [
     path('result_check/<lid>-<sid>-<skunum>', views.result_check, name='result_check'),
     path('stage_update/<lid>', views.stage_update, name='stage_update'),
     path('issue_list/<pid>', views.issue_list, name='issue_list'),
+    path('refer_issue/<pid>-<iss_id>', views.refer_issue, name='refer_issue'),
     path('add_issue/<pid>', views.add_issue, name='add_issue'),
     path('issue_update/<pid>-<bid>', views.issue_update, name='issue_update'),
     path('change_tester/<lid>-<sid>-<skunum>', views.change_tester, name='change_tester'),
+    path('asign_bug/<pid>-<lid>-<sid>-<cid>-<skunum>', views.asign_bug, name='asign_bug'),
 ]

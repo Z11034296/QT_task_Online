@@ -6,6 +6,8 @@ import TestCase.models as T
 import UserProfile.models as U
 from collections import Counter
 from itertools import chain
+from django.contrib import messages
+import re
 
 
 def index(request):
@@ -153,13 +155,12 @@ def project_ct_info(request,nid):
 
     # 计算progress
     sheets_list = T.Sheet.objects.all()
-
-
     CT_list = models.ControlTableList.objects.filter(project_id=nid)
     pj = models.Project.objects.filter(id=nid).values().first()
     ct_list = models.ControlTableContent.objects.values("ControlTable_List_id_id").distinct()
     ct_list_distinct=[]
     progress={}
+    att_time={}
     for i in ct_list:
         ct_list_distinct.append(i["ControlTable_List_id_id"])
 
@@ -181,17 +182,22 @@ def project_ct_info(request,nid):
                 attend_time_sum += int(k['attend_time'])
             attend_time_dic_persheet.update({sheets.id: attend_time_sum})
             attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
+            att_time.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:sum(attend_time_dic.values())})
         y=models.TestResult.objects.filter(ControlTableList_id=i["ControlTable_List_id_id"]).values("test_case_id")
         attend_time_finished=0
         for k in y:
             attend_time_finished += int(T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
-        progress.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:'{:.0%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
+        progress.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:'{:.2%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
+
         # models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']
     for i in CT_list:
         if i.project_stage in progress.keys():
+            i.attend_time=att_time[i.project_stage]
             i.progressed = progress[i.project_stage]
         else:
+            i.attend_time="N/A"
             i.progressed="未开始"
+
     return render(request, 'Project/project_ct_info.html', {"CT_list":CT_list, "pj":pj,"ct_list_distinct":ct_list_distinct,"progress":progress})
 
     # pj = models.Project.objects.filter(id=nid).values().first()
@@ -219,8 +225,9 @@ def project_ct_list(request,nid):
         return render(request,'Project/project_ct_list.html',{"pj":pj})
     else:
         result= request.POST
+        print(result)
         pj = models.Project.objects.filter(id=nid).values().first()
-        result_list = list(models.ControlTableList.objects.values_list('project_id', 'project_stage','stage_sku_qty'))
+        result_list = list(models.ControlTableList.objects.values_list('project_id', 'project_stage'))
         project_id = request.POST.get("project_id")
         project_stage = request.POST.get("project_stage")
         stage_sku = request.POST.get("stage_sku_qty")
@@ -228,13 +235,28 @@ def project_ct_list(request,nid):
         if (int(project_id),project_stage) in result_list:
             error='该project已经有这个stage了'
             return render(request, 'Project/project_ct_list.html', {"pj":pj,'error':error})
-        models.ControlTableList.objects.create(project_stage=result["project_stage"],project_id=result["project_id"],
-                                               stage_sku_qty=result["stage_sku_qty"],stage_note=result["stage_note"])
-        if request.POST.get("stage_begin") != "":
-            models.ControlTableList.objects.update(stage_begin=result["stage_begin"])
-        elif request.POST.get("stage_end") != "":
-            models.ControlTableList.objects.update(stage_end=result["stage_end"])
-        return redirect('projects')
+        if result["stage_end"] and result["stage_begin"] != "":
+            models.ControlTableList.objects.create(project_stage=result["project_stage"],project_id=result["project_id"],
+                                                   stage_sku_qty=result["stage_sku_qty"],stage_note=result["stage_note"],stage_end=result["stage_end"],stage_begin=result["stage_begin"])
+        elif result["stage_end"] == "":
+            models.ControlTableList.objects.create(project_stage=result["project_stage"],
+                                                   project_id=result["project_id"],
+                                                   stage_sku_qty=result["stage_sku_qty"],
+                                                   stage_note=result["stage_note"],
+                                                   stage_begin=result["stage_begin"])
+        elif result["stage_begin"] == "":
+            models.ControlTableList.objects.create(project_stage=result["project_stage"],
+                                                   project_id=result["project_id"],
+                                                   stage_sku_qty=result["stage_sku_qty"],
+                                                   stage_note=result["stage_note"],
+                                                   stage_end=result["stage_end"])
+        else:
+            models.ControlTableList.objects.create(project_stage=result["project_stage"],
+                                                   project_id=result["project_id"],
+                                                   stage_sku_qty=result["stage_sku_qty"],
+                                                   stage_note=result["stage_note"],
+                                                    )
+        return redirect('project_ct_info',nid)
 
 
 def project_ct_content(request,lid):
@@ -255,14 +277,17 @@ def project_ct_content(request,lid):
     cout = Counter(sheet_list)
 
     # sheet的测试结果，若都Pass则Pass ，有一个fail则结果显示fail，若全部N/A 才写N/A，若有没有填结果的case则显示为空
-    res_list = models.TestResult.objects.filter(ControlTableList_id=lid).values('sheet_id', 'test_result')
+    res_list = models.TestResult.objects.filter(ControlTableList_id=lid).values('sheet_id', 'test_result','remark')
     sheet_result_list = {}
-
+    bugid_dic={}
     for i in sheets_list:
         re_list = []
+        bugid_list=[]
         final_result = ''
         for j in res_list:
             if i.id == int(j['sheet_id']):
+                if 'refer to bug ' in j['remark']:
+                    bugid_list.append(int(re.findall(r"\d+",j['remark'])[0]))
                 re_list.append(j['test_result'])
                 if 'Fail' in re_list:
                     final_result = 'Fail'
@@ -270,9 +295,8 @@ def project_ct_content(request,lid):
                     final_result = ''
                 else:
                     final_result = 'Pass'
-
+        bugid_dic[i.id] = bugid_list
         sheet_result_list[i.sheet_name] = final_result
-
     # 每个sheet中的case个数填入sheets_list
     attend_time_dic={}
     attend_time_dic_persheet={}
@@ -284,7 +308,7 @@ def project_ct_content(request,lid):
         x=models.ControlTableContent.objects.filter(ControlTable_List_id=lid,sheet_id=sheets.id)
         for j in x:
             if j.tester.name != "N/A":
-                test_sku_num +=1
+                test_sku_num += 1
         test_sku_num_list.update({sheets.id:test_sku_num})
         # 计算每个sheet的case attend time之和
         cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
@@ -299,42 +323,38 @@ def project_ct_content(request,lid):
     #     result_case_time=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i['sheet_id'])
     #     for j in result_case_time:
 
-
     content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
-
-    new_list=[]
-    new_dic={}
-
+    new_list = []
+    new_dic = {}
     # 将每个sheet所有SKU信息整合到同个字典中方便使用
     count=0
     for i in content_list:
         # 计算test result的progress
         time_result = models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.sheet_id_id)
-        finished_attent_time_dic={"sku0":0}
+        finished_attend_time_dic = {"sku0":0}
         for k in SKU_Num_list:
             finished_attend_time = 0
             for j in time_result:
                 if int(k) == int(j.sku_num):
-                    finished_attend_time+= int(j.test_case.attend_time)
+                    finished_attend_time += int(j.test_case.attend_time)
             if attend_time_dic[i.sheet_id_id] != 0:
-                finished_attent_time_dic.update({"sku"+str(k):'{:.0%}'.format(finished_attend_time / attend_time_dic_persheet[i.sheet_id_id]) })
+                finished_attend_time_dic.update({"sku"+str(k):'{:.0%}'.format(finished_attend_time / attend_time_dic_persheet[i.sheet_id_id]) })
             else:
-                finished_attent_time_dic.update({"sku" + str(k): '0%' })
+                finished_attend_time_dic.update({"sku" + str(k): '0%' })
         # ******************************************************************************************
         count+=1
         new_dic.update({'sheet_id':i.sheet_id_id,'sheet_name':i.sheet_id.sheet_name,'attend_time':attend_time_dic[i.sheet_id_id],
-                        'sheet_description':i.sheet_id.sheet_description})
-        new_dic.update({'sku'+str(count % int(plist['stage_sku_qty'])):i.tester,'sku'+str(count % int(plist['stage_sku_qty']))+'_progress':finished_attent_time_dic['sku'+str(count % int(plist['stage_sku_qty']))]})
+                        'sheet_description':i.sheet_id.sheet_description,"bugid":bugid_dic[i.sheet_id_id]})
+        new_dic.update({'sku'+str(count % int(plist['stage_sku_qty'])):i.tester,'sku'+str(count % int(plist['stage_sku_qty']))+'_progress':finished_attend_time_dic['sku'+str(count % int(plist['stage_sku_qty']))]})
 
         if count % int(plist['stage_sku_qty']) == 0:
-            new_dic.update({'sku' + str(int(plist['stage_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name],'sku'+plist['stage_sku_qty']+'_progress':finished_attent_time_dic['sku'+plist['stage_sku_qty']]})
+            new_dic.update({'sku' + str(int(plist['stage_sku_qty'])): i.tester,'test_result':sheet_result_list[i.sheet_id.sheet_name],'sku'+plist['stage_sku_qty']+'_progress':finished_attend_time_dic['sku'+plist['stage_sku_qty']]})
 
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
 
-
     return render(request, 'Project/project_ct_content.html', {"pj": pj, "plist": plist,
-                                                               "SKU_Num_list": SKU_Num_list,"new_list":new_list,})
+                                                               "SKU_Num_list": SKU_Num_list,"new_list":new_list})
 
 
 def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet_id,
@@ -482,14 +502,19 @@ def result_review(request,lid,sid,skunum):
                 if i.test_case.id == j.id:
                     result_dic['result'] = i.test_result
                     result_dic['remark'] = i.remark
+                    if "refer to bug " in i.remark:
+                        x=i.remark
+                        result_dic['bug_id'] = int(re.findall(r"\d+",x)[0])
+                    # else:result_dic['bug_id'] = ''
             result_list.append(result_dic)
-        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name})
+        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid})
     else:
         project = models.Project.objects.filter(id=lid).values('id').first()
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
         case_id_list = request.POST.getlist('case_id')
         result_list = request.POST.getlist('test_result')
         result = dict(zip(case_id_list, result_list))
+        print(result)
         for i in result:
             if result[i] =="":
                 continue
@@ -499,27 +524,6 @@ def result_review(request,lid,sid,skunum):
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                      test_result=result[i], tester_id=request.user.id, sheet_id=sid,result_info_id=result_info_id['id'])
-
-        # plist = models.ControlTableList.objects.filter(id=lid).values().first()
-        # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
-        # name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
-        # cases = T.TestCase.objects.filter(sheet_id=sid)
-        # result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
-        #
-        # result_list = []
-        # for j in cases:
-        #     result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
-        #                   'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
-        #
-        #     for i in result:
-        #         if i.test_case.id == j.id:
-        #             result_dic['result'] = i.test_result
-        #             result_dic['remark'] = i.remark
-        #     result_list.append(result_dic)
-        # return render(request, 'Project/result_review.html',
-        #                   {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases, "skunum": skunum,
-        #                    "name": name})
-
         return redirect("task_table",lid=lid)
 
 
@@ -541,9 +545,12 @@ def result_check(request,lid,sid,skunum):
                 if i.test_case.id == j.id:
                     result_dic['result'] = i.test_result
                     result_dic['remark'] = i.remark
+                if "refer to bug " in i.remark:
+                    x = i.remark
+                    result_dic['bug_id'] = int(re.findall(r"\d+", x)[0])
             result_list.append(result_dic)
 
-        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name})
+        return render(request,'Project/result_check.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid})
     else:
         project = models.Project.objects.filter(id=lid).values('id').first()
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
@@ -561,27 +568,6 @@ def result_check(request,lid,sid,skunum):
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                      test_result=result[i], tester_id=request.user.id, sheet_id=sid,
                                                      result_info_id=result_info_id['id'])
-
-        # plist = models.ControlTableList.objects.filter(id=lid).values().first()
-        # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
-        # name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
-        # cases = T.TestCase.objects.filter(sheet_id=sid)
-        # result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
-        #
-        # result_list = []
-        # for j in cases:
-        #     result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
-        #                   'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
-        #
-        #     for i in result:
-        #         if i.test_case.id == j.id:
-        #             result_dic['result'] = i.test_result
-        #             result_dic['remark'] = i.remark
-        #     result_list.append(result_dic)
-        # return render(request, 'Project/result_review.html',
-        #                   {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases, "skunum": skunum,
-        #                    "name": name})
-
         return redirect("project_ct_content",lid=lid)
 
 
@@ -609,6 +595,11 @@ def issue_list(request,pid):
     pj = models.Project.objects.filter(id=pid).values().first()
     issue_list=models.Issue.objects.filter(project_id=pid)
     return render(request,'Project/issue_list.html',{"pj":pj,"issue_list":issue_list})
+
+def refer_issue(request,pid,iss_id):
+    pj = models.Project.objects.filter(id=pid).values().first()
+    issue = models.Issue.objects.filter(project_id=pid,issue_id=iss_id)
+    return render(request,'Project/issue_list.html',{"pj":pj,"issue_list":issue})
 
 
 def add_issue(request,pid):
@@ -708,3 +699,17 @@ def change_tester(request,lid,sid,skunum):
             tester=request.POST.get("changed_tester")
         )
         return redirect("project_ct_content",lid)
+
+def asign_bug(request,pid,lid,cid,sid,skunum):
+    if request.method == "GET":
+        return render(request, 'Project/asign_bug.html',{"pid":pid,"lid":lid,"cid":cid,"sid":sid,"skunum":skunum})
+    else:
+        if request.POST.get("asign_bug"):
+            bug=models.Issue.objects.filter(project_id=pid,issue_id=int(request.POST.get("asign_bug"))).values().first()
+            if bug:
+                models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=cid,sku_num=skunum).update(remark="refer to bug "+request.POST.get("asign_bug")+":"+bug["description"])
+            else:messages.success(request, "输入错误")
+            return redirect("result_review",lid,sid,skunum)
+        else:
+            messages.success(request, "输入错误")
+            return redirect("result_review",lid,sid,skunum)

@@ -60,12 +60,11 @@
                                 <th><label for="id_shot_number">{{ info_form.shot_number.label }}</label></th>
                                 <td>{{ info_form.shot_number }}</td>
                             </tr>
-                            <tr><td>
-                                <p><input class="btn btn-primary" value="提交" type="submit" ></p>
-                                <p class = "text-danger">{{ error }}</p>
-                            </td></tr>
                             </tbody>
                         </table>
+                        <input class="btn btn-primary pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                        <input class="btn btn-primary pull-right" value="提交" type="submit" >
+                        <p class = "text-danger">{{ error }}</p>
                     </div>
                 </form>
             </div>
