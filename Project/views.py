@@ -116,7 +116,7 @@ def project_ct(request,lid):
 
             sheets.count = cout[sheets.sheet_name]
 
-        # 计算每个Sheet的attend time
+            # 计算每个Sheet的attend time
             cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
             attend_time_sum = 0
             for i in cases_by_sheet:
@@ -146,8 +146,6 @@ def project_ct(request,lid):
                 tester=U.UserInfo.objects.filter(id=request.POST.get(name)).values().first()
                 models.ControlTableContent.objects.create(sku_num=i,ControlTable_List_id_id=lid,
                                                           sheet_id_id=sheets.id,tester_id=tester["id"])
-
-
         return redirect('projects')
 
 
@@ -182,18 +180,17 @@ def project_ct_info(request,nid):
                 attend_time_sum += int(k['attend_time'])
             attend_time_dic_persheet.update({sheets.id: attend_time_sum})
             attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
-            att_time.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:sum(attend_time_dic.values())})
+            att_time.update({i["ControlTable_List_id_id"]:sum(attend_time_dic.values())})
         y=models.TestResult.objects.filter(ControlTableList_id=i["ControlTable_List_id_id"]).values("test_case_id")
         attend_time_finished=0
         for k in y:
             attend_time_finished += int(T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
-        progress.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:'{:.2%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
-
-        # models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']
+        # progress.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:'{:.2%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
+        progress.update({i["ControlTable_List_id_id"]:'{:.2%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
     for i in CT_list:
-        if i.project_stage in progress.keys():
-            i.attend_time=att_time[i.project_stage]
-            i.progressed = progress[i.project_stage]
+        if i.id in progress.keys():
+            i.attend_time=att_time[i.id]
+            i.progressed = progress[i.id]
         else:
             i.attend_time="N/A"
             i.progressed="未开始"
@@ -225,7 +222,6 @@ def project_ct_list(request,nid):
         return render(request,'Project/project_ct_list.html',{"pj":pj})
     else:
         result= request.POST
-        print(result)
         pj = models.Project.objects.filter(id=nid).values().first()
         result_list = list(models.ControlTableList.objects.values_list('project_id', 'project_stage'))
         project_id = request.POST.get("project_id")
@@ -255,7 +251,7 @@ def project_ct_list(request,nid):
                                                    project_id=result["project_id"],
                                                    stage_sku_qty=result["stage_sku_qty"],
                                                    stage_note=result["stage_note"],
-                                                    )
+                                                   )
         return redirect('project_ct_info',nid)
 
 
@@ -287,7 +283,9 @@ def project_ct_content(request,lid):
         for j in res_list:
             if i.id == int(j['sheet_id']):
                 if 'refer to bug ' in j['remark']:
-                    bugid_list.append(int(re.findall(r"\d+",j['remark'])[0]))
+                    bugid_list.append(int(re.findall(r"\d+",j['remark'])[0])) # 取 bug ID
+                    bugid_list = list(set(bugid_list)) # 列表去重
+                    bugid_list.sort(reverse = False) # 排序
                 re_list.append(j['test_result'])
                 if 'Fail' in re_list:
                     final_result = 'Fail'
@@ -352,7 +350,6 @@ def project_ct_content(request,lid):
 
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
-
     return render(request, 'Project/project_ct_content.html', {"pj": pj, "plist": plist,
                                                                "SKU_Num_list": SKU_Num_list,"new_list":new_list})
 
@@ -503,8 +500,7 @@ def result_review(request,lid,sid,skunum):
                     result_dic['result'] = i.test_result
                     result_dic['remark'] = i.remark
                     if "refer to bug " in i.remark:
-                        x=i.remark
-                        result_dic['bug_id'] = int(re.findall(r"\d+",x)[0])
+                        result_dic['bug_id'] = int(re.findall(r"\d+",i.remark)[0])
                     # else:result_dic['bug_id'] = ''
             result_list.append(result_dic)
         return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid})
@@ -514,13 +510,17 @@ def result_review(request,lid,sid,skunum):
         case_id_list = request.POST.getlist('case_id')
         result_list = request.POST.getlist('test_result')
         result = dict(zip(case_id_list, result_list))
-        print(result)
+        remark_list = request.POST.getlist('remark')
+        result_remark = dict(zip(case_id_list, remark_list))
         for i in result:
             if result[i] =="":
                 continue
             else:
                 if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
                     models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i],result_info_id=result_info_id['id'],tester_id=request.user.id,)
+                    if result[i] == 'Pass' and "refer to bug " in result_remark[i]:
+                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                         sku_num=skunum).update(remark='')
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                      test_result=result[i], tester_id=request.user.id, sheet_id=sid,result_info_id=result_info_id['id'])
@@ -533,30 +533,30 @@ def result_check(request,lid,sid,skunum):
         pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
         name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
         cases = T.TestCase.objects.filter(sheet_id=sid)
-        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=sid,sku_num=skunum,)
-
-        result_list=[]
-
+        result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
+        result_list = []
         for j in cases:
             result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
                           'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
-
             for i in result:
                 if i.test_case.id == j.id:
                     result_dic['result'] = i.test_result
                     result_dic['remark'] = i.remark
-                if "refer to bug " in i.remark:
-                    x = i.remark
-                    result_dic['bug_id'] = int(re.findall(r"\d+", x)[0])
+                    if "refer to bug " in i.remark:
+                        result_dic['bug_id'] = int(re.findall(r"\d+", i.remark)[0])
+                    # else:result_dic['bug_id'] = ''
             result_list.append(result_dic)
-
-        return render(request,'Project/result_check.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid})
+        return render(request, 'Project/result_review.html',
+                      {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases, "skunum": skunum,
+                       "name": name, 'sid': sid})
     else:
         project = models.Project.objects.filter(id=lid).values('id').first()
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
         case_id_list = request.POST.getlist('case_id')
         result_list = request.POST.getlist('test_result')
         result = dict(zip(case_id_list, result_list))
+        remark_list = request.POST.getlist('remark')
+        result_remark = dict(zip(case_id_list, remark_list))
         for i in result:
             if result[i] =="":
                 continue
@@ -564,6 +564,9 @@ def result_check(request,lid,sid,skunum):
                 if models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
                     models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum).update(
                         test_result=result[i], result_info_id=result_info_id['id'], tester_id=request.user.id, )
+                    if result[i] == 'Pass' and "refer to bug " in result_remark[i]:
+                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                         sku_num=skunum).update(remark='')
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                      test_result=result[i], tester_id=request.user.id, sheet_id=sid,
@@ -591,10 +594,12 @@ def stage_update(request,lid):
         return render(request, 'Project/project_ct_info.html',
                       {"CT_list": CT_list, "pj": pj, "ct_list_distinct": ct_list_distinct})
 
+
 def issue_list(request,pid):
     pj = models.Project.objects.filter(id=pid).values().first()
     issue_list=models.Issue.objects.filter(project_id=pid)
     return render(request,'Project/issue_list.html',{"pj":pj,"issue_list":issue_list})
+
 
 def refer_issue(request,pid,iss_id):
     pj = models.Project.objects.filter(id=pid).values().first()
@@ -692,13 +697,13 @@ def issue_update(request,pid,bid):  # bid:issue表中的id
 def change_tester(request,lid,sid,skunum):
     if request.method == "GET":
         test_user = U.UserInfo.objects.filter(site_id="1")
-        plist = models.ControlTableList.objects.filter(id=lid).values().first()
         return render(request,"Project/change_tester.html",{"test_user":test_user,"lid":lid,"sid":sid,"skunum":skunum})
     else:
         models.ControlTableContent.objects.filter(ControlTable_List_id_id=lid,sheet_id_id=sid,sku_num=skunum).update(
             tester=request.POST.get("changed_tester")
         )
         return redirect("project_ct_content",lid)
+
 
 def asign_bug(request,pid,lid,cid,sid,skunum):
     if request.method == "GET":
@@ -713,3 +718,5 @@ def asign_bug(request,pid,lid,cid,sid,skunum):
         else:
             messages.success(request, "输入错误")
             return redirect("result_review",lid,sid,skunum)
+
+

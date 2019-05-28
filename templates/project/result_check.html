@@ -71,9 +71,9 @@
                                 </select>
                             </td>
                             {% if "refer to bug " in i.remark %}
-                                <td><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
+                                <td><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
                             {% else %}
-                                <td>{{ i.remark }}</td>
+                                <td><input type="hidden" name="remark" value="{{ i.remark }}">{{ i.remark }}</td>
                             {% endif %}
                         {% endfor %}
                         </tbody>

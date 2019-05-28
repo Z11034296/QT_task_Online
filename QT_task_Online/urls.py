@@ -24,6 +24,7 @@ from django.conf.urls import url
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', U.login, name='login'),
+    path('index/', U.index, name='index'),
     path('logout/', U.logout, name='logout'),
     path('user/', include('UserProfile.urls')),
     path('case/', include('TestCase.urls')),

@@ -14,5 +14,6 @@ urlpatterns = [
     path('set_password', views.set_password, name='set_password'),
     path('home/<id>', views.home, name='home'),
     path('task_list',  Project.views.task_list, name='task_list'),
+    path('index',  views.index, name='index'),
 
 ]

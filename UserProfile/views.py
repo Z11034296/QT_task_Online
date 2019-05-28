@@ -3,11 +3,14 @@ from django.contrib import auth
 from django.views.decorators.csrf import csrf_exempt
 from UserProfile.models import *
 from UserProfile import forms
+from django.urls import reverse
 # Create your views here.
 
 
 @csrf_exempt
 def login(request):
+    if request.session.get('is_login', None):
+        return redirect("/task_list/")
     error_msg=""
     # 若POST 校验用户名密码
     if request.method == "POST":
@@ -19,6 +22,8 @@ def login(request):
             # 用户名密码正确
             # 给用户做登录
             auth.login(request, user)
+            request.session["login_user"] = username
+
             return redirect("task_list")
         else:
             # 用户名密码错误
@@ -27,7 +32,18 @@ def login(request):
     return render(request, "login.html")
 
 
+def check_user(func):
+    def inner(*args, **kwargs): #判断是否登录
+        username = args[0].session.get("login_user", "")
+        if username == "": #保存当前的url到session中
+            args[0].session["path"] = args[0].path # 重定向到登录页面
+            return redirect('login')
+        return func(*args, **kwargs)
+    return inner
+
+
 @csrf_exempt
+@check_user
 def userinfo(request):
     if request.method == "GET":
         # 取所有單位：user_list傳給下級
@@ -37,6 +53,7 @@ def userinfo(request):
     else:
         user_list_all = UserInfo.objects.all()
         return render(request, "user/userinfo.html", {"user_list": user_list_all, "i": "1"})
+
 
 @csrf_exempt
 def add_user(request):
@@ -153,3 +170,10 @@ def home(request, id):
         else:
             return HttpResponse("error")
 
+
+def index(request):
+    try:
+        request.session["login_user"]
+    except:
+        return redirect('login')
+    return redirect("task_list")
