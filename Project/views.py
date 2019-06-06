@@ -197,22 +197,6 @@ def project_ct_info(request,nid):
 
     return render(request, 'Project/project_ct_info.html', {"CT_list":CT_list, "pj":pj,"ct_list_distinct":ct_list_distinct,"progress":progress})
 
-    # pj = models.Project.objects.filter(id=nid).values().first()
-    # # 从control table库中查找关联project的sheet list
-    #
-    # sheet=models.ControlTable.objects.filter(project_name_id=nid).values().first()
-    # l=sheet["control_table_sheet"]
-    # l_new = l.replace("'", "").strip("[]").strip().split(',')  # 去掉空格和[]以及单引号，并以逗号分隔后生成一个list。
-    # sheet_list = T.Sheet.objects.none()
-    # sheets_list = []
-    # for i in l_new:
-    #     sheets = T.Sheet.objects.filter(id=i)
-    #     sheets_list.append(sheets)
-    # for i in sheets_list:
-    #     sheet_list = sheet_list | i
-    #
-    # sheets_list=chain(sheet_list)
-    # return render(request,'Project/project_ct_info.html',{"pj":pj,'sheet_list':sheets_list})
 
 
 def project_ct_list(request,nid):
