@@ -54,6 +54,7 @@
                             <td>{{ i.progressed }}</td>
                             {% if i.id in ct_list_distinct %}
                                 <td><a class="btn btn-info" href="{% url 'project_ct_content' i.id %}">查看control table</a></td>
+                                <td><a class="btn btn-info" href="{% url 'export_project_report' i.id %}">生成报告</a></td>
                             {% else %}
                                 <td><a class="btn btn-info" href="{% url 'project_ct' i.id %}">创建control table</a></td>
                             {% endif %}

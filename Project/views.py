@@ -8,6 +8,8 @@ from collections import Counter
 from itertools import chain
 from django.contrib import messages
 import re
+import xlwt,os
+from io import BytesIO
 
 
 def index(request):
@@ -704,3 +706,63 @@ def asign_bug(request,pid,lid,cid,sid,skunum):
             return redirect("result_review",lid,sid,skunum)
 
 
+def export_project_report(self, lid):
+    sheet_list = T.Sheet.objects.all()
+    if sheet_list:
+        ws=xlwt.Workbook(encoding='utf8')
+        sku_n=models.ControlTableList.objects.filter(id=lid).values().first()['stage_sku_qty']
+        # SKU_N_list = []
+        # num = 1
+        # while num <= int(sku_n):
+        #     SKU_N_list.append(num)
+        #     num += 1
+        for i in sheet_list:
+            w = ws.add_sheet(i.sheet_name)
+            w.write(0, 2, 'Test Suite:'+i.sheet_name)
+            w.write(1, 2, i.sheet_description)
+            w.write(2, 0, 'case_id')
+            w.write(2, 1, 'case_name')
+            w.write(2, 2, 'procedure')
+            w.write(2, 3, 'pass_critearia')
+            k=0
+            while k<int(sku_n):
+                w.write(2, 4+k, 'SKU'+str(k+1))
+                k+=1
+            # w.write(2, 4, 'SKU1')
+            w.write(2, 4+int(sku_n), 'Notes/Comment')
+            excel_row = 3
+
+            result_list=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values()
+            for j in result_list:
+                case_id=T.TestCase.objects.filter(id=j['test_case_id']).values().first()['case_id']
+                case_name=T.TestCase.objects.filter(id=j['test_case_id']).values().first()['case_name']
+                procedure=T.TestCase.objects.filter(id=j['test_case_id']).values().first()['procedure']
+                pass_criteria=T.TestCase.objects.filter(id=j['test_case_id']).values().first()['pass_criteria']
+                Notes_Comment=j['remark']
+                # 写入数据
+
+                w.write(excel_row, 0, case_id)
+                w.write(excel_row, 1, case_name)
+                w.write(excel_row, 2, procedure)
+                w.write(excel_row, 3, pass_criteria)
+                # for l in  SKU_N_list:
+                l=1
+                while l <= int(sku_n):
+                    try:
+                        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=j['test_case_id']).values().first()['test_result']
+                    except :
+                        result=''
+                    w.write(excel_row, 3+l, result)
+                    l+=1
+                # w.write(excel_row, 5, Notes_Comment)
+                excel_row += 1
+
+
+        sio = BytesIO()
+        ws.save(sio)
+        sio.seek(0)
+        response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=report.xls'
+        response.write(sio.getvalue())
+        return response
+        # return HttpResponse('OKOKOKOKOK')
