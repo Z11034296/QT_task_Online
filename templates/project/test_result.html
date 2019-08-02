@@ -58,8 +58,8 @@
                             <input type="hidden" value="{{ cases.id }}" name="case_id">
                             <td >{{ cases.case_id }}</td>
                             <td style="white-space:pre-wrap; word-break:break-all"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
-                            <td>{{ cases.procedure }}</td>
-                            <td>{{ cases.pass_criteria }}</td>
+                            <td>{{ cases.procedure|linebreaksbr  }}</td>
+                            <td>{{ cases.pass_criteria|linebreaksbr  }}</td>
                             <td>{% if cases.test_plan_pic_path %}
                                 <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
                             {% endif %}</td>

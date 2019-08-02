@@ -8,9 +8,8 @@ from collections import Counter
 from itertools import chain
 from django.contrib import messages
 import re
-import xlwt,os
+import xlwt
 from io import BytesIO
-
 
 def index(request):
     return render(request, 'Project/index.html')
@@ -707,57 +706,382 @@ def asign_bug(request,pid,lid,cid,sid,skunum):
 
 
 def export_project_report(self, lid):
-    sheet_list = T.Sheet.objects.all()
-    if sheet_list:
+    sheets_list = T.Sheet.objects.all()
+    sku_n = models.ControlTableList.objects.filter(id=lid).values().first()['stage_sku_qty']
+    if sheets_list:
         ws=xlwt.Workbook(encoding='utf8')
-        sku_n=models.ControlTableList.objects.filter(id=lid).values().first()['stage_sku_qty']
-        # SKU_N_list = []
-        # num = 1
-        # while num <= int(sku_n):
-        #     SKU_N_list.append(num)
-        #     num += 1
-        for i in sheet_list:
-            w = ws.add_sheet(i.sheet_name)
-            w.write(0, 2, 'Test Suite:'+i.sheet_name)
-            w.write(1, 2, i.sheet_description)
-            w.write(2, 0, 'case_id')
-            w.write(2, 1, 'case_name')
-            w.write(2, 2, 'procedure')
-            w.write(2, 3, 'pass_critearia')
-            k=0
+
+        style_heading = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0x014A;
+            align:
+                wrap off,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour orange ;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_heading_2 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour orange ;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_body_1 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_body_2 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_result_pass = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_result_fail = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index red,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_back = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold on,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            pattern:
+                pattern solid,
+                fore-colour orange ;    
+            """)
+        # ***********************************************
+        # *******************************
+        # 生成table of Contents
+        project_stage=models.ControlTableList.objects.filter(id=lid).values().first()['project_stage']
+        project_id=models.ControlTableList.objects.filter(id=lid).values().first()['project_id']
+        project=models.Project.objects.filter(id=project_id).values().first()
+        w_c = ws.add_sheet('Table_of_Contents',cell_overwrite_ok=True)
+
+        # w.write(2, 2, project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report')
+        # w.write(3, 1, 'Project:'+' '+project['project_name']+' '+project['project_model'])
+        w_c.write_merge(4, 5, 0, 0, 'Item No.',style_heading_2)
+        w_c.write_merge(4, 5, 1, 1, 'Description',style_heading_2)
+        w_c.write_merge(4, 5, 2, 2, 'Total Sub-item',style_heading_2)
+        w_c.write_merge(4, 5, 3, 3, 'Note',style_heading_2)
+        w_c.write_merge(4, 5, 4, 4, 'Result',style_heading_2)
+        k = 0
+        while k < int(sku_n):
+            # w.write(2, 4 + k, '')
+            w_c.write_merge(4, 4, 5, 5+k, 'Test SKU',style_heading_2)
+            w_c.write(5, 5 + k, 'SKU'+str(k+1),style_heading_2)
+            w_c.col(5+k).width = 1500
+            k += 1
+        w_c.write_merge(4, 5, 5 + int(sku_n),5 + int(sku_n), 'Remark',style_heading_2)
+
+        w_c.col(0).width = 2700
+        w_c.col(1).width = 15000
+        w_c.col(2).width = 2500
+        w_c.col(3).width = 2000
+        w_c.col(4).width = 2000
+        w_c.col(5 + int(sku_n)).width = 13000
+        w_c.write_merge(0, 1, 0, 4,project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report',style_heading)
+        w_c.write_merge(2, 3, 0, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
+        # w.write_merge(2, 3, 0, 0,'',style_title1)
+        w_c.write_merge(0, 1, 5, 5 + int(sku_n),'',style_heading)
+        w_c.write_merge(2, 3, 5, 5 + int(sku_n),'',style_heading)
+        excel_row_C = 6
+
+
+        # 对每个sheet进行生成
+        for i in sheets_list:
+            w = ws.add_sheet(i.sheet_name,cell_overwrite_ok=True)
+
+            # w.write(2, 0, 'Case_id',style_heading_2)
+            w.write(2, 0, 'Case_name',style_heading_2)
+            w.write(2, 1, 'Procedure',style_heading_2)
+            w.write(2, 2, 'Pass_critearia',style_heading_2)
+            k = 0
             while k<int(sku_n):
-                w.write(2, 4+k, 'SKU'+str(k+1))
+                w.write(0, 0,xlwt.Formula('HYPERLINK("#Table_of_Contents!A1","Go Back")'),style_back)
+                w.write_merge(0, 0, 1, 4 + k, 'Test Suite:' + i.sheet_name,style_heading_2)
+                w.write(1, 0, "",style_heading_2)
+                w.write_merge(1, 1, 1, 4 + k, i.sheet_description,style_heading_2)
+                w.write(2, 3+k, 'SKU'+str(k+1),style_heading_2)
+                w.col(4 + k).width = 1500
                 k+=1
             # w.write(2, 4, 'SKU1')
-            w.write(2, 4+int(sku_n), 'Notes/Comment')
+            w.write(2, 3+int(sku_n), 'Notes/Comment',style_heading_2)
+
+            w.col(0).width = 4500
+            # w.col(1).width = 4500
+            w.col(1).width = 15000
+            w.col(2).width = 15000
+            w.col(3 + int(sku_n)).width = 13000
             excel_row = 3
 
-            result_list=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values()
-            for j in result_list:
-                case_id=T.TestCase.objects.filter(id=j['test_case_id']).values().first()['case_id']
-                case_name=T.TestCase.objects.filter(id=j['test_case_id']).values().first()['case_name']
-                procedure=T.TestCase.objects.filter(id=j['test_case_id']).values().first()['procedure']
-                pass_criteria=T.TestCase.objects.filter(id=j['test_case_id']).values().first()['pass_criteria']
-                Notes_Comment=j['remark']
+            # result_list=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values()
+            li=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values_list('test_case_id').distinct()
+            for x in li:
+            # for j in result_list:
+            #     case_id=T.TestCase.objects.filter(id=x[0]).values().first()['case_id']
+                case_name=T.TestCase.objects.filter(id=x[0]).values().first()['case_name']
+                procedure=T.TestCase.objects.filter(id=x[0]).values().first()['procedure']
+                pass_criteria=T.TestCase.objects.filter(id=x[0]).values().first()['pass_criteria']
+                # Notes_Comment=T.TestCase.objects.filter(id=x[0]).values().first()['remark']
                 # 写入数据
 
-                w.write(excel_row, 0, case_id)
-                w.write(excel_row, 1, case_name)
-                w.write(excel_row, 2, procedure)
-                w.write(excel_row, 3, pass_criteria)
+                # w.write(excel_row, 0, case_id,style_body_2)
+                w.write(excel_row, 0, case_name,style_body_2)
+                w.write(excel_row, 1, procedure,style_body_2)
+                w.write(excel_row, 2, pass_criteria,style_body_2)
                 # for l in  SKU_N_list:
-                l=1
+                l = 1
                 while l <= int(sku_n):
                     try:
-                        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=j['test_case_id']).values().first()['test_result']
+                        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=x[0]).values().first()['test_result']
                     except :
                         result=''
-                    w.write(excel_row, 3+l, result)
-                    l+=1
+                    if result == "Pass":
+                        w.write(excel_row, 2+l, result, style_result_pass)
+                    elif result == "Fail":
+                        w.write(excel_row, 2+l, result, style_result_fail)
+                    else:
+                        w.write(excel_row, 2+l, result, style_body_1)
+                    # w.write(excel_row, 3+l, result,style_body_1)
+                    l += 1
+                #****************************************************
+                # Note/Comment 无法追写到同一个单元格内，需要重新计算
+                Notes_Comment=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,test_case_id=x[0]).values('remark')
+                notes = ''
+                for y in Notes_Comment:
+                    if y['remark']!='':
+                        if notes=='':
+                            notes=y['remark']
+                        else:
+                            notes=notes+';'+ y['remark']
+                w.write(excel_row, 3+int(sku_n), notes,style_body_2)
+
                 # w.write(excel_row, 5, Notes_Comment)
                 excel_row += 1
+                # *************************************************
+        # 后写Table of Contents
+        # *********************Table of Contents内容********************************
+        plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        sheets_list = T.Sheet.objects.all()
+        case_list = T.TestCase.objects.all()
+        SKU_Num_list = []
+        num = 1
+        while num <= int(plist['stage_sku_qty']):
+            SKU_Num_list.append(num)
+            num += 1
 
+        # 计算case_list中每个sheet有多少个case
+        sheet_list = []
+        for cases in case_list:
+            sheet_list.append(cases.sheet.sheet_name)
+        cout = Counter(sheet_list)
 
+        # sheet的测试结果，若都Pass则Pass ，有一个fail则结果显示fail，若全部N/A 才写N/A，若有没有填结果的case则显示为空
+        res_list = models.TestResult.objects.filter(ControlTableList_id=lid).values('sheet_id', 'test_result',
+                                                                                    'remark')
+        sheet_result_list = {}
+        bugid_dic = {}
+        for i in sheets_list:
+            re_list = []
+            bugid_list = []
+            final_result = ''
+            for j in res_list:
+                if i.id == int(j['sheet_id']):
+                    if 'refer to bug ' in j['remark']:
+                        bugid_list.append(int(re.findall(r"\d+", j['remark'])[0]))  # 取 bug ID
+                        bugid_list = list(set(bugid_list))  # 列表去重
+                        bugid_list.sort(reverse=False)  # 排序
+                    re_list.append(j['test_result'])
+                    if 'Fail' in re_list:
+                        final_result = 'Fail'
+                    elif re_list == []:
+                        final_result = ''
+                    else:
+                        final_result = 'Pass'
+            bugid_dic[i.id] = bugid_list
+            sheet_result_list[i.sheet_name] = final_result
+        # 每个sheet中的case个数填入sheets_list
+        attend_time_dic = {}
+        attend_time_dic_persheet = {}
+        test_sku_num_list = {}
+        for sheets in sheets_list:
+            sheets.count = cout[sheets.sheet_name]
+            # *******计算非N/A的SKU的sku数量*********
+            test_sku_num = 0
+            x = models.ControlTableContent.objects.filter(ControlTable_List_id=lid, sheet_id=sheets.id)
+            for j in x:
+                if j.tester.name != "N/A":
+                    test_sku_num += 1
+            test_sku_num_list.update({sheets.id: test_sku_num})
+            # 计算每个sheet的case attend time之和
+            cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+            attend_time_sum = 0
+            for i in cases_by_sheet:
+                attend_time_sum += int(i['attend_time'])
+            attend_time_dic_persheet.update({sheets.id: attend_time_sum})
+            attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
+        content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
+        new_list = []
+        new_dic = {}
+        # 将每个sheet所有SKU信息整合到同个字典中方便使用
+        count = 0
+        for i in content_list:
+            # 计算test result的progress
+            time_result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=i.sheet_id_id)
+            finished_attend_time_dic = {"sku0": 0}
+            for k in SKU_Num_list:
+                finished_attend_time = 0
+                for j in time_result:
+                    if int(k) == int(j.sku_num):
+                        finished_attend_time += int(j.test_case.attend_time)
+                if attend_time_dic[i.sheet_id_id] != 0:
+                    finished_attend_time_dic.update({"sku" + str(k): '{:.0%}'.format(
+                        finished_attend_time / attend_time_dic_persheet[i.sheet_id_id])})
+                else:
+                    finished_attend_time_dic.update({"sku" + str(k): '0%'})
+            # ******************************************************************************************
+            count += 1
+            new_dic.update({'sheet_id': i.sheet_id_id, 'sheet_name': i.sheet_id.sheet_name,
+                            'attend_time': attend_time_dic[i.sheet_id_id],
+                            'sheet_description': i.sheet_id.sheet_description, "bugid": bugid_dic[i.sheet_id_id]})
+            new_dic.update({'sku' + str(count % int(plist['stage_sku_qty'])): i.tester,
+                            'sku' + str(count % int(plist['stage_sku_qty'])) + '_progress':
+                                finished_attend_time_dic[
+                                    'sku' + str(count % int(plist['stage_sku_qty']))]})
+
+            if count % int(plist['stage_sku_qty']) == 0:
+                new_dic.update({'sku' + str(int(plist['stage_sku_qty'])): i.tester,
+                                'test_result': sheet_result_list[i.sheet_id.sheet_name],
+                                'sku' + plist['stage_sku_qty'] + '_progress': finished_attend_time_dic[
+                                    'sku' + plist['stage_sku_qty']]})
+
+                # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
+                new_list.append(dict(new_dic))
+
+        # *********************************************************
+
+        for i in new_list:
+            w_c.write(excel_row_C, 0,
+                      xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'), style_body_1)
+            # "i['sheet_name'], style_body_1)
+            w_c.write(excel_row_C, 1, xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'), style_body_2)
+            w_c.write(excel_row_C, 2, cout[i['sheet_name']], style_body_1)
+            w_c.write(excel_row_C, 3, '', style_body_2)
+            if i['test_result'] == "Pass":
+                w_c.write(excel_row_C, 4, i['test_result'], style_result_pass)
+            elif i['test_result'] == "Fail":
+                w_c.write(excel_row_C, 4, i['test_result'], style_result_fail)
+            else:
+                w_c.write(excel_row_C, 4, i['test_result'], style_body_1)
+            k = 0
+            while k < int(sku_n):
+                # w.write(2, 4 + k, '')
+                if i['sku' + str(k + 1) + '_progress'] == '100%':
+                    w_c.write(excel_row_C, 5 + k, i['sku' + str(k + 1) + '_progress'], style_result_pass)
+                else:
+                    w_c.write(excel_row_C, 5 + k, i['sku' + str(k + 1) + '_progress'], style_body_1)
+                k += 1
+            if i['bugid'] != []:
+                w_c.write(excel_row_C, 5 + int(sku_n), 'refer to bugID: ' + str(i['bugid']), style_body_2)
+            else:
+                w_c.write(excel_row_C, 5 + int(sku_n), '', style_body_1)
+            excel_row_C += 1
+
+        # 写出到IO
         sio = BytesIO()
         ws.save(sio)
         sio.seek(0)

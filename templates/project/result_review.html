@@ -63,8 +63,8 @@
                             <input type="hidden" value="{{ i.case_id }}" name="case_id">
                             <td >{{ i.test_case_id }}</td>
                             <td style="white-space:pre-wrap; word-break:break-all">{{ i.case_name }}</td>
-                            <td>{{ i.procedure }}</td>
-                            <td>{{ i.pass_criteria }}</td>
+                            <td>{{ i.procedure|linebreaksbr }}</td>
+                            <td>{{ i.pass_criteria|linebreaksbr }}</td>
                             {% if i.result == 'Fail' %}
                                 <td bgcolor="red" style="text-align: center"><a href="{% url 'asign_bug' pj.id plist.id i.case_id sid skunum %}" data-toggle="modal" data-target="#asign_bug">{{ i.result }}</a></td>
                                 {#                            data-toggle="modal" data-target="#asign_bug"#}

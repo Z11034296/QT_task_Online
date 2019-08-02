@@ -67,8 +67,8 @@
                     <td style="white-space:pre-wrap; word-break:break-all"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
                     <td>{{ cases.function.function_name }}</td>
                     <td>{{ cases.sheet.sheet_name}}</td>
-                    <td class="xtd">{{ cases.procedure }}</td>
-                    <td class="xtd">{{ cases.pass_criteria }}</td>
+                    <td class="xtd">{{ cases.procedure|linebreaksbr }}</td>
+                    <td class="xtd">{{ cases.pass_criteria|linebreaksbr }}</td>
                     <td>{{ cases.attend_time }}</td>
                     <td>
                         {% if cases.case_status == '1'  %}
