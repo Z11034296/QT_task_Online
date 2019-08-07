@@ -3,6 +3,7 @@ from django.contrib import auth
 from django.views.decorators.csrf import csrf_exempt
 from UserProfile.models import *
 from UserProfile import forms
+from django.contrib.auth.decorators import permission_required
 from django.urls import reverse
 # Create your views here.
 
@@ -33,17 +34,17 @@ def login(request):
 
 
 def check_user(func):
-    def inner(*args, **kwargs): #判断是否登录
+    def inner(*args, **kwargs):  # 判断是否登录
         username = args[0].session.get("login_user", "")
-        if username == "": #保存当前的url到session中
-            args[0].session["path"] = args[0].path # 重定向到登录页面
+        if username == "":  # 保存当前的url到session中
+            args[0].session["path"] = args[0].path  # 重定向到登录页面
             return redirect('login')
         return func(*args, **kwargs)
     return inner
 
 
 @csrf_exempt
-@check_user
+# @permission_required('Testleader')
 def userinfo(request):
     if request.method == "GET":
         # 取所有單位：user_list傳給下級

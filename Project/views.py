@@ -10,11 +10,14 @@ from django.contrib import messages
 import re
 import xlwt
 from io import BytesIO
+from django.contrib.auth.decorators import permission_required
+
 
 def index(request):
     return render(request, 'Project/index.html')
 
 
+# @permission_required('Tester')
 def projects(request):
     result = models.Project.objects.all()
     # 搜索此project是否已经有了Control table
@@ -26,6 +29,7 @@ def projects(request):
         return render(request, 'Project/projects.html', {'projects': result,'CT_list':CT_list})
 
 
+# @permission_required('Testleader')
 def add_project(request):
     if request.method == "GET":
         obj = ProjectForm()
@@ -131,7 +135,7 @@ def project_ct(request,lid):
     else:
 
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
-        pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+        # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
 
         SKU_Num_list = []
         num = 1
@@ -197,7 +201,6 @@ def project_ct_info(request,nid):
             i.progressed="未开始"
 
     return render(request, 'Project/project_ct_info.html', {"CT_list":CT_list, "pj":pj,"ct_list_distinct":ct_list_distinct,"progress":progress})
-
 
 
 def project_ct_list(request,nid):
@@ -535,7 +538,8 @@ def result_check(request,lid,sid,skunum):
                       {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases, "skunum": skunum,
                        "name": name, 'sid': sid})
     else:
-        project = models.Project.objects.filter(id=lid).values('id').first()
+        plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        project = models.Project.objects.filter(id=plist["project_id"]).values('id').first()
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
         case_id_list = request.POST.getlist('case_id')
         result_list = request.POST.getlist('test_result')
@@ -844,7 +848,7 @@ def export_project_report(self, lid):
                 fore-colour orange ;    
             """)
         # ***********************************************
-        # *******************************
+        # ***********************************************
         # 生成table of Contents
         project_stage=models.ControlTableList.objects.filter(id=lid).values().first()['project_stage']
         project_id=models.ControlTableList.objects.filter(id=lid).values().first()['project_id']
