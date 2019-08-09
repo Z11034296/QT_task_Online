@@ -6,45 +6,54 @@
         }
     </style>
 
-{% if user.is_authenticated %}
+    {% if user.is_authenticated %}
 
 
-{#    <div class="modal-content">#}
+        {#    <div class="modal-content">#}
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
         </button>
         <div class="modal-header">
             <div class="modal-body">
                 {#        <div class="container">#}
                 <div class="row">
-{#                    <div class="col-md-5 col-md-offset-3">#}
-                        <form action="update_userinfo/{{ id }}" method="post" class="form-horizontal">
-                            {% csrf_token %}
-                            <div class="col-md-8 col-md-offset-3">
-                                <table>
-                                    {{ info_form }}
-                                    <script type="text/javascript">
-                                        $('#id_join_in_time').datetimepicker({
-                                            format: 'yyyy-mm-dd',
-                                            minView: "month",
-                                            todayBtn:  1,
-                                            autoclose: 1,
-                                        });
-                                    </script>
-                                    <tr><td>
-                                        <p><input class="btn btn-primary" value="提交" type="submit" >
+                    {#                    <div class="col-md-5 col-md-offset-3">#}
+                    <form action="update_userinfo/{{ id }}" method="post" class="form-horizontal">
+                        {% csrf_token %}
+                        <div class="col-md-8 col-md-offset-3">
+                            <table>
+                                {{ info_form }}
+                                <tr><th><label for="id_role">权限:</label></th><th><select name="role" class="form-control" id="id_role">
+                                    {% for role in role_list %}
+                                        {% if role in editer_obj.role.all %}
+                                            <option selected value={{ role.id }}>{{ role.name }}</option>
+                                        {% else %}
+                                            <option value={{ role.id }}>{{ role.name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select></th></tr>
+                                <script type="text/javascript">
+                                    $('#id_join_in_time').datetimepicker({
+                                        format: 'yyyy-mm-dd',
+                                        minView: "month",
+                                        todayBtn:  1,
+                                        autoclose: 1,
+                                    });
+                                </script>
+                                <tr><td>
+                                    <p><input class="btn btn-primary" value="提交" type="submit" >
                                         <input type="button" class="btn btn-default" data-dismiss="modal" value="取消"></p>
-                                        <p class = "text-danger">{{ error }}</p>
-                                    </td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
+                                    <p class = "text-danger">{{ error }}</p>
+                                </td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-{#    </div>#}
-{% else %}
-    <a href="/login/">please login!</a>
-{% endif %}
+        {#    </div>#}
+    {% else %}
+        <a href="/login/">please login!</a>
+    {% endif %}
 {% endblock %}
 

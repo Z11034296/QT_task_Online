@@ -93,7 +93,7 @@ class UserForm(Form):
         required=False
     )
 
-    role_id = fields.IntegerField(
+    role = fields.IntegerField(
         # max_length=16,
         label="权限",
         widget=widgets.Select(choices=models.Role.objects.values_list('id', 'name'),
@@ -235,13 +235,13 @@ class UpdateUserForm(Form):
         required=False
     )
 
-    role_id = fields.IntegerField(
-        # max_length=16,
-        label="权限",
-        widget=widgets.Select(choices=models.Role.objects.values_list('id', 'name'),
-                              attrs={'class': 'form-control'}),
-        required=False
-    )
+    # role = fields.IntegerField(
+    #     # max_length=16,
+    #     label="权限",
+    #     widget=widgets.Select(choices=models.Role.objects.values_list('id', 'name'),
+    #                           attrs={'class': 'form-control'}),
+    #     required=False
+    # )
 
     def __init__(self, *args, **kwargs):
         super(UpdateUserForm, self).__init__(*args, **kwargs)

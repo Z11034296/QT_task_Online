@@ -24,14 +24,27 @@ def login(request):
             # 给用户做登录
             auth.login(request, user)
             request.session["login_user"] = username
+            request.session["user_id"] = user.pk
+            permissions = user.userinfo.role.all().values("permission__url").distinct()
+            permission_list = []
+            for item in permissions:
+                permission_list.append(item["permission__url"])
+            request.session["permission_list"] = permission_list
 
-            return redirect("task_list")
+            return redirect("userinfo")
         else:
             # 用户名密码错误
             error_msg = "用户名或密码错误"
             return render(request, "login.html", {"error": error_msg})
     return render(request, "login.html")
 
+
+# def initial_session(user,request):
+#     permissions = user.role.all().values("permission__url").distinct()
+#     permission_list = []
+#     for item in permissions:
+#         permission_list.append(item["permission__url"])
+#     request.session["permission_list"] = permission_list
 
 def check_user(func):
     def inner(*args, **kwargs):  # 判断是否登录
@@ -58,14 +71,15 @@ def userinfo(request):
 
 @csrf_exempt
 def add_user(request):
-
     # 若為POST
     if request.method == "POST":
         # 從提交數據中拿到用戶填入數據
         add_user_obj = forms.UserForm(request.POST)
         if add_user_obj.is_valid():
             add_user_obj.cleaned_data.pop("re_password")
-            UserInfo.objects.create_user(**add_user_obj.cleaned_data, first_name=request.POST.get('name'),last_name=request.POST.get('job_name'))
+            add_user_obj.cleaned_data.pop("role")
+            adder=UserInfo.objects.create_user(**add_user_obj.cleaned_data, first_name=request.POST.get('name'),last_name=request.POST.get('job_name'))
+            adder.role.set(request.POST.get("role"))
             return redirect("userinfo")
         return render(request, 'user/add_user.html', {'add_user_obj': add_user_obj})
     else:
@@ -85,9 +99,11 @@ def update_userinfo(request, id):
     if request.method == "GET":
         # 取ID
         if id:
-            user_id = UserInfo.objects.filter(id=id).values().first()
-            info_form = forms.UpdateUserForm(user_id)
-            return render(request, "user/update_userinfo.html", {"info_form": info_form, "id": id})
+            editer_obj=UserInfo.objects.get(id=id)
+            editer = UserInfo.objects.filter(id=id).values().first()
+            info_form = forms.UpdateUserForm(editer)
+            role_list = Role.objects.all()
+            return render(request, "user/update_userinfo.html", {"info_form": info_form, "id": id,"role_list":role_list,"editer_obj":editer_obj})
         else:
             return HttpResponse("error")
     else:
@@ -95,8 +111,10 @@ def update_userinfo(request, id):
             # 获取修改信息
             update_obj = forms.UpdateUserForm(request.POST)
             if update_obj.is_valid():
-                UserInfo.objects.filter(id=id).update(**update_obj.cleaned_data,
+                upper=UserInfo.objects.filter(id=id).update(**update_obj.cleaned_data,
                                                       first_name=request.POST.get('name'),last_name=request.POST.get('job_name'))
+                print(upper,request.POST.get("role"))
+                UserInfo.objects.get(id=id).role.set(request.POST.get("role"))
                 return redirect("userinfo")
             else:
                 return HttpResponse("error")
@@ -177,4 +195,6 @@ def index(request):
         request.session["login_user"]
     except:
         return redirect('login')
-    return redirect("task_list")
+    return redirect("userinfo")
+
+

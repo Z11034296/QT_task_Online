@@ -19,6 +19,7 @@ def index(request):
 
 # @permission_required('Tester')
 def projects(request):
+
     result = models.Project.objects.all()
     # 搜索此project是否已经有了Control table
     CT_lists = models.ControlTableList.objects.values('project_id')
@@ -29,7 +30,7 @@ def projects(request):
         return render(request, 'Project/projects.html', {'projects': result,'CT_list':CT_list})
 
 
-# @permission_required('Testleader')
+@permission_required('Teamleader')
 def add_project(request):
     if request.method == "GET":
         obj = ProjectForm()
@@ -46,6 +47,7 @@ def add_project(request):
 
 
 def edit_project(request, nid):
+    print(request.path_info)
     if request.method == "GET":
         ret = models.Project.objects.filter(id=nid).values().first()
         obj = update_ProjectForm(ret)
@@ -874,8 +876,8 @@ def export_project_report(self, lid):
         w_c.col(0).width = 2700
         w_c.col(1).width = 15000
         w_c.col(2).width = 2500
-        w_c.col(3).width = 2000
-        w_c.col(4).width = 2000
+        w_c.col(3).width = 2500
+        w_c.col(4).width = 2500
         w_c.col(5 + int(sku_n)).width = 13000
         w_c.write_merge(0, 1, 0, 4,project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report',style_heading)
         w_c.write_merge(2, 3, 0, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)

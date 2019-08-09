@@ -28,3 +28,9 @@ class RoleAdmin(admin.ModelAdmin):
 admin.site.register(Role, RoleAdmin)
 
 
+class PermissionAdmin(admin.ModelAdmin):
+    list_display = ('name','url')
+
+admin.site.register(Permission, PermissionAdmin)
+
+

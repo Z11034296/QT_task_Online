@@ -40,6 +40,8 @@
                         <th>stage end</th>
                         <th>attend time</th>
                         <th>test progress</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -57,6 +59,7 @@
                                 <td><a class="btn btn-info" href="{% url 'export_project_report' i.id %}">生成报告</a></td>
                             {% else %}
                                 <td><a class="btn btn-info" href="{% url 'project_ct' i.id %}">创建control table</a></td>
+                                <td></td>
                             {% endif %}
                         </tr>
                     {% endfor %}

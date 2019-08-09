@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'UserProfile.permissionMiddleware.validPermission'
 ]
 
 ROOT_URLCONF = 'QT_task_Online.urls'

@@ -87,14 +87,19 @@
                     <td>{{ users.major }}</td>
                     <td>{{ users.phone_number }}</td>
                     <td>{{ users.shot_number }}</td>
-                    <td>{{ users.role }}</td>
                     <td>
-                        {% if user.is_superuser %}
+                        {% for role in users.role.all %}
+                            {% if forloop.last  %}
+                                {{ role.name }}
+                            {% else %}
+                                {{ role.name }}&nbsp|&nbsp
+                            {% endif %}
+                        {% endfor %}</td>
+                    <td>
                             <div class="model link">
                                 <a href="change_status/{{ users.id }}" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#change_status">删除</a>
                                 <a href="update_userinfo/{{ users.id }}" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#update_userinfo">修改</a>
                             </div>
-                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
