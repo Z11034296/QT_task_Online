@@ -1,7 +1,7 @@
 
 from django.utils.deprecation import MiddlewareMixin
 import re
-from django.shortcuts import HttpResponse,redirect
+from django.shortcuts import HttpResponse,redirect,render
 
 
 class validPermission(MiddlewareMixin):
@@ -11,7 +11,7 @@ class validPermission(MiddlewareMixin):
         current_path = request.path_info
         # print(current_path)
         # 检查是否属于白名单
-        valid_url_list=["/login/","/admin/.*","/user/login","/index/","/user/home/.*","/user/set_password"]
+        valid_url_list=["/login/","/admin/.*","/user/login","/index/"]
 
         for valid_url in valid_url_list:
             ret=re.match(valid_url,current_path)
@@ -36,6 +36,7 @@ class validPermission(MiddlewareMixin):
                 flag = True
                 break
         if not flag:
-            return HttpResponse("没有访问权限！")
+            return render(request,"nopermission.html")
+            # return HttpResponse("无权访问！")
 
         return None

@@ -22,8 +22,9 @@
 
     <div class="panel-body">
         <button class="btn btn-success pull-right" data-toggle="modal"
-                onclick="window.location.href='add_user'">新增
+                onclick="window.location.href='add_user'" data-target="#add_user">新增
         </button>
+{#        <a href="/user/add_user" class="btn btn-success pull-right" data-toggle="modal" data-target="#add_user">新增</a>#}
         <div class="col-md-1 pull-right">
 
             {% if i == "0" %}
@@ -110,7 +111,13 @@
 </div>
 
 
-
+<!-- 模态框（Modal） -->
+{#<div class="modal fade" id="add_user" tabindex="-1" role="dialog" aria-labelledby="add_userLabel" aria-hidden="true">#}
+{#    <div class="modal-dialog">#}
+{#        <div class="modal-content">#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="change_status" tabindex="-1" role="dialog" aria-labelledby="statusLabel" aria-hidden="true">
     <div class="modal-dialog">

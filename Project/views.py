@@ -30,7 +30,6 @@ def projects(request):
         return render(request, 'Project/projects.html', {'projects': result,'CT_list':CT_list})
 
 
-@permission_required('Teamleader')
 def add_project(request):
     if request.method == "GET":
         obj = ProjectForm()

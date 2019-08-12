@@ -31,7 +31,7 @@ def login(request):
                 permission_list.append(item["permission__url"])
             request.session["permission_list"] = permission_list
 
-            return redirect("userinfo")
+            return redirect("task_list")
         else:
             # 用户名密码错误
             error_msg = "用户名或密码错误"
@@ -195,6 +195,8 @@ def index(request):
         request.session["login_user"]
     except:
         return redirect('login')
-    return redirect("userinfo")
+    return redirect("task_list")
 
 
+def nopermission(request):
+    return redirect("nopermission")

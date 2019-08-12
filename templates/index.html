@@ -17,7 +17,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{% url 'home' user.id %}"> 欢迎 {{ user.first_name }}</a></li>
+                     <li><a href="{% url 'home' user.id %}">欢迎 {{ user.first_name }}</a></li>
                     <li><a href="{% url 'task_list' %}"> My task</a></li>
                     <li><a href="{% url 'set_password' %}">修改密码</a></li>
                     <li><a href="{% url 'logout' %}">注销</a></li>
@@ -28,7 +28,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar" style="background-color: lightgray ">
+            <div class="col-sm-3 col-md-1 sidebar" style="background-color: lightgray ">
                 <ul class="nav sidebar-nav">
                     <p> <a href="{% url 'caseinfo' %}"><i class="fa fa-fw fa-folder"> </i>Testcase</a></p>
                     <p> <a href="{% url 'projects' %}"><i class="fa fa-fw fa-folder"> </i>Projects</a></p>
@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-1 main">
 
 
         {% block page-content %}

@@ -169,7 +169,7 @@ class UpdateUserForm(Form):
     job_name = fields.CharField(
         # max_length=16,
         label="英文名",
-        widget=widgets.TextInput(attrs={'class': 'form-control'}),
+        widget=widgets.TextInput(attrs={'class': 'form-control', 'readonly': 'True'}),
         error_messages={
             "required": "英文名不能为空"}
     )
