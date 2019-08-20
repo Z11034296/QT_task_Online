@@ -215,13 +215,15 @@ def project_ct_list(request,nid):
         result_list = list(models.ControlTableList.objects.values_list('project_id', 'project_stage'))
         project_id = request.POST.get("project_id")
         project_stage = request.POST.get("project_stage")
+        if project_stage == "":
+            project_stage="blank,please modify this item"
         stage_sku = request.POST.get("stage_sku_qty")
         stage_note = request.POST.get("stage_note")
         if (int(project_id),project_stage) in result_list:
             error='该project已经有这个stage了'
             return render(request, 'Project/project_ct_list.html', {"pj":pj,'error':error})
         if result["stage_end"] and result["stage_begin"] != "":
-            models.ControlTableList.objects.create(project_stage=result["project_stage"],project_id=result["project_id"],
+            models.ControlTableList.objects.create(project_stage=project_stage,project_id=result["project_id"],
                                                    stage_sku_qty=result["stage_sku_qty"],stage_note=result["stage_note"],stage_end=result["stage_end"],stage_begin=result["stage_begin"])
         elif result["stage_end"] == "":
             models.ControlTableList.objects.create(project_stage=result["project_stage"],

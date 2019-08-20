@@ -52,7 +52,7 @@ class Menu(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=64,null=False,unique=False)
-    permission =models.ManyToManyField(to='Permission')
+    permission =models.ManyToManyField(to='Permission',blank=True)
 
     def __str__(self):
         return self.name

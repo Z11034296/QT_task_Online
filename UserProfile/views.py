@@ -25,6 +25,7 @@ def login(request):
             auth.login(request, user)
             request.session["login_user"] = username
             request.session["user_id"] = user.pk
+            # role放入session传到中间件
             permissions = user.userinfo.role.all().values("permission__url").distinct()
             permission_list = []
             for item in permissions:

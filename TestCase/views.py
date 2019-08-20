@@ -15,18 +15,39 @@ def caseinfo(request):
     # case_list = TestCase.objects.all()
 
     case_list_org = TestCase.objects.order_by('case_id').filter()
-    paginator = Paginator(case_list_org, 9, 1)  # 每页10条结果，少于2条合并到上一页
+    paginator = Paginator(case_list_org, 9, 1)  # 每页9条结果，少于1条合并到上一页
 
-    page = request.GET.get('page')
+
+    page_num = request.GET.get('page')
     try:
-        case_list = paginator.page(page)
+        case_list = paginator.page(page_num)
     except PageNotAnInteger:
         # If page is not an integer, deliver first page.
         case_list = paginator.page(1)
+        page_num = 1
+
     except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        case_list = paginator.page(paginator.num_pages)
-    return render(request, "case/caseinfo.html", {"case_list": case_list})
+        # 当参数页码大于或小于页码范围时,会触发该异常
+        if int(page_num) > paginator.num_pages:
+            # 大于 获取最后一页数据返回
+            case_list = paginator.page(paginator.num_pages)
+        else:
+            # 小于 获取第一页
+            case_list = paginator.page(1)
+
+    page_num = int(page_num)
+    if page_num < 4:
+        if paginator.num_pages <= 7:
+            dis_range = range(1, paginator.num_pages + 1)
+        else:
+            dis_range = range(1, 8)
+    elif (page_num >= 4) and (page_num <= paginator.num_pages - 3):
+        dis_range = range(page_num - 3, page_num + 4)
+    else:
+        dis_range = range(paginator.num_pages - 6, paginator.num_pages+1 )
+
+    return render(request, "case/caseinfo.html",
+                  {'case_list': case_list, 'paginator': paginator, 'dis_range': dis_range})
 
 
 @csrf_exempt
@@ -180,19 +201,6 @@ def table_of_contents(request):
             attend_time_sum += int(i['attend_time'])*4
         attend_time_dic.update({sheets: attend_time_sum})
         sheets.attend_time = attend_time_dic[sheets]
-
-
-    # paginator = Paginator(case_list_org, 9, 1)  # 每页10条结果，少于2条合并到上一页
-    #
-    #     # page = request.GET.get('page')
-    #     # try:
-    #     #     case_list = paginator.page(page)
-    #     # except PageNotAnInteger:
-    #     #     # If page is not an integer, deliver first page.
-    #     #     case_list = paginator.page(1)
-    #     # except EmptyPage:
-    #     #     # If page is out of range (e.g. 9999), deliver last page of results.
-    #     #     case_list = paginator.page(paginator.num_pages)
     return render(request, "case/table_of_contents.html", {"sheets_list": sheets_list,"j":j,"attend_time_dic":attend_time_dic})
 
 
