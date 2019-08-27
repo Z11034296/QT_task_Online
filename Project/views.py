@@ -8,7 +8,7 @@ from collections import Counter
 from itertools import chain
 from django.contrib import messages
 import re
-import xlwt
+import xlwt,xlsxwriter
 from io import BytesIO
 from django.contrib.auth.decorators import permission_required
 
@@ -857,6 +857,7 @@ def export_project_report(self, lid):
         project_id=models.ControlTableList.objects.filter(id=lid).values().first()['project_id']
         project=models.Project.objects.filter(id=project_id).values().first()
         w_c = ws.add_sheet('Table_of_Contents',cell_overwrite_ok=True)
+        # w_c.add_image('F1','logo.jpg')
 
         # w.write(2, 2, project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report')
         # w.write(3, 1, 'Project:'+' '+project['project_name']+' '+project['project_model'])
