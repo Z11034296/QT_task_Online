@@ -20,7 +20,7 @@
             <div class="panel-heading "><h3 class="panel-title">All Testcase</h3></div>
             <div class="panel-body ">
                 <div class="row" style="margin-bottom: 15px">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search for...">
                             <span class="input-group-btn">
@@ -28,14 +28,17 @@
                                 </span>
                         </div><!-- /input-group -->
                     </div><!-- /.col-md-4 -->
-                    <div class="col-md-1 pull-right">
+                    <div class="col-md-2 pull-right">
                         <button class="btn btn-success" data-toggle="modal"
                                 onclick="window.location.href='add_case'">新增
                         </button>
+
                         <button class="btn btn-success" data-toggle="modal"
                                 onclick="window.location.href='upload_files'">批量
                         </button>
+
                     </div>
+
                 </div><!-- /.row -->
 
 
@@ -46,12 +49,12 @@
                     <thead class="">
                     <tr>
 
-                        <th>case_id</th>
+                        <th width="10%">case_id</th>
                         <th>case_name</th>
                         <th width="5%">function</th>
-                        <th width="8%">Test items</th>
-                        <th>procedure</th>
-                        <th>pass_critearia</th>
+                        <th width="5%">Test items</th>
+                        <th width="20%">procedure</th>
+                        <th width="20%">pass_critearia</th>
                         <th width="5%">attend time</th>
                         <th width="5%">status</th>
                         <th>case_note</th>
@@ -63,14 +66,14 @@
 
                     {%  for cases in case_list %}
                         <tr>
-                        <td >{{ cases.case_id }}</td>
-                        <td style="white-space:pre-wrap; word-break:break-all"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
-                        <td>{{ cases.function.function_name }}</td>
-                        <td>{{ cases.sheet.sheet_name}}</td>
+                        <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
+                        <td style="white-space:pre-wrap; word-break:break-alltext-align: center;vertical-align: middle"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
+                        <td style="text-align: center;vertical-align: middle">{{ cases.function.function_name }}</td>
+                        <td style="text-align: center;vertical-align: middle">{{ cases.sheet.sheet_name}}</td>
                         <td class="xtd">{{ cases.procedure|linebreaksbr }}</td>
                         <td class="xtd">{{ cases.pass_criteria|linebreaksbr }}</td>
-                        <td>{{ cases.attend_time }}</td>
-                        <td>
+                        <td style="text-align: center;vertical-align: middle">{{ cases.attend_time }}</td>
+                        <td style="text-align: center;vertical-align: middle">
                             {% if cases.case_status == '1'  %}
                                 open
                             {% elif cases.case_status == '2'  %}
@@ -78,13 +81,13 @@
                             {% endif %}
                         </td>
                         <td class="xtd">{{ cases.case_note }}</td>
-                        <td>
+                        <td style="text-align: center;vertical-align: middle">
                             <div class="model link">
                                 {#                            <a href="delete_case/{{ cases.id }}" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete_case">删除</a>#}
                                 <a href="update_case/{{ cases.id }}" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#update_case">修改</a>
                             </div>
                         </td>
-                        <td>{% if cases.test_plan_pic_path %}
+                        <td style="text-align: center;vertical-align: middle">{% if cases.test_plan_pic_path %}
                             <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
                         {% endif %}</td>
                     {% endfor %}
@@ -102,19 +105,19 @@
                         </li>
                     {% endif %}
 
-{#                    {% for pg in case_list.paginator.page_range %}#}
-{#                                            {% circle_page case_list.number pg %}#}
-{#                        {% if case_list.number == pg %}#}
-{#                            <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>#}
-{#                        {% else %}#}
-{#                            <li><a href="?page={{ pg }}">{{ pg }}</a></li>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
+                    {#                    {% for pg in case_list.paginator.page_range %}#}
+                    {#                                            {% circle_page case_list.number pg %}#}
+                    {#                        {% if case_list.number == pg %}#}
+                    {#                            <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>#}
+                    {#                        {% else %}#}
+                    {#                            <li><a href="?page={{ pg }}">{{ pg }}</a></li>#}
+                    {#                        {% endif %}#}
+                    {#                    {% endfor %}#}
 
                     {% for num in dis_range %}
                         {% if case_list.number == num %}
-                        <li class="active" ><a href="?page={{ num }}">{{ num }}</a></li>
-                          {% else %}
+                            <li class="active" ><a href="?page={{ num }}">{{ num }}</a></li>
+                        {% else %}
                             <li><a href="?page={{ num }}">{{ num }}</a></li>
                         {% endif %}
                     {% endfor %}

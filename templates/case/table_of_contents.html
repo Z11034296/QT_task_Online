@@ -51,10 +51,10 @@
                 <tbody>
                 {%  for sheets in sheets_list %}
                     <tr>
-                        <td align="center"><a href="sheet_detail/{{ sheets.id }}">{{ sheets.sheet_name }}</a></td>
-                        <td>{{ sheets.sheet_description }}</td>
-                        <td align="center">{{ sheets.count }}</td>
-                        <td align="center">{{ sheets.attend_time }}</td>
+                        <td style="text-align: center;vertical-align: middle"><a href="sheet_detail/{{ sheets.id }}">{{ sheets.sheet_name }}</a></td>
+                        <td >{{ sheets.sheet_description }}</td>
+                        <td style="text-align: center;vertical-align: middle">{{ sheets.count }}</td>
+                        <td style="text-align: center;vertical-align: middle">{{ sheets.attend_time }}</td>
                         {% for i in j %}
                             <td align="center"><input class="form-control" style="width: 100px" type="text" name="{{ sheets }}-SKU{{ i }}"></td>
                         {% endfor %}

@@ -15,7 +15,7 @@ def caseinfo(request):
     # case_list = TestCase.objects.all()
 
     case_list_org = TestCase.objects.order_by('case_id').filter()
-    paginator = Paginator(case_list_org, 9, 1)  # 每页9条结果，少于1条合并到上一页
+    paginator = Paginator(case_list_org, 10, 1)  # 每页9条结果，少于1条合并到上一页
 
 
     page_num = request.GET.get('page')
@@ -41,10 +41,10 @@ def caseinfo(request):
             dis_range = range(1, paginator.num_pages + 1)
         else:
             dis_range = range(1, 8)
-    elif (page_num >= 4) and (page_num <= paginator.num_pages - 3):
-        dis_range = range(page_num - 3, page_num + 4)
+    elif (page_num >= 4) and (page_num <= paginator.num_pages-3):
+        dis_range = range(page_num - 3,page_num+4)
     else:
-        dis_range = range(paginator.num_pages - 6, paginator.num_pages+1 )
+        dis_range = range(paginator.num_pages - 6, paginator.num_pages+1)
 
     return render(request, "case/caseinfo.html",
                   {'case_list': case_list, 'paginator': paginator, 'dis_range': dis_range})
@@ -198,7 +198,7 @@ def table_of_contents(request):
         cases_by_sheet = TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
         attend_time_sum = 0
         for i in cases_by_sheet:
-            attend_time_sum += int(i['attend_time'])*4
+            attend_time_sum += float(i['attend_time'])*4
         attend_time_dic.update({sheets: attend_time_sum})
         sheets.attend_time = attend_time_dic[sheets]
     return render(request, "case/table_of_contents.html", {"sheets_list": sheets_list,"j":j,"attend_time_dic":attend_time_dic})
@@ -206,6 +206,6 @@ def table_of_contents(request):
 
 def sheet_detail(request, sid):
     if request.method == "GET":
-        case_list_by_sheet = TestCase.objects.filter(sheet_id=sid)
+        case_list_by_sheet = TestCase.objects.filter(sheet_id=sid).order_by('case_id')
         name = Sheet.objects.filter(id=sid).values().first()['sheet_name']
         return render(request, "case/sheet_case.html", {"case_list": case_list_by_sheet,"name":name})

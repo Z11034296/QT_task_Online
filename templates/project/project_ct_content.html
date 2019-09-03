@@ -54,9 +54,9 @@
                     {# by ct content #}
                     {% for i in new_list %}
                         <tr>
-                            <td style="text-align: center">{{ i.sheet_name }}</td>
-                            <td style="text-align: center">{{ i.sheet_description }}</td>
-                            <td style="text-align: center">{{ i.attend_time }}</td>
+                            <td style="text-align: center;vertical-align: middle">{{ i.sheet_name }}</td>
+                            <td style="text-align: center;vertical-align: middle">{{ i.sheet_description }}</td>
+                            <td style="text-align: center;vertical-align: middle">{{ i.attend_time }}</td>
                             {% for j in SKU_Num_list %}
                                 {% if j == 1 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 1 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku1.last_name }}</a></td>

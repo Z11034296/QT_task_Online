@@ -40,40 +40,39 @@
                 <thead >
                 <tr>
 
-                    <th>case_id</th>
+                    <th width="10%">case_id</th>
                     <th>case_name</th>
-                    <th>function</th>
-                    <th>Test items</th>
-                    <th>procedure</th>
-                    <th>pass_critearia</th>
-                    <th>attend_time</th>
-                    <th>case_status</th>
+                    <th width="5%">function</th>
+                    <th width="5%">Test items</th>
+                    <th width="20%">procedure</th>
+                    <th width="20%">pass critearia</th>
+                    <th width="5%">attend time</th>
+                    <th width="4%">status</th>
                     <th>case_note</th>
-
-                    <th>附件</th>
+                    <th>attached</th>
                 </tr>
                 </thead>
                 <tbody>
 
                 {%  for cases in case_list %}
                     <tr>
-                    <td >{{ cases.case_id }}</td>
-                    <td style="white-space:pre-wrap; word-break:break-all"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
-                    <td>{{ cases.function.function_name }}</td>
-                    <td>{{ cases.sheet.sheet_name}}</td>
-                    <td class="xtd">{{ cases.procedure }}</td>
-                    <td class="xtd">{{ cases.pass_criteria }}</td>
-                    <td>{{ cases.attend_time }}</td>
-                    <td>
+                    <td style="vertical-align: middle" >{{ cases.case_id }}</td>
+                    <td style="white-space:pre-wrap; word-break:break-all;vertical-align: middle"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
+                    <td style="text-align: center;vertical-align: middle">{{ cases.function.function_name }}</td>
+                    <td style="text-align: center;vertical-align: middle">{{ cases.sheet.sheet_name}}</td>
+                    <td class="xtd">{{ cases.procedure|linebreaksbr }}</td>
+                    <td class="xtd">{{ cases.pass_criteria|linebreaksbr }}</td>
+                    <td style="text-align: center">{{ cases.attend_time }}</td>
+                    <td style="text-align: center">
                         {% if cases.case_status == '1'  %}
                             open
                         {% elif cases.case_status == '2'  %}
                             closed
                         {% endif %}
                     </td>
-                    <td class="xtd">{{ cases.case_note }}</td>
+                    <td class="xtd" >{{ cases.case_note }}</td>
                     <td>{% if cases.test_plan_pic_path %}
-                        <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
+                        <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank" style="text-align: center;vertical-align: middle"><H2>Check</H2></a>
                     {% endif %}</td>
                 {% endfor %}
 

@@ -15,8 +15,8 @@ import uuid,os
 
 
 class TestCase(models.Model):
-    case_id=models.CharField(max_length=32,null=False,unique=True)  #
-    case_name=models.CharField(max_length=64,null=False,unique=False)  #
+    case_id=models.CharField(max_length=64,null=False,unique=True)  #
+    case_name=models.CharField(max_length=255,null=False,unique=False)  #
     function=models.ForeignKey("Function",null=True,on_delete=None)  # 归属function
     sheet=models.ForeignKey("Sheet",null=True,on_delete=None)  # 归属sheet
     procedure=models.TextField(blank=True, null=True,)  # 步骤
@@ -38,8 +38,8 @@ class Function(models.Model):
 
 
 class Sheet(models.Model):
-    sheet_name = models.CharField(max_length=64,null=False,unique=True)
-    sheet_description = models.CharField(max_length=64,null=True,unique=False)
+    sheet_name = models.CharField(max_length=128,null=False,unique=True)
+    sheet_description = models.CharField(max_length=128,null=True,unique=False)
 
     def __str__(self):
         return self.sheet_name

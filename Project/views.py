@@ -46,7 +46,6 @@ def add_project(request):
 
 
 def edit_project(request, nid):
-    print(request.path_info)
     if request.method == "GET":
         ret = models.Project.objects.filter(id=nid).values().first()
         obj = update_ProjectForm(ret)
@@ -127,7 +126,7 @@ def project_ct(request,lid):
             attend_time_sum = 0
             for i in cases_by_sheet:
 
-                attend_time_sum+=int(i['attend_time'])
+                attend_time_sum+=float(i['attend_time'])
             attend_time_dic.update({sheets:attend_time_sum * int(plist['stage_sku_qty'])})
             sheets.attend_time=attend_time_dic[sheets]
         return render(request,'Project/project_ct.html',{"pj":pj,"plist":plist,
@@ -183,16 +182,16 @@ def project_ct_info(request,nid):
             cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
             attend_time_sum = 0
             for k in cases_by_sheet:
-                attend_time_sum += int(k['attend_time'])
+                attend_time_sum += float(k['attend_time'])
             attend_time_dic_persheet.update({sheets.id: attend_time_sum})
             attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
             att_time.update({i["ControlTable_List_id_id"]:sum(attend_time_dic.values())})
         y=models.TestResult.objects.filter(ControlTableList_id=i["ControlTable_List_id_id"]).values("test_case_id")
         attend_time_finished=0
         for k in y:
-            attend_time_finished += int(T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
+            attend_time_finished += float(T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
         # progress.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:'{:.2%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
-        progress.update({i["ControlTable_List_id_id"]:'{:.2%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
+        progress.update({i["ControlTable_List_id_id"]:'{:.2%}'.format(float(attend_time_finished)/sum(attend_time_dic.values()))})
     for i in CT_list:
         if i.id in progress.keys():
             i.attend_time=att_time[i.id]
@@ -303,7 +302,7 @@ def project_ct_content(request,lid):
         cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
         attend_time_sum = 0
         for i in cases_by_sheet:
-            attend_time_sum += int(i['attend_time'])
+            attend_time_sum += float(i['attend_time'])
         attend_time_dic_persheet.update({sheets.id: attend_time_sum})
         attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
 
@@ -325,7 +324,7 @@ def project_ct_content(request,lid):
             finished_attend_time = 0
             for j in time_result:
                 if int(k) == int(j.sku_num):
-                    finished_attend_time += int(j.test_case.attend_time)
+                    finished_attend_time += float(j.test_case.attend_time)
             if attend_time_dic[i.sheet_id_id] != 0:
                 finished_attend_time_dic.update({"sku"+str(k):'{:.0%}'.format(finished_attend_time / attend_time_dic_persheet[i.sheet_id_id]) })
             else:
@@ -423,7 +422,7 @@ def task_table(request,lid):
         cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
         attend_time_sum = 0
         for i in cases_by_sheet:
-            attend_time_sum += int(i['attend_time'])
+            attend_time_sum += float(i['attend_time'])
         attend_time_dic.update({sheets.id: attend_time_sum * int(plist['stage_sku_qty'])})
         # attend_time_dic.update({sheets.id: attend_time_sum}) # 每个sheet总的attend time
 
@@ -1019,7 +1018,7 @@ def export_project_report(self, lid):
             cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
             attend_time_sum = 0
             for i in cases_by_sheet:
-                attend_time_sum += int(i['attend_time'])
+                attend_time_sum += float(i['attend_time'])
             attend_time_dic_persheet.update({sheets.id: attend_time_sum})
             attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
         content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
@@ -1035,7 +1034,7 @@ def export_project_report(self, lid):
                 finished_attend_time = 0
                 for j in time_result:
                     if int(k) == int(j.sku_num):
-                        finished_attend_time += int(j.test_case.attend_time)
+                        finished_attend_time += float(j.test_case.attend_time)
                 if attend_time_dic[i.sheet_id_id] != 0:
                     finished_attend_time_dic.update({"sku" + str(k): '{:.0%}'.format(
                         finished_attend_time / attend_time_dic_persheet[i.sheet_id_id])})
