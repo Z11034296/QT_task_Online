@@ -15,7 +15,7 @@ def caseinfo(request):
     # case_list = TestCase.objects.all()
 
     case_list_org = TestCase.objects.order_by('case_id').filter()
-    paginator = Paginator(case_list_org, 10, 1)  # 每页9条结果，少于1条合并到上一页
+    paginator = Paginator(case_list_org, 15, 1)  # 每页9条结果，少于1条合并到上一页
 
 
     page_num = request.GET.get('page')
@@ -34,7 +34,7 @@ def caseinfo(request):
         else:
             # 小于 获取第一页
             case_list = paginator.page(1)
-
+    page_sumrange = range(1,paginator.num_pages+1)
     page_num = int(page_num)
     if page_num < 4:
         if paginator.num_pages <= 7:
@@ -47,7 +47,7 @@ def caseinfo(request):
         dis_range = range(paginator.num_pages - 6, paginator.num_pages+1)
 
     return render(request, "case/caseinfo.html",
-                  {'case_list': case_list, 'paginator': paginator, 'dis_range': dis_range})
+                  {'case_list': case_list, 'paginator': paginator, 'dis_range': dis_range,"page_sumrange":page_sumrange})
 
 
 @csrf_exempt
@@ -181,7 +181,7 @@ def case_moreinfo(request, id):
 
 
 def table_of_contents(request):
-    j=[1,2,3,4]
+    j=range(1,5)
     sheets_list = Sheet.objects.all()
     case_list = TestCase.objects.all()
     # 计算case_list中每个sheet有多少个case
@@ -198,7 +198,7 @@ def table_of_contents(request):
         cases_by_sheet = TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
         attend_time_sum = 0
         for i in cases_by_sheet:
-            attend_time_sum += float(i['attend_time'])*4
+            attend_time_sum += float(i['attend_time'])
         attend_time_dic.update({sheets: attend_time_sum})
         sheets.attend_time = attend_time_dic[sheets]
     return render(request, "case/table_of_contents.html", {"sheets_list": sheets_list,"j":j,"attend_time_dic":attend_time_dic})

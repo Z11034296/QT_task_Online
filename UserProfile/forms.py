@@ -33,7 +33,7 @@ class UserForm(Form):
         # max_length=4,
         label="性别",
         required=False,
-        choices=((1, "男"), (2, "女"), (3, "保密")),
+        choices=((1, "男"), (2, "女")),
         initial=3,
         widget=widgets.Select(attrs={'class': 'form-control'}),
     )
@@ -178,7 +178,7 @@ class UpdateUserForm(Form):
         # max_length=4,
         label="性别",
         required=False,
-        choices=((1, "男"), (2, "女"), (3, "保密")),
+        choices=((1, "男"), (2, "女")),
         initial=3,
         widget=widgets.Select(attrs={'class': 'form-control'}),
     )

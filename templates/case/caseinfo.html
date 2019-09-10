@@ -49,15 +49,15 @@
                     <thead class="">
                     <tr>
 
-                        <th width="10%">case_id</th>
-                        <th>case_name</th>
-                        <th width="5%">function</th>
+                        <th width="10%">Case_id</th>
+                        <th>Case_name</th>
+                        <th width="5%">Function</th>
                         <th width="5%">Test items</th>
-                        <th width="20%">procedure</th>
-                        <th width="20%">pass_critearia</th>
-                        <th width="5%">attend time</th>
-                        <th width="5%">status</th>
-                        <th>case_note</th>
+                        <th width="20%">Procedure</th>
+                        <th width="20%">Pass_critearia</th>
+                        <th width="5%">Attend time</th>
+                        <th width="5%">Status</th>
+                        <th>Case_note</th>
                         <th width="5%">操作</th>
                         <th width="5%">附件</th>
                     </tr>
@@ -67,7 +67,7 @@
                     {%  for cases in case_list %}
                         <tr>
                         <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
-                        <td style="white-space:pre-wrap; word-break:break-alltext-align: center;vertical-align: middle"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
+                        <td style="white-space:pre-wrap; word-break: unset; alltext-align: center;vertical-align: middle"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
                         <td style="text-align: center;vertical-align: middle">{{ cases.function.function_name }}</td>
                         <td style="text-align: center;vertical-align: middle">{{ cases.sheet.sheet_name}}</td>
                         <td class="xtd">{{ cases.procedure|linebreaksbr }}</td>
@@ -120,6 +120,7 @@
                         {% else %}
                             <li><a href="?page={{ num }}">{{ num }}</a></li>
                         {% endif %}
+
                     {% endfor %}
 
                     {% if case_list.has_next %}
@@ -129,7 +130,22 @@
                             </a>
                         </li>
                     {% endif %}
+                    <br>
+                    <br>
+                    <nav aria-label="Page navigation">
+                        <h4>选择跳转页:</h4><select class="form-control" style="width: 73px" name="topage" onchange="window.open('?page='+this.options[this.selectedIndex].value,'_self')">
+                            {% for i in page_sumrange %}
+                                {% if i == case_list.number %}
+                                    <option value={{ i }} selected>{{ i }}</option>
+                                {% else %}
+                                    <option value={{ i }} >{{ i }}</option>
+                                {% endif %}
+                            {% endfor %}
+
+                        </select>
+                    </nav>
                 </ul>
+
             </nav>
         </div>
 
@@ -175,16 +191,10 @@
             })
             });
         </script>
-
-
     {% else %}
         <a href="/login/"><h1>please login!</h1></a>
     {% endif %}
-
-
     <br><br>
-
-
 {% endblock %}
 
 <!-- forloop.counter -->

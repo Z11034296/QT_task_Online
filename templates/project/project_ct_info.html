@@ -48,7 +48,8 @@
                     {% for i in CT_list %}
                         <tr>
                             <td>{{ i.project }}</td>
-                            <td><a href="{% url 'stage_update' i.id %}">{{ i.project_stage }}</a></td>
+                            <td><a href="{% url 'stage_update' i.id %}">{{ i.project_stage }} <span class="glyphicon glyphicon-edit"
+                                                                                                       aria-hidden="true" ></span></a></td>
                             <td>{{ i.stage_sku_qty }}</td>
                             <td>{{ i.stage_begin|date:'Y-m-d' }}</td>
                             <td>{{ i.stage_end|date:'Y-m-d' }}</td>

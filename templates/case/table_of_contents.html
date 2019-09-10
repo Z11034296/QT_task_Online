@@ -42,7 +42,7 @@
                     <th >Item No.</th>
                     <th >Description</th>
                     <th >Total Sub-item</th>
-                    <th >attend time</th>
+                    <th >Test attend time / SKU</th>
                     {% for i in j %}
                     <th>SKU{{ i }}</th>
                     {% endfor %}
@@ -52,7 +52,7 @@
                 {%  for sheets in sheets_list %}
                     <tr>
                         <td style="text-align: center;vertical-align: middle"><a href="sheet_detail/{{ sheets.id }}">{{ sheets.sheet_name }}</a></td>
-                        <td >{{ sheets.sheet_description }}</td>
+                        <td style="vertical-align: middle">{{ sheets.sheet_description }}</td>
                         <td style="text-align: center;vertical-align: middle">{{ sheets.count }}</td>
                         <td style="text-align: center;vertical-align: middle">{{ sheets.attend_time }}</td>
                         {% for i in j %}

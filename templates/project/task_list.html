@@ -30,24 +30,24 @@
                     <thead class="">
                     <tr>
                         <th hidden>control table list</th>
-                        <th>project name</th>
-                        <th>project stage</th>
-                        <th>stage sku qty</th>
-                        <th>stage start</th>
-                        <th>stage end</th>
-                        <th>issue list</th>
+                        <th style="text-align: center">project name</th>
+                        <th style="text-align: center">project stage</th>
+                        <th style="text-align: center">stage sku qty</th>
+                        <th style="text-align: center">stage start</th>
+                        <th style="text-align: center">stage end</th>
+                        <th style="text-align: center">issue list</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for i in CT_list %}
                         <tr>
                             <td hidden>{{ i.id }}</td>
-                            <td>{{ i.project.project_name }}</td>
-                            <td><a href="{% url 'task_table' i.id %}">{{ i.project_stage }}</a></td>
-                            <td>{{ i.stage_sku_qty }}</td>
-                            <td>{{ i.stage_begin|date:'Y-m-d' }}</td>
-                            <td>{{ i.stage_end|date:'Y-m-d' }}</td>
-                            <td><a href="{% url 'issue_list' i.project_id %}">查看</a></td>
+                            <td style="text-align: center">{{ i.project.project_name }}</td>
+                            <td style="text-align: center"><a href="{% url 'task_table' i.id %}">{{ i.project_stage }}</a></td>
+                            <td style="text-align: center">{{ i.stage_sku_qty }}</td>
+                            <td style="text-align: center">{{ i.stage_begin|date:'Y-m-d' }}</td>
+                            <td style="text-align: center">{{ i.stage_end|date:'Y-m-d' }}</td>
+                            <td style="text-align: center"><a href="{% url 'issue_list' i.project_id %}">查看</a></td>
                         </tr>
                     {% endfor %}
                     </tbody>

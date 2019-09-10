@@ -63,32 +63,30 @@
 
             {% for users in user_list %}
                 <tr class="data" >
-                    <td>{{ users.username }}</td>
-                    <td>{{ users.name }}</td>
-                    <td>{{ users.job_name }}</td>
-                    <td>
+                    <td style="text-align: center">{{ users.username }}</td>
+                    <td style="text-align: center">{{ users.name }}</td>
+                    <td style="text-align: center">{{ users.job_name }}</td>
+                    <td style="text-align: center">
                         {% if users.gender == '1'  %}
                             男
                         {% elif users.gender == '2'  %}
                             女
-                        {% elif users.gender == '3' %}
-                            保密
                         {% endif %}
                     </td>
-                    <td>{{ users.belone_to_team.name }}</td>
-                    <td>{{ users.join_in_time|date:'Y-m-d' }}</td>
+                    <td style="text-align: center">{{ users.belone_to_team.name }}</td>
+                    <td style="text-align: center">{{ users.join_in_time|date:'Y-m-d' }}</td>
                     {% if i == '1' %}
                         {%  if users.leave_time %}
-                            <td id="leave_time_id" class="leave_time">{{ users.leave_time|date:'Y-m-d' }}</td>
+                            <td id="leave_time_id" class="leave_time" style="text-align: center">{{ users.leave_time|date:'Y-m-d' }}</td>
                         {% else %}
-                            <td id="leave_time_id" >{{ users.leave_time|date:'Y-m-d' }}</td>
+                            <td id="leave_time_id" style="text-align: center">{{ users.leave_time|date:'Y-m-d' }}</td>
                         {% endif %}
                     {% endif %}
-                    <td>{{ users.university }}</td>
-                    <td>{{ users.major }}</td>
-                    <td>{{ users.phone_number }}</td>
-                    <td>{{ users.shot_number }}</td>
-                    <td>
+                    <td style="text-align: center">{{ users.university }}</td>
+                    <td style="text-align: center">{{ users.major }}</td>
+                    <td style="text-align: center">{{ users.phone_number }}</td>
+                    <td style="text-align: center">{{ users.shot_number }}</td>
+                    <td style="text-align: center">
                         {% for role in users.role.all %}
                             {% if forloop.last  %}
                                 {{ role.name }}
@@ -96,10 +94,11 @@
                                 {{ role.name }}&nbsp|&nbsp
                             {% endif %}
                         {% endfor %}</td>
-                    <td>
+                    <td style="text-align: center">
                             <div class="model link">
-                                <a href="change_status/{{ users.id }}" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#change_status">删除</a>
                                 <a href="update_userinfo/{{ users.id }}" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#update_userinfo">修改</a>
+                                <a href="change_status/{{ users.id }}" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#change_status">删除</a>
+
                             </div>
                     </td>
                 </tr>

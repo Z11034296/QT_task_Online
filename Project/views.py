@@ -102,7 +102,7 @@ def project_ct(request,lid):
 
         sheets_list = T.Sheet.objects.all()
         case_list = T.TestCase.objects.all()
-        test_user = U.UserInfo.objects.filter(site_id="1")
+        test_user = U.UserInfo.objects.all()
         SKU_Num_list = []
         num = 1
         while num <= int(plist['stage_sku_qty']):
@@ -354,16 +354,15 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
     else:
 
         # case id 与 result组成字典后加到数据库
-        project = models.Project.objects.filter(id=lid).values('id').first()
+        project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
         case_id_list=request.POST.getlist('case_id')
 
         result_list=request.POST.getlist('test_result')
 
         remark_list=request.POST.getlist('remark')
         result=dict(zip(case_id_list,result_list))
-
         remark_result=dict(zip(case_id_list,remark_list))
-        result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
+        result_info_id = models.ProjectInfo.objects.filter(project_id=project['project_id']).values("id").last()
         for i in result:
             if result[i] != "":
                 models.TestResult.objects.create(ControlTableList_id=lid,sku_num=skunum,test_case_id=int(i),
@@ -495,8 +494,8 @@ def result_review(request,lid,sid,skunum):
             result_list.append(result_dic)
         return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid})
     else:
-        project = models.Project.objects.filter(id=lid).values('id').first()
-        result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
+        project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
+        result_info_id = models.ProjectInfo.objects.filter(project_id=project['project_id']).values("id").last()
         case_id_list = request.POST.getlist('case_id')
         result_list = request.POST.getlist('test_result')
         result = dict(zip(case_id_list, result_list))

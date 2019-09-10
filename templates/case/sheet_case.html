@@ -40,16 +40,16 @@
                 <thead >
                 <tr>
 
-                    <th width="10%">case_id</th>
-                    <th>case_name</th>
-                    <th width="5%">function</th>
-                    <th width="5%">Test items</th>
-                    <th width="20%">procedure</th>
-                    <th width="20%">pass critearia</th>
-                    <th width="5%">attend time</th>
-                    <th width="4%">status</th>
-                    <th>case_note</th>
-                    <th>attached</th>
+                    <th width="10%">Case_id</th>
+                    <th>Case_name</th>
+                    <th width="5%">Function</th>
+{#                    <th width="5%">Test items</th>#}
+                    <th width="20%">Procedure</th>
+                    <th width="20%">Pass critearia</th>
+                    <th width="5%">Attend time</th>
+                    <th width="4%">Status</th>
+                    <th>Case_note</th>
+                    <th>Attached</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -59,11 +59,11 @@
                     <td style="vertical-align: middle" >{{ cases.case_id }}</td>
                     <td style="white-space:pre-wrap; word-break:break-all;vertical-align: middle"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
                     <td style="text-align: center;vertical-align: middle">{{ cases.function.function_name }}</td>
-                    <td style="text-align: center;vertical-align: middle">{{ cases.sheet.sheet_name}}</td>
+{#                    <td style="text-align: center;vertical-align: middle">{{ cases.sheet.sheet_name}}</td>#}
                     <td class="xtd">{{ cases.procedure|linebreaksbr }}</td>
                     <td class="xtd">{{ cases.pass_criteria|linebreaksbr }}</td>
-                    <td style="text-align: center">{{ cases.attend_time }}</td>
-                    <td style="text-align: center">
+                    <td style="text-align: center;vertical-align: middle">{{ cases.attend_time }}</td>
+                    <td style="text-align: center;vertical-align: middle">
                         {% if cases.case_status == '1'  %}
                             open
                         {% elif cases.case_status == '2'  %}
