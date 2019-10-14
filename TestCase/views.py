@@ -181,7 +181,7 @@ def case_moreinfo(request, id):
 
 
 def table_of_contents(request):
-    j=range(1,5)
+    j=range(1,3)
     sheets_list = Sheet.objects.all()
     case_list = TestCase.objects.all()
     # 计算case_list中每个sheet有多少个case
@@ -201,6 +201,7 @@ def table_of_contents(request):
             attend_time_sum += float(i['attend_time'])
         attend_time_dic.update({sheets: attend_time_sum})
         sheets.attend_time = attend_time_dic[sheets]
+
     return render(request, "case/table_of_contents.html", {"sheets_list": sheets_list,"j":j,"attend_time_dic":attend_time_dic})
 
 

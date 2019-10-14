@@ -10,13 +10,9 @@
         table {
             table-layout:  fixed;
         }
-        .xtd {
-        {#white-space: nowrap; //不换行#}
-            text-overflow: ellipsis;
-            overflow: hidden; //超出隐藏
+        th{
+            text-align: center;
 
-        {#word-break:break-all;#}
-        {#word-wrap:break-word;#}
         }
 
     </style>
@@ -34,19 +30,19 @@
 
                         <tbody>
                         <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ pj.id }}" readonly ></td></tr>
-                        <tr><th><label for="id_project_name">project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
-                        <tr><th><label for="id_project_stage">project_stage:</label></th><td><input type="text" name="project_stage" class="form-control" id="id_project_stage"></td></tr>
-                        <tr><th><label for="id_stage_sku_qty">stage_sku_qty:</label></th><td><input type="text" name="stage_sku_qty" class="form-control" id="id_stage_sku_qty"></td></tr>
-                        <tr><th><label for="id_stage_begin">stage_begin:</label></th><td><input type="date" name="stage_begin" class="form-control" id="id_stage_begin" readonly></td></tr>
-                        <tr><th><label for="id_stage_end">stage_end:</label></th><td><input type="date" name="stage_end" class="form-control" id="id_stage_end" readonly></td></tr>
-                        <tr><th><label for="id_stage_note">stage_note:</label></th><td><input type="text" name="stage_note" class="form-control" id="id_stage_note" placeholder="多个model不同sku，在这里说明，如:SKU1,SKU2,SKU3为TC-330,SKU4为XC-330"></td></tr>
+                        <tr><th><label for="id_project_name">Project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
+                        <tr><th><label for="id_project_stage">Project_stage:</label></th><td><input type="text" name="project_stage" class="form-control" id="id_project_stage"></td></tr>
+                        <tr><th><label for="id_stage_sku_qty">Stage_sku_qty:</label></th><td><input type="text" name="stage_sku_qty" class="form-control" id="id_stage_sku_qty"></td></tr>
+                        <tr><th><label for="id_stage_begin">Stage_begin:</label></th><td><input type="date" name="stage_begin" class="form-control" id="id_stage_begin" readonly></td></tr>
+                        <tr><th><label for="id_stage_end">Stage_end:</label></th><td><input type="date" name="stage_end" class="form-control" id="id_stage_end" readonly></td></tr>
+                        <tr><th><label for="id_stage_note">Stage_note:</label></th><td><input type="text" name="stage_note" class="form-control" id="id_stage_note" placeholder="多个model不同sku，在这里说明，如:SKU1,SKU2,SKU3为TC-330,SKU4为XC-330"></td></tr>
                         </tbody>
                     </table>
 
                     <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
                     <input class="btn btn-success pull-right" type="submit" value="提交">
 
-        <p class = "text-center text-danger">{{error }}</p>
+                    <p class = "text-center text-danger">{{error }}</p>
         </form>
         </div>
         </div>

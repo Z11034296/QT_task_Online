@@ -41,7 +41,7 @@ def add_project(request):
             # 创建project 的同时创建一个对应的project_info
             pf = models.ProjectInfo(project_id=p.id)
             pf.save()
-            return redirect('projects')
+            return redirect('add_project_info',p.project_id)
         return render(request, 'Project/add_project.html', {'obj': obj})
 
 
@@ -60,26 +60,81 @@ def edit_project(request, nid):
 
 def project_info(request, nid):
     if request.method == "GET":
-        ret = models.ProjectInfo.objects.filter(id=nid).values().first()
-        obj_info = ProjectInfoForm(ret)
-        return render(request, 'Project/project_info.html', {'nid': nid, 'obj_info': obj_info})
-        # return HttpResponse('aaa')
+        ret = models.ProjectInfo.objects.filter(project_id=nid).values().last()
+        ret['project_name']=models.Project.objects.filter(id=nid).values().first()['project_name']
+        return render(request, 'Project/project_info.html', {'nid': nid, 'ret': ret})
 
 
 def add_project_info(request, nid):
-    pass
+
+    if request.method == "GET":
+        pj = models.Project.objects.filter(project_id=nid).values().first()
+        return render(request, 'Project/add_project_info.html', {'pj': pj})
+    else:
+        pj = models.Project.objects.filter(project_id=nid).values().first()
+        models.ProjectInfo.objects.create(
+            project_id=request.POST.get('project_id'),
+            project_bios=request.POST.get('BIOS_ver'),
+            project_mb=request.POST.get('MB_ver'),
+            project_os=request.POST.get('OS'),
+            dr_chipset=request.POST.get('chipset'),
+            dr_vga=request.POST.get('VGA'),
+            dr_iamt=request.POST.get('IAMT'),
+            dr_storage=request.POST.get('Storage'),
+            dr_lan=request.POST.get('LAN'),
+            dr_audio=request.POST.get('audio'),
+            dr_wireless=request.POST.get('Wireless'),
+            dr_bt=request.POST.get('Bluetooth'),
+            dr_panel=request.POST.get('Panel'),
+            dr_finger_printer=request.POST.get('Finger_printer'),
+            dr_g_sensor=request.POST.get('G_sensor'),
+            dr_camera=request.POST.get('Camera'),
+            dr_usb=request.POST.get('USB'),
+            dr_com_parallel=request.POST.get('Com_parallel'),
+            dr_serial_io=request.POST.get('Serial_io'),
+            dr_sgx=request.POST.get('SGX'),
+            dr_others=request.POST.get('Others'),
+            dr_cr=request.POST.get('Cardreader'),
+
+        )
+        return redirect('projects')
 
 
 def edit_project_info(request, nid):
     if request.method == "GET":
-        ret = models.ProjectInfo.objects.filter(project_id=nid).values().last()
-        obj_info = ProjectInfoForm(ret, nid)
-        return render(request, 'Project/edit_project_info.html', {'nid': nid, 'obj_info': obj_info})
+        ret = models.ProjectInfo.objects.filter(id=nid).values().last()
+        ret['project_name'] = models.Project.objects.filter(id=ret['project_id']).values().first()['project_name']
+        return render(request, 'Project/edit_project_info.html', {'ret': ret})
     else:
-        obj_info = ProjectInfoForm(request.POST, nid)
-        if obj_info.is_valid():
-            # models.ProjectInfo.objects.filter(id=nid).update(**obj_info.cleaned_data)
-            models.ProjectInfo.objects.create(**obj_info.cleaned_data)
+        # obj_info = ProjectInfoForm(request.POST, nid)
+        # if obj_info.is_valid():
+        #     # models.ProjectInfo.objects.filter(id=nid).update(**obj_info.cleaned_data)
+        #     models.ProjectInfo.objects.create(**obj_info.cleaned_data)
+        models.ProjectInfo.objects.create(
+            project_id=request.POST.get('project_id'),
+            project_bios=request.POST.get('BIOS_ver'),
+            project_mb=request.POST.get('MB_ver'),
+            project_os=request.POST.get('OS'),
+            dr_chipset=request.POST.get('chipset'),
+            dr_vga=request.POST.get('VGA'),
+            dr_iamt=request.POST.get('IAMT'),
+            dr_storage=request.POST.get('Storage'),
+            dr_lan=request.POST.get('LAN'),
+            dr_audio=request.POST.get('audio'),
+            dr_wireless=request.POST.get('Wireless'),
+            dr_bt=request.POST.get('Bluetooth'),
+            dr_panel=request.POST.get('Panel'),
+            dr_finger_printer=request.POST.get('Finger_printer'),
+            dr_g_sensor=request.POST.get('G_sensor'),
+            dr_camera=request.POST.get('Camera'),
+            dr_usb=request.POST.get('USB'),
+            dr_com_parallel=request.POST.get('Com_parallel'),
+            dr_serial_io=request.POST.get('Serial_io'),
+            dr_sgx=request.POST.get('SGX'),
+            dr_others=request.POST.get('Others'),
+            dr_cr=request.POST.get('Cardreader'),
+
+        )
         return redirect('projects')
 
 
@@ -102,7 +157,7 @@ def project_ct(request,lid):
 
         sheets_list = T.Sheet.objects.all()
         case_list = T.TestCase.objects.all()
-        test_user = U.UserInfo.objects.all()
+        test_user = U.UserInfo.objects.all().order_by('job_name')
         SKU_Num_list = []
         num = 1
         while num <= int(plist['stage_sku_qty']):
@@ -144,11 +199,14 @@ def project_ct(request,lid):
             num += 1
 
         sheets_list = T.Sheet.objects.all()
-
+        # add_list=[]
         for sheets in sheets_list:
             for i in SKU_Num_list:
                 name = '{}-SKU{}'.format(sheets.id, i)
                 tester=U.UserInfo.objects.filter(id=request.POST.get(name)).values().first()
+                # obj = models.ControlTableContent(sku_num=i,ControlTable_List_id_id=lid,sheet_id_id=sheets.id,tester_id=tester["id"])
+                # add_list.append(obj)
+                # models.ControlTableContent.objects.bulk_create(sku_num=i,ControlTable_List_id_id=lid,sheet_id_id=sheets.id,tester_id=tester["id"])
                 models.ControlTableContent.objects.create(sku_num=i,ControlTable_List_id_id=lid,
                                                           sheet_id_id=sheets.id,tester_id=tester["id"])
         return redirect('projects')
@@ -175,7 +233,7 @@ def project_ct_info(request,nid):
             test_sku_num = 0
             x = models.ControlTableContent.objects.filter(sheet_id=sheets.id,ControlTable_List_id=i["ControlTable_List_id_id"])
             for j in x:
-                if j.tester.name != "N/A":
+                if j.tester.job_name != "N/A":
                     test_sku_num += 1
             test_sku_num_list.update({sheets.id: test_sku_num})
             # 计算每个sheet的case attend time之和
@@ -295,7 +353,7 @@ def project_ct_content(request,lid):
         test_sku_num=0
         x=models.ControlTableContent.objects.filter(ControlTable_List_id=lid,sheet_id=sheets.id)
         for j in x:
-            if j.tester.name != "N/A":
+            if j.tester.job_name != "N/A":
                 test_sku_num += 1
         test_sku_num_list.update({sheets.id:test_sku_num})
         # 计算每个sheet的case attend time之和
@@ -686,7 +744,7 @@ def issue_update(request,pid,bid):  # bid:issue表中的id
 
 def change_tester(request,lid,sid,skunum):
     if request.method == "GET":
-        test_user = U.UserInfo.objects.filter(site_id="1")
+        test_user = U.UserInfo.objects.all().order_by('job_name')
         return render(request,"Project/change_tester.html",{"test_user":test_user,"lid":lid,"sid":sid,"skunum":skunum})
     else:
         models.ControlTableContent.objects.filter(ControlTable_List_id_id=lid,sheet_id_id=sid,sku_num=skunum).update(
@@ -793,7 +851,23 @@ def export_project_report(self, lid):
                 top THIN,
                 bottom THIN;
             """)
-
+        style_result_NA = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
         style_result_pass = xlwt.easyxf(
             """
             font:
@@ -902,7 +976,7 @@ def export_project_report(self, lid):
                 w.write(1, 0, "",style_heading_2)
                 w.write_merge(1, 1, 1, 4 + k, i.sheet_description,style_heading_2)
                 w.write(2, 3+k, 'SKU'+str(k+1),style_heading_2)
-                w.col(4 + k).width = 1500
+                w.col(3 + k).width = 1500
                 k+=1
             # w.write(2, 4, 'SKU1')
             w.write(2, 3+int(sku_n), 'Notes/Comment',style_heading_2)
@@ -935,13 +1009,13 @@ def export_project_report(self, lid):
                     try:
                         result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=x[0]).values().first()['test_result']
                     except :
-                        result=''
+                        result='N/A'
                     if result == "Pass":
                         w.write(excel_row, 2+l, result, style_result_pass)
                     elif result == "Fail":
                         w.write(excel_row, 2+l, result, style_result_fail)
                     else:
-                        w.write(excel_row, 2+l, result, style_body_1)
+                        w.write(excel_row, 2+l, result, style_result_NA)
                     # w.write(excel_row, 3+l, result,style_body_1)
                     l += 1
                 #****************************************************
@@ -1072,7 +1146,7 @@ def export_project_report(self, lid):
             elif i['test_result'] == "Fail":
                 w_c.write(excel_row_C, 4, i['test_result'], style_result_fail)
             else:
-                w_c.write(excel_row_C, 4, i['test_result'], style_body_1)
+                w_c.write(excel_row_C, 4, i['test_result'], style_result_NA)
             k = 0
             while k < int(sku_n):
                 # w.write(2, 4 + k, '')

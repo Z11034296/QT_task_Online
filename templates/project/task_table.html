@@ -10,15 +10,11 @@
         table {
             table-layout:  fixed;
         }
-        .xtd {
-        {#white-space: nowrap; //不换行#}
-            text-overflow: ellipsis;
-            overflow: hidden; //超出隐藏
-
-        {#word-break:break-all;#}
-        {#word-wrap:break-word;#}
+         th{
+            text-align: center;
+            background: #9d9d9d;
+            font-size: initial;
         }
-
     </style>
 
 
@@ -36,11 +32,11 @@
                     <thead>
                     <th width="10%">Test Sheet</th>
                     <th>Description</th>
-                    <th>attend_time</th>
+                    <th>Attend_time</th>
                     {% for j in SKU_Num_list %}
                         <th>SKU{{ j }}</th>
                     {% endfor %}
-                    <th>test result</th>
+                    <th>Test result</th>
                     </thead>
                     <tbody>
 

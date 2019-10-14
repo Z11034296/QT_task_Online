@@ -10,13 +10,10 @@
         table {
             table-layout:  fixed;
         }
-        .xtd {
-        {#white-space: nowrap; //不换行#}
-            text-overflow: ellipsis;
-            overflow: hidden; //超出隐藏
-
-        {#word-break:break-all;#}
-        {#word-wrap:break-word;#}
+        th{
+            text-align: center;
+            background: #9d9d9d;
+            font-size: initial;
         }
 
     </style>
@@ -33,13 +30,13 @@
 
                     <thead class="">
                     <tr>
-                        <th>project name</th>
-                        <th>project stage</th>
-                        <th>stage sku qty</th>
-                        <th>stage start</th>
-                        <th>stage end</th>
-                        <th>attend time</th>
-                        <th>test progress</th>
+                        <th>Project name</th>
+                        <th>Poject stage</th>
+                        <th>Stage sku qty</th>
+                        <th>Stage start</th>
+                        <th>Stage end</th>
+                        <th>Attend time</th>
+                        <th>Test progress</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -47,20 +44,20 @@
                     <tbody>
                     {% for i in CT_list %}
                         <tr>
-                            <td>{{ i.project }}</td>
-                            <td><a href="{% url 'stage_update' i.id %}">{{ i.project_stage }} <span class="glyphicon glyphicon-edit"
-                                                                                                       aria-hidden="true" ></span></a></td>
-                            <td>{{ i.stage_sku_qty }}</td>
-                            <td>{{ i.stage_begin|date:'Y-m-d' }}</td>
-                            <td>{{ i.stage_end|date:'Y-m-d' }}</td>
-                            <td>{{ i.attend_time }}</td>
-                            <td>{{ i.progressed }}</td>
+                            <td style="text-align: center">{{ i.project }}</td>
+                            <td style="text-align: center"><a href="{% url 'stage_update' i.id %}">{{ i.project_stage }} <span class="glyphicon glyphicon-edit"
+                                                                                                                               aria-hidden="true" ></span></a></td>
+                            <td style="text-align: center">{{ i.stage_sku_qty }}</td>
+                            <td style="text-align: center">{{ i.stage_begin|date:'Y-m-d' }}</td>
+                            <td style="text-align: center">{{ i.stage_end|date:'Y-m-d' }}</td>
+                            <td style="text-align: center">{{ i.attend_time }}</td>
+                            <td style="text-align: center">{{ i.progressed }}</td>
                             {% if i.id in ct_list_distinct %}
-                                <td><a class="btn btn-info" href="{% url 'project_ct_content' i.id %}">查看control table</a></td>
-                                <td><a class="btn btn-info" href="{% url 'export_project_report' i.id %}">生成报告</a></td>
+                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'project_ct_content' i.id %}">查看control table</a></td>
+                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'export_project_report' i.id %}">生成报告</a></td>
                             {% else %}
-                                <td><a class="btn btn-info" href="{% url 'project_ct' i.id %}">创建control table</a></td>
-                                <td></td>
+                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'project_ct' i.id %}">创建control table</a></td>
+                                <td style="text-align: center"></td>
                             {% endif %}
                         </tr>
                     {% endfor %}

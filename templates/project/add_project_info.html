@@ -1,25 +1,69 @@
-{% block page-modal %}
-<!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">this is appended</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form action="add_project/">
-                            {{ obj_info }}
-                        </form>
+{% extends 'index.html' %}
+{% block page-content %}
+    <title>add issue</title>
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary">
+            <div class="panel-heading ">
+                <h3 class="panel-title">add Project info</h3></div>
+            <div class="panel-body ">
+                <div class="row" style="margin-bottom: 15px">
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
+
+                </div><!-- /.row -->
+                <div class="modal-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <table class = "table table-striped table-bordered">
+                            <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ pj.id }}" readonly ></td></tr>
+                            <tr>
+                                <th><label for="id_project_name">Project:</label></th>
+                                <td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td>
+                                <th><label for="id_update_time">Update_time:</label></th>
+                                <td><input type="text-local" name="update_time" class="form-control" id="id_update_time"></td>
+                            </tr>
+                            <tr><th><label for="id_Motherboard">MB version:</label></th><td><input type="text" name="MB_ver" class="form-control" id="id_MB_ver"></td>
+                                <th><label for="id_BIOS_ver">BIOS version:</label></th><td><input type="text" name="BIOS_ver" class="form-control" id="id_BIOS_ver"></td></tr>
+                            <tr><th><label for="id_OS">OS:</label></th><td><input type="text" name="OS" class="form-control" id="id_OS"></td></tr>
+                            <tr><th><label for="id_chipset">Chipset driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset"></td>
+                                <th><label for="id_audio">Audio driver:</label></th><td><input type="text-local" name="audio" class="form-control" id="id_audio"></td></tr>
+                            <tr><th><label for="id_VGA">VGA driver:</label></th><td><input type="text" name="VGA" class="form-control" id="id_VGA"></td>
+                                <th><label for="id_LAN">LAN driver:</label></th><td><input type="text-local" name="LAN" class="form-control" id="id_LAN"></td></tr>
+                            <tr><th><label for="id_IAMT">IAMT driver:</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT"></td>
+                                <th><label for="id_storage">Storage driver:</label></th><td><input type="text-local" name="Storage" class="form-control" id="id_Storage"></td></tr>
+                            <tr><th><label for="id_Cardreader">Cardreader driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader"></td>
+                                <th><label for="id_Wireless">Wireless driver:</label></th><td><input type="text-local" name="Wireless" class="form-control" id="id_Wireless"></td></tr>
+                            <tr><th><label for="id_Bluetooth">Bluetooth driver:</label></th><td><input type="text" name="Bluetooth" class="form-control" id="id_Bluetooth"></td>
+                                <th><label for="id_Panel">Panel driver:</label></th><td><input type="text-local" name="Panel" class="form-control" id="id_Panel"></td></tr>
+                            <tr><th><label for="id_Finger_printer">Finger_printer driver:</label></th><td><input type="text" name="Finger_printer" class="form-control" id="id_Finger_printer"></td>
+                                <th><label for="id_G_sensor">G_Sensor driver:</label></th><td><input type="text-local" name="G_sensor" class="form-control" id="id_G_sensor"></td></tr>
+                            <tr><th><label for="id_Camera">Camera driver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera"></td>
+                                <th><label for="id_USB">USB driver:</label></th><td><input type="text-local" name="USB" class="form-control" id="id_USB"></td></tr>
+                            <tr><th><label for="id_Com_parallel">Com_parallel driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel"></td>
+                                <th><label for="id_Serial_io">Serial_io driver:</label></th><td><input type="text-local" name="Serial_io" class="form-control" id="id_Serial_io"></td></tr>
+                            <tr><th><label for="id_SGX">SGX driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX"></td></tr>
+                            <tr><th><label for="id_Others">Others driver:</label></th><td><input type="text-local" name="Others" class="form-control" id="id_Others"></td></tr>
+
+
+
+                        </table>
+                        <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                        <input type="submit" class="btn btn-success pull-right" value="提交">
+                    </form>
+
                 </div>
+
+
             </div>
+
         </div>
-    </div>
+        <script>
+            {#$('#id_update_time').attr('readonly', 'true')#}
+            var today=new Date();
+            {#var submitTime=today.getFullYear()+'年'+(today.getMonth()+1)+'月'+today.getDate()+'日';#}
+            var submitTime=today.getFullYear()+"-"+today.getMonth()+"-"+today.getDate()+" "+today.getHours()+":"+today.getMinutes()
+            $("#id_update_time").attr('value',submitTime).attr('readonly', 'true');
+        </script>
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
 {% endblock %}

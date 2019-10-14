@@ -114,7 +114,7 @@ def update_userinfo(request, id):
             if update_obj.is_valid():
                 upper=UserInfo.objects.filter(id=id).update(**update_obj.cleaned_data,
                                                       first_name=request.POST.get('name'),last_name=request.POST.get('job_name'))
-                print(upper,request.POST.get("role"))
+
                 UserInfo.objects.get(id=id).role.set(request.POST.get("role"))
                 return redirect("userinfo")
             else:

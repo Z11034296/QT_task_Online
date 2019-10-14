@@ -3,19 +3,59 @@
     <div class="panel panel-primary">
         <div class="panel-heading "><h3 class="panel-title">Project info</h3></div>
         <div class="panel-body ">
-            <div class="row" style="margin-bottom: 15px">
+{#            <div class="modal-body">#}
+                <div class="row" style="margin-bottom: 15px">
+                    {#                <div class="col-md-4">#}
+                    {#                    <div class="input-group">#}
+                    {#                        <input type="text" class="form-control" placeholder="Search for...">#}
+                    {#                        <span class="input-group-btn">#}
+                    {#                                    <button class="btn btn-default" type="button">搜索</button>#}
+                    {#                                </span>#}
+                    {#                    </div><!-- /input-group -->#}
+                    {#                </div><!-- /.col-md-4 -->#}
+                    <div class="col-md-1 pull-right">
+                       <a class="btn btn-xs btn-success" type="button" title="更新信息"  href="{% url 'edit_project_info' ret.id %}" >更新
+                                    <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a>
+
+                    </div>
+                </div><!-- /.row -->
+                <table class = "table table-striped table-bordered">
+                    <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ ret.project_id }}" readonly ></td></tr>
+                    <tr>
+                        <th><label for="id_project_name">Project:</label></th>
+                        <td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ ret.project_name }}" readonly></td>
+                        <th><label for="id_update_time">Update_time:</label></th>
+                        <td><input type="text-local" name="update_time" class="form-control" id="id_update_time" value="{{ ret.update_time}}" readonly></td>
+                    </tr>
+                    <tr><th><label for="id_Motherboard">MB version:</label></th><td><input type="text" name="MB_ver" class="form-control" id="id_MB_ver" value="{{ ret.project_mb }}" readonly></td>
+                        <th><label for="id_BIOS_ver">BIOS version:</label></th><td><input type="text" name="BIOS_ver" class="form-control" id="id_BIOS_ver" value="{{ ret.project_bios }}" readonly></td></tr>
+                    <tr><th><label for="id_OS">OS:</label></th><td><input type="text" name="OS" class="form-control" id="id_OS" value="{{ ret.project_os }}" readonly></td></tr>
+                    <tr><th><label for="id_chipset">Chipset driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset" value="{{ ret.dr_chipset }}" readonly></td>
+                        <th><label for="id_audio">Audio driver:</label></th><td><input type="text" name="audio" class="form-control" id="id_audio" value="{{ ret.dr_audio }}" readonly></td></tr>
+                    <tr><th><label for="id_VGA">VGA driver:</label></th><td><input type="text" name="VGA" class="form-control" id="id_VGA" value="{{ ret.dr_vga }}" readonly></td>
+                        <th><label for="id_LAN">LAN driver:</label></th><td><input type="text" name="LAN" class="form-control" id="id_LAN" value="{{ ret.dr_lan }}" readonly></td></tr>
+                    <tr><th><label for="id_IAMT">IAMT driver:</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT" value="{{ ret.dr_iamt }}" readonly></td>
+                        <th><label for="id_storage">Storage driver:</label></th><td><input type="text" name="Storage" class="form-control" id="id_Storage" value="{{ ret.dr_storage }}" readonly></td></tr>
+                    <tr><th><label for="id_Cardreader">Cardreader driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader" value="{{ ret.dr_cr }}" readonly></td>
+                        <th><label for="id_Wireless">Wireless driver:</label></th><td><input type="text" name="Wireless" class="form-control" id="id_Wireless" value="{{ ret.dr_wireless }}" readonly></td></tr>
+                    <tr><th><label for="id_Bluetooth">Bluetooth driver:</label></th><td><input type="text" name="Bluetooth" class="form-control" id="id_Bluetooth" value="{{ ret.dr_bt }}" readonly></td>
+                        <th><label for="id_Panel">Panel driver:</label></th><td><input type="text" name="Panel" class="form-control" id="id_Panel" value="{{ ret.dr_panel }}" readonly></td></tr>
+                    <tr><th><label for="id_Finger_printer">Finger_printer driver:</label></th><td><input type="text" name="Finger_printer" class="form-control" id="id_Finger_printer" value="{{ ret.dr_finger_printer }}" readonly></td>
+                        <th><label for="id_G_sensor">G_Sensor driver:</label></th><td><input type="text" name="G_sensor" class="form-control" id="id_G_sensor" value="{{ ret.dr_g_sensor }}" readonly></td></tr>
+                    <tr><th><label for="id_Camera">Camera driver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera" value="{{ ret.dr_camera }}" readonly></td>
+                        <th><label for="id_USB">USB driver:</label></th><td><input type="text" name="USB" class="form-control" id="id_USB" value="{{ ret.dr_usb }}" readonly></td></tr>
+                    <tr><th><label for="id_Com_parallel">Com_parallel driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel" value="{{ ret.dr_com_parallel }}" readonly></td>
+                        <th><label for="id_Serial_io">Serial_io driver:</label></th><td><input type="text" name="Serial_io" class="form-control" id="id_Serial_io" value="{{ ret.dr_serial_io }}" readonly></td></tr>
+                    <tr><th><label for="id_SGX">SGX driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX" value="{{ ret.dr_sgx }}" readonly></td></tr>
+                    <tr><th><label for="id_Others">Others driver:</label></th><td><textarea type="text" name="Others" class="form-control" id="id_Others" readonly>{{ ret.dr_others|linebreaksbr }}</textarea></td></tr>
 
 
-            </div><!-- /.row -->
-            <div class="modal-body">
-                <form action="add_project/">
-                    {{ obj_info }}
-                </form>
+
+                </table>
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save changes</button>
+                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="window.location.href='../../projects'" value="返回">
             </div>
 
         </div>

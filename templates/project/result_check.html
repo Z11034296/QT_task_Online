@@ -7,19 +7,10 @@
             background-color: #eeedef;
             padding-right:0!important;
         }
-        {#table {#}
-        {#    table-layout:  fixed;#}
-        {#}#}
-        .xtd {
-        {#white-space: nowrap; //不换行#}
-            text-overflow: ellipsis;
-            overflow: hidden; //超出隐藏
-
-        {#word-break:break-all;#}
-        {#word-wrap:break-word;#}
-        }
-        th{
-            text-align: center
+         th{
+            text-align: center;
+            background: #9d9d9d;
+            font-size: initial;
         }
     </style>
 
@@ -37,13 +28,13 @@
                     <table border="" class = "table table-striped">
                         <thead >
                         <tr>
-                            <th width="200px">case_id</th>
-                            <th>case_name</th>
-                            <th>procedure</th>
-                            <th>pass_criteria</th>
+                            <th width="200px">Case_id</th>
+                            <th>Case_name</th>
+                            <th>Procedure</th>
+                            <th>Pass_criteria</th>
                             <th width="80px">SKU{{ skunum }}</th>
-                            <th width="120px">更改</th>
-                            <th>remark</th>
+                            <th width="120px">Update</th>
+                            <th>Remark</th>
                         </tr>
                         </thead>
                         <tbody>
