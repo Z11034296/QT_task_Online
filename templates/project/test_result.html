@@ -42,13 +42,13 @@
                         <thead >
                         <tr>
 
-                            <th>case_id</th>
-                            <th>case_name</th>
-                            <th>procedure</th>
-                            <th>pass_critearia</th>
-                            <th>附件</th>
-                            <th>SKU{{ skunum }}</th>
-                            <th>remark</th>
+                            <th width="12%">Case_ID</th>
+                            <th width="10%">Case_Name</th>
+                            <th width="20%">Procedure</th>
+                            <th width="20%">Pass_Criteria</th>
+                            <th width="6%">Attachment</th>
+                            <th width="6%">SKU{{ skunum }}</th>
+                            <th width="10%">Remark</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -56,20 +56,22 @@
                         {%  for cases in case_list %}
                             <tr>
                             <input type="hidden" value="{{ cases.id }}" name="case_id">
-                            <td >{{ cases.case_id }}</td>
-                            <td style="white-space:pre-wrap; word-break:break-all"><a href="../case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
+                            <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
+                            <td style="white-space:pre-wrap; word-break:break-all;text-align: left;vertical-align: middle">{{ cases.case_name }}</td>
                             <td>{{ cases.procedure|linebreaksbr  }}</td>
                             <td>{{ cases.pass_criteria|linebreaksbr  }}</td>
                             <td>{% if cases.test_plan_pic_path %}
                                 <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
                             {% endif %}</td>
-                            <td><select class="form form-control" style="width: 100px" name="test_result">
+                            <td style="text-align: center;vertical-align: middle"><select class="form form-control" name="test_result" onchange="assign_bug(this,{{ cases.id }})">
                                 <option value="Pass">Pass</option>
                                 <option value="Fail">Fail</option>
                                 <option value="N/A">N/A</option>
                                 <option selected="selected"  style='display: none' value=''></option>
-                            </select></td>
-                            <td><input type="text" class="form form-control" name="remark"></td>
+                            </select>
+                                <input class="form-control" name="fail_bug_id{{ cases.id }}" id="fail_bug_id{{ cases.id }}" type="text" style="display: none" placeholder="对应bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
+
+                            <td style="vertical-align: middle"><input type="text" class="form form-control" name="remark"></td>
                         {% endfor %}
                         </tbody>
                     </table>
@@ -77,54 +79,22 @@
                     <input class="btn btn-success pull-right" type="submit" value="提交">
                 </div>
             </form>
-            {#        <nav aria-label="Page navigation">#}
-            {#            <ul class="pagination">#}
-            {#                {% if case_list.has_previous %}#}
-            {#                    <li>#}
-            {#                        <a href="?page={{ case_list.previous_page_number }}" aria-label="Previous">#}
-            {#                            <span aria-hidden="true">&laquo;</span>#}
-            {#                        </a>#}
-            {#                    </li>#}
-            {#                {% endif %}#}
-            {#                {% for pg in case_list.paginator.page_range %}#}
-            {#                    {% circle_page case_list.number pg %}#}
-            {#                    {% if case_list.number == pg %}#}
-            {#                        <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>#}
-            {#                    {% else %}#}
-            {#                        <li><a href="?page={{ pg }}">{{ pg }}</a></li>#}
-            {#                    {% endif %}#}
-            {#                {% endfor %}#}
-            {##}
-            {#                {% if case_list.has_next %}#}
-            {#                    <li>#}
-            {#                        <a href="?page={{ case_list.next_page_number }}" aria-label="Next">#}
-            {#                            <span aria-hidden="true">&raquo;</span>#}
-            {#                        </a>#}
-            {#                    </li>#}
-            {#                {% endif %}#}
-            {#            </ul>#}
-            {#        </nav>#}
         </div>
 
-        <!-- 模态框（Modal） -->
-        <div class="modal fade" id="case_moreinfo" tabindex="-1" role="dialog" aria-labelledby="case_moreinfoLabel" aria-hidden="true">
-            <div class="modal-dialog" style="width:700px">
-                <div class="modal-content">
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-        <script>
-            {#模态框#}
-            $(function() {
-                {#模态框#}
-                $('#link .mymodel').modal('toggle')
-            })
 
-            {# 关闭窗口时刷新页面以便重新加载js#}
-            $(function () { $('#case_moreinfo').on('hide.bs.modal', function () {
-                window.location.reload();
-            })
-            });
+        <script>
+            function assign_bug(obj,tt) {
+                var sel_id="fail_bug_id"+tt;
+                {#console.log(obj,tt,obj.value);#}
+                if (obj.value === "Fail") {
+                    $("#" + sel_id).css({"display": 'block'});
+                }
+                else{
+                    $("#" + sel_id).css({"display": 'none'});
+                }
+            }
+
+
 
         </script>
 

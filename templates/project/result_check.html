@@ -11,6 +11,7 @@
             text-align: center;
             background: #9d9d9d;
             font-size: initial;
+
         }
     </style>
 
@@ -28,10 +29,10 @@
                     <table border="" class = "table table-striped">
                         <thead >
                         <tr>
-                            <th width="200px">Case_id</th>
-                            <th>Case_name</th>
+                            <th width="200px">Case_ID</th>
+                            <th>Case_Name</th>
                             <th>Procedure</th>
-                            <th>Pass_criteria</th>
+                            <th>Pass_Criteria</th>
                             <th width="80px">SKU{{ skunum }}</th>
                             <th width="120px">Update</th>
                             <th>Remark</th>
@@ -42,15 +43,15 @@
                         {%  for i in result_list %}
                             <tr>
                             <input type="hidden" value="{{ i.case_id }}" name="case_id">
-                            <td >{{ i.test_case_id }}</td>
-                            <td style="white-space:pre-wrap; word-break:break-all">{{ i.case_name }}</td>
+                            <td style="text-align: center;vertical-align: middle">{{ i.test_case_id }}</td>
+                            <td style="white-space:pre-wrap; word-break:break-all;text-align: center;vertical-align: middle">{{ i.case_name }}</td>
                             <td>{{ i.procedure|linebreaksbr }}</td>
-                            <td >{{ i.pass_criteria|linebreaksbr }}</td>
+                            <td>{{ i.pass_criteria|linebreaksbr }}</td>
                             {% if i.result == 'Fail' %}
-                                <td bgcolor="red" style="text-align: center"><a href="{% url 'asign_bug' pj.id plist.id i.case_id sid skunum %}" data-toggle="modal" data-target="#asign_bug">{{ i.result }}</a></td>
+                                <td bgcolor="red" style="text-align: center;vertical-align: middle"><a href="{% url 'asign_bug' pj.id plist.id i.case_id sid skunum %}" data-toggle="modal" data-target="#asign_bug">{{ i.result }}</a></td>
                                 {#                            data-toggle="modal" data-target="#asign_bug"#}
                             {% else %}
-                                <td  style="text-align: center">{{ i.result }}</td>
+                                <td  style="text-align: center;vertical-align: middle">{{ i.result }}</td>
                             {% endif %}
 
                             <td>

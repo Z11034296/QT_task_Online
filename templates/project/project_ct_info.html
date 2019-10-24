@@ -30,13 +30,13 @@
 
                     <thead class="">
                     <tr>
-                        <th>Project name</th>
-                        <th>Poject stage</th>
-                        <th>Stage sku qty</th>
-                        <th>Stage start</th>
-                        <th>Stage end</th>
-                        <th>Attend time</th>
-                        <th>Test progress</th>
+                        <th>Project Name</th>
+                        <th>Poject Stage</th>
+                        <th>Stage Sku qty</th>
+                        <th>Stage Start</th>
+                        <th>Stage End</th>
+                        <th>Attend Time</th>
+                        <th>Test Progress</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -53,10 +53,10 @@
                             <td style="text-align: center">{{ i.attend_time }}</td>
                             <td style="text-align: center">{{ i.progressed }}</td>
                             {% if i.id in ct_list_distinct %}
-                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'project_ct_content' i.id %}">查看control table</a></td>
+                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'project_ct_content' i.id %}">查看Control Table</a></td>
                                 <td style="text-align: center"><a class="btn btn-info" href="{% url 'export_project_report' i.id %}">生成报告</a></td>
                             {% else %}
-                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'project_ct' i.id %}">创建control table</a></td>
+                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'project_ct' i.id %}">创建Control Table</a></td>
                                 <td style="text-align: center"></td>
                             {% endif %}
                         </tr>

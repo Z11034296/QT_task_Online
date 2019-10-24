@@ -15,29 +15,29 @@
                     <tr>
                         <th><label for="id_project_name">Project:</label></th>
                         <td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ ret.project_name }}" readonly></td>
-                        <th><label for="id_update_time">Update_time:</label></th>
+                        <th><label for="id_update_time">Update_Time:</label></th>
                         <td><input type="text" name="update_time" class="form-control" id="id_update_time" value="{{ ret.update_time}}" readonly></td></tr>
-                    <tr><th><label for="id_Motherboard">MB version:</label></th><td><input type="text" name="MB_ver" class="form-control" id="id_MB_ver" value="{{ ret.project_mb }}" ></td>
-                        <th><label for="id_BIOS_ver">BIOS version:</label></th><td><input type="text" name="BIOS_ver" class="form-control" id="id_BIOS_ver" value="{{ ret.project_bios }}" ></td></tr>
+                    <tr><th><label for="id_Motherboard">MB Version:</label></th><td><input type="text" name="MB_ver" class="form-control" id="id_MB_ver" value="{{ ret.project_mb }}" ></td>
+                        <th><label for="id_BIOS_ver">BIOS Version:</label></th><td><input type="text" name="BIOS_ver" class="form-control" id="id_BIOS_ver" value="{{ ret.project_bios }}" ></td></tr>
                     <tr><th><label for="id_OS">OS:</label></th><td><input type="text" name="OS" class="form-control" id="id_OS" value="{{ ret.project_os }}" ></td></tr>
-                    <tr><th><label for="id_chipset">Chipset driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset" value="{{ ret.dr_chipset }}" ></td>
-                        <th><label for="id_audio">Audio driver:</label></th><td><input type="text" name="audio" class="form-control" id="id_audio" value="{{ ret.dr_audio }}" ></td></tr>
-                    <tr><th><label for="id_VGA">VGA driver:</label></th><td><input type="text" name="VGA" class="form-control" id="id_VGA" value="{{ ret.dr_vga }}" ></td>
-                        <th><label for="id_LAN">LAN driver:</label></th><td><input type="text" name="LAN" class="form-control" id="id_LAN" value="{{ ret.dr_lan }}" ></td></tr>
-                    <tr><th><label for="id_IAMT">IAMT driver:</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT" value="{{ ret.dr_iamt }}" ></td>
-                        <th><label for="id_storage">Storage driver:</label></th><td><input type="text" name="Storage" class="form-control" id="id_Storage" value="{{ ret.dr_storage }}" ></td></tr>
-                    <tr><th><label for="id_Cardreader">Cardreader driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader" value="{{ ret.dr_cr }}" ></td>
-                        <th><label for="id_Wireless">Wireless driver:</label></th><td><input type="text" name="Wireless" class="form-control" id="id_Wireless" value="{{ ret.dr_wireless }}" ></td></tr>
-                    <tr><th><label for="id_Bluetooth">Bluetooth driver:</label></th><td><input type="text" name="Bluetooth" class="form-control" id="id_Bluetooth" value="{{ ret.dr_bt }}" ></td>
-                        <th><label for="id_Panel">Panel driver:</label></th><td><input type="text" name="Panel" class="form-control" id="id_Panel" value="{{ ret.dr_panel }}" ></td></tr>
-                    <tr><th><label for="id_Finger_printer">Finger_printer driver:</label></th><td><input type="text" name="Finger_printer" class="form-control" id="id_Finger_printer" value="{{ ret.dr_finger_printer }}" ></td>
-                        <th><label for="id_G_sensor">G_Sensor driver:</label></th><td><input type="text" name="G_sensor" class="form-control" id="id_G_sensor" value="{{ ret.dr_g_sensor }}" ></td></tr>
-                    <tr><th><label for="id_Camera">Camera driver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera" value="{{ ret.dr_camera }}" ></td>
-                        <th><label for="id_USB">USB driver:</label></th><td><input type="text" name="USB" class="form-control" id="id_USB" value="{{ ret.dr_usb }}" ></td></tr>
-                    <tr><th><label for="id_Com_parallel">Com_parallel driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel" value="{{ ret.dr_com_parallel }}" ></td>
-                        <th><label for="id_Serial_io">Serial_io driver:</label></th><td><input type="text" name="Serial_io" class="form-control" id="id_Serial_io" value="{{ ret.dr_serial_io }}" ></td></tr>
-                    <tr><th><label for="id_SGX">SGX driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX" value="{{ ret.dr_sgx }}" ></td></tr>
-                        <tr><th><label for="id_Others">Others driver:</label></th><td><textarea  name="Others" class="form-control" id="id_Others" >{{ ret.dr_others|linebreaksbr }}</textarea></td></tr>
+                    <tr><th><label for="id_chipset">Chipset Driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset" value="{{ ret.dr_chipset }}" ></td>
+                        <th><label for="id_audio">Audio Driver:</label></th><td><input type="text" name="audio" class="form-control" id="id_audio" value="{{ ret.dr_audio }}" ></td></tr>
+                    <tr><th><label for="id_VGA">VGA Driver:</label></th><td><input type="text" name="VGA" class="form-control" id="id_VGA" value="{{ ret.dr_vga }}" ></td>
+                        <th><label for="id_LAN">LAN Driver:</label></th><td><input type="text" name="LAN" class="form-control" id="id_LAN" value="{{ ret.dr_lan }}" ></td></tr>
+                    <tr><th><label for="id_IAMT">IAMT Driver:</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT" value="{{ ret.dr_iamt }}" ></td>
+                        <th><label for="id_storage">Storage Driver:</label></th><td><input type="text" name="Storage" class="form-control" id="id_Storage" value="{{ ret.dr_storage }}" ></td></tr>
+                    <tr><th><label for="id_Cardreader">Cardreader Driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader" value="{{ ret.dr_cr }}" ></td>
+                        <th><label for="id_Wireless">Wireless Driver:</label></th><td><input type="text" name="Wireless" class="form-control" id="id_Wireless" value="{{ ret.dr_wireless }}" ></td></tr>
+                    <tr><th><label for="id_Bluetooth">Bluetooth Driver:</label></th><td><input type="text" name="Bluetooth" class="form-control" id="id_Bluetooth" value="{{ ret.dr_bt }}" ></td>
+                        <th><label for="id_Panel">Panel Driver:</label></th><td><input type="text" name="Panel" class="form-control" id="id_Panel" value="{{ ret.dr_panel }}" ></td></tr>
+                    <tr><th><label for="id_Finger_printer">Finger_Printer Driver:</label></th><td><input type="text" name="Finger_printer" class="form-control" id="id_Finger_printer" value="{{ ret.dr_finger_printer }}" ></td>
+                        <th><label for="id_G_sensor">G_Sensor Driver:</label></th><td><input type="text" name="G_sensor" class="form-control" id="id_G_sensor" value="{{ ret.dr_g_sensor }}" ></td></tr>
+                    <tr><th><label for="id_Camera">Camera Diver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera" value="{{ ret.dr_camera }}" ></td>
+                        <th><label for="id_USB">USB Driver:</label></th><td><input type="text" name="USB" class="form-control" id="id_USB" value="{{ ret.dr_usb }}" ></td></tr>
+                    <tr><th><label for="id_Com_parallel">Com_Parallel Driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel" value="{{ ret.dr_com_parallel }}" ></td>
+                        <th><label for="id_Serial_io">Serial_IO dDriver:</label></th><td><input type="text" name="Serial_io" class="form-control" id="id_Serial_io" value="{{ ret.dr_serial_io }}" ></td></tr>
+                    <tr><th><label for="id_SGX">SGX Driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX" value="{{ ret.dr_sgx }}" ></td></tr>
+                        <tr><th><label for="id_Others">Others Driver:</label></th><td><textarea  name="Others" class="form-control" id="id_Others" >{{ ret.dr_others|linebreaksbr }}</textarea></td></tr>
 
 
 

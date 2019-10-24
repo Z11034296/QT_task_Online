@@ -7,13 +7,13 @@ from django.core.exceptions import ValidationError
 class CaseForm(Form):
     case_id = fields.CharField(
             # max_length=32,
-            label="Case_id",
+            label="Case_Id",
             widget=widgets.TextInput(attrs={'class': 'form-control'})
         )
 
     case_name = fields.CharField(
             # max_length=32,
-            label="Case_name",
+            label="Case_Name",
             widget=widgets.TextInput(attrs={'class': 'form-control'})
         )
 
@@ -33,7 +33,7 @@ class CaseForm(Form):
 
     attend_time = fields.CharField(
         # max_length=32,
-        label="attend_time",
+        label="Attend_Time",
         widget=widgets.TextInput(attrs={'class': 'form-control'}),
         required=False
     )
@@ -53,7 +53,7 @@ class CaseForm(Form):
         )
 
     case_status = fields.ChoiceField(
-        label="case_status",
+        label="Case_Status",
         required=False,
         choices=((1, "open"), (2, "closed")),
         initial=1,
@@ -61,13 +61,13 @@ class CaseForm(Form):
     )
 
     case_note = fields.CharField(
-        label="case_note",
+        label="Case_Note",
         widget=widgets.Textarea(attrs={'class': 'form-control', }),
         required=False
     )
 
     test_plan_pic_path = fields.CharField(
-        label="attachment",
+        label="Attachment",
         widget=widgets.FileInput(),
         required=False
     )
@@ -84,13 +84,13 @@ class CaseForm(Form):
 class Case_updateForm(Form):
     case_id = fields.CharField(
             # max_length=32,
-            label="Case_id",
+            label="Case_Id",
             widget=widgets.TextInput(attrs={'class': 'form-control','readonly': 'True'})
         )
 
     case_name = fields.CharField(
             # max_length=32,
-            label="Case_name",
+            label="Case_Name",
             widget=widgets.TextInput(attrs={'class': 'form-control'})
         )
 
@@ -110,7 +110,7 @@ class Case_updateForm(Form):
 
     attend_time = fields.CharField(
         # max_length=32,
-        label="attend_time",
+        label="Attend_Time",
         widget=widgets.TextInput(attrs={'class': 'form-control', 'style': 'height: 40px;width:500px'}),
         required=False
     )
@@ -130,7 +130,7 @@ class Case_updateForm(Form):
         )
 
     case_status = fields.ChoiceField(
-        label="case_status",
+        label="Case_Status",
         required=False,
         choices=((1, "open"), (2, "closed")),
         initial=1,
@@ -138,13 +138,13 @@ class Case_updateForm(Form):
     )
 
     case_note = fields.CharField(
-        label="case_note",
+        label="Case_Note",
         widget=widgets.Textarea(attrs={'class': 'form-control', }),
         required=False
     )
 
     test_plan_pic_path = fields.CharField(
-        label="attachment",
+        label="Attachment",
         widget=widgets.FileInput(),
         required=False
     )

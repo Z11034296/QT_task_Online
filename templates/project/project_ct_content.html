@@ -36,13 +36,13 @@
                     <thead>
                     <tr>
 
-                        <th width="10%">Test Sheet</th>
-                        <th>Description</th>
-                        <th style="text-align: center">attend_time</th>
+                        <th style="text-align: center" width="8%">Test Sheet</th>
+                        <th width="25%">Description</th>
+                        <th style="text-align: center" width="7%">Attend_Time</th>
                         {% for j in SKU_Num_list %}
-                            <th colspan="2" style="text-align: center">SKU{{ j }}</th>
+                            <th colspan="2" style="text-align: center" width="12%">SKU{{ j }}</th>
                         {% endfor %}
-                        <th style="text-align: center">test result</th>
+                        <th style="text-align: center" width="10%">Test Result</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -51,7 +51,7 @@
                     {% for i in new_list %}
                         <tr>
                             <td style="text-align: center;vertical-align: middle">{{ i.sheet_name }}</td>
-                            <td style="text-align: center;vertical-align: middle">{{ i.sheet_description }}</td>
+                            <td style="text-align: left;vertical-align: middle">{{ i.sheet_description }}</td>
                             <td style="text-align: center;vertical-align: middle">{{ i.attend_time }}</td>
                             {% for j in SKU_Num_list %}
                                 {% if j == 1 %}
@@ -113,7 +113,7 @@
                                 {% endif %}
                             {% endfor %}
                             {% if i.test_result == "Fail" %}
-                                <td style="text-align: center">{{ i.test_result }} <Br /> refer to bug ID: <a href="{% url 'issue_list' pj.id %}">{{ i.bugid }}</a></td>
+                                <td style="text-align: center">{{ i.test_result }} <Br/> Refer to bug ID: <a href="{% url 'issue_list' pj.id %}">{{ i.bugid }}</a></td>
                             {% else %}
                                 <td style="text-align: center">{{ i.test_result }}</td>
                             {% endif %}

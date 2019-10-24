@@ -38,10 +38,10 @@
                         <thead >
                         <tr>
 
-                            <th width="200px">Case_id</th>
-                            <th>Case_name</th>
+                            <th width="200px">Case_ID</th>
+                            <th>Case_Name</th>
                             <th>Procedure</th>
-                            <th>Pass_critearia</th>
+                            <th>Pass_Critearia</th>
                             <th width="80px"  style="text-align: center">SKU{{ skunum }}</th>
                             <th width="120px"  style="text-align: center">Update</th>
                             <th  style="text-align: center">Remark</th>
@@ -53,26 +53,26 @@
                         {%  for i in result_list %}
                             <tr>
                             <input type="hidden" value="{{ i.case_id }}" name="case_id">
-                            <td >{{ i.test_case_id }}</td>
-                            <td style="white-space:pre-wrap; word-break:break-all">{{ i.case_name }}</td>
+                            <td style="text-align: center;vertical-align: middle">{{ i.test_case_id }}</td>
+                            <td style="white-space:pre-wrap; word-break:break-all;vertical-align: middle">{{ i.case_name }}</td>
                             <td>{{ i.procedure|linebreaksbr }}</td>
                             <td>{{ i.pass_criteria|linebreaksbr }}</td>
                             {% if i.result == 'Fail' %}
-                                <td bgcolor="red" style="text-align: center"><a href="{% url 'asign_bug' pj.id plist.id i.case_id sid skunum %}" data-toggle="modal" data-target="#asign_bug">{{ i.result }}</a></td>
+                                <td bgcolor="red" style="text-align: center;vertical-align: middle"><a href="{% url 'asign_bug' pj.id plist.id i.case_id sid skunum %}" data-toggle="modal" data-target="#asign_bug">{{ i.result }}</a></td>
                                 {#                            data-toggle="modal" data-target="#asign_bug"#}
                             {% else %}
-                                <td  style="text-align: center">{{ i.result }}</td>
+                                <td  style="text-align: center;vertical-align: middle">{{ i.result }}</td>
                             {% endif %}
-                            <td><select class="form form-control" style="width: 100px" name="test_result">
+                            <td style="text-align: center;vertical-align: middle"><select class="form form-control" style="width: 100px" name="test_result">
                                 <option value="Pass">Pass</option>
                                 <option value="Fail">Fail</option>
                                 <option value="N/A">N/A</option>
                                 <option selected="selected"  style='display: none' value=''></option>
                             </select></td>
                             {% if "refer to bug " in i.remark %}
-                                <td><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
+                                <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
                             {% else %}
-                                <td><input type="hidden" name="remark" value="{{ i.remark }}">{{ i.remark }}</td>
+                                <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}">{{ i.remark }}</td>
                             {% endif %}
                         {% endfor %}
                         </tbody>

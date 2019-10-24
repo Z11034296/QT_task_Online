@@ -33,15 +33,15 @@
                 <thead class="">
                 <tr>
 
-                    <th width="10%">Case_id</th>
+                    <th width="10%">Case_Id</th>
                     <th>Case_name</th>
                     <th width="5%">Function</th>
-                    <th width="5%">Test items</th>
+                    <th width="5%">Test_Items</th>
                     <th width="20%">Procedure</th>
-                    <th width="20%">Pass_critearia</th>
-                    <th width="5%">Attend time</th>
+                    <th width="20%">Pass_Critearia</th>
+                    <th width="6%">Attend_Time</th>
                     <th width="5%">Status</th>
-                    <th>Case_note</th>
+                    <th>Case_Note</th>
                     <th width="5%">操作</th>
                     <th width="5%">附件</th>
                 </tr>
@@ -51,7 +51,7 @@
                 {%  for cases in case_list %}
                     <tr>
                     <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
-                    <td style="white-space:pre-wrap; word-break: unset; alltext-align: center;vertical-align: middle"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
+                    <td style="white-space:pre-wrap; word-break: unset; vertical-align: middle"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
                     <td style="text-align: center;vertical-align: middle">{{ cases.function.function_name }}</td>
                     <td style="text-align: center;vertical-align: middle">{{ cases.sheet.sheet_name}}</td>
                     <td class="xtd">{{ cases.procedure|linebreaksbr }}</td>

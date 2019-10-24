@@ -41,6 +41,9 @@ def add_project(request):
             # 创建project 的同时创建一个对应的project_info
             pf = models.ProjectInfo(project_id=p.id)
             pf.save()
+            # 所选择的member设为 TL权限
+            if U.UserInfo.objects.get(id=obj.cleaned_data['test_leader_wzs_id']).role.values().first()['id'] not in [4,5]:
+                U.UserInfo.objects.get(id=obj.cleaned_data['test_leader_wzs_id']).role.set('3')
             return redirect('add_project_info',p.project_id)
         return render(request, 'Project/add_project.html', {'obj': obj})
 
@@ -182,7 +185,7 @@ def project_ct(request,lid):
             for i in cases_by_sheet:
 
                 attend_time_sum+=float(i['attend_time'])
-            attend_time_dic.update({sheets:attend_time_sum * int(plist['stage_sku_qty'])})
+            attend_time_dic.update({sheets:attend_time_sum}) #  * int(plist['stage_sku_qty']
             sheets.attend_time=attend_time_dic[sheets]
         return render(request,'Project/project_ct.html',{"pj":pj,"plist":plist,
                                                          "SKU_Num_list":SKU_Num_list,
@@ -339,6 +342,8 @@ def project_ct_content(request,lid):
                     final_result = 'Fail'
                 elif re_list == []:
                     final_result = ''
+                elif re_list != [] and 'Pass' not in re_list and 'Fail' not in re_list:
+                    final_result = 'N/A'
                 else:
                     final_result = 'Pass'
         bugid_dic[i.id] = bugid_list
@@ -473,14 +478,22 @@ def task_table(request,lid):
 
     # 每个sheet中的case个数填入sheets_list
     attend_time_dic={}
+    test_sku_num_list = {}
     for sheets in sheets_list:
         sheets.count = cout[sheets.sheet_name]
-
+        # *******计算非N/A的SKU的sku数量*********
+        test_sku_num = 0
+        x = models.ControlTableContent.objects.filter(ControlTable_List_id=lid, sheet_id=sheets.id)
+        for j in x:
+            if j.tester.job_name != "N/A":
+                test_sku_num += 1
+        test_sku_num_list.update({sheets.id: test_sku_num})
+        # *************************************
         cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
         attend_time_sum = 0
         for i in cases_by_sheet:
             attend_time_sum += float(i['attend_time'])
-        attend_time_dic.update({sheets.id: attend_time_sum * int(plist['stage_sku_qty'])})
+        attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id] )}) # int(plist['stage_sku_qty']
         # attend_time_dic.update({sheets.id: attend_time_sum}) # 每个sheet总的attend time
 
     content_list = models.ControlTableContent.objects.filter(ControlTable_List_id=lid)
@@ -1009,7 +1022,7 @@ def export_project_report(self, lid):
                     try:
                         result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=x[0]).values().first()['test_result']
                     except :
-                        result='N/A'
+                        result=''
                     if result == "Pass":
                         w.write(excel_row, 2+l, result, style_result_pass)
                     elif result == "Fail":
@@ -1070,6 +1083,8 @@ def export_project_report(self, lid):
                         final_result = 'Fail'
                     elif re_list == []:
                         final_result = ''
+                    elif re_list != [] and 'Pass' not in re_list and 'Fail' not in re_list:
+                        final_result = 'N/A'
                     else:
                         final_result = 'Pass'
             bugid_dic[i.id] = bugid_list

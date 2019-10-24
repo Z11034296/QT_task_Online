@@ -15,10 +15,10 @@
 
                         <tr>
                         <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ pj.id }}" readonly ></td></tr>
-                        <tr><th><label for="id_project_name">project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
+                        <tr><th><label for="id_project_name">Project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
                         <tr><th><label for="id_TRID">TRID:</label></th><td><input type="text" name="TRID" class="form-control" id="id_TRID" value="{{ issue.TRID }}"></td>
-                            <th><label for="id_bugzilla_id">bugzilla_id:</label></th><td><input type="text" name="bugzilla_id" class="form-control" id="id_bugzilla_id" value="{{ issue.bugzilla_id }}"></td></tr>
-                        <tr><th><label for="id_category">category:</label></th><td><select  name="category" class="form-control" id="id_category" >
+                            <th><label for="id_bugzilla_id">Bugzilla_Id:</label></th><td><input type="text" name="bugzilla_id" class="form-control" id="id_bugzilla_id" value="{{ issue.bugzilla_id }}"></td></tr>
+                        <tr><th><label for="id_category">Category:</label></th><td><select  name="category" class="form-control" id="id_category" >
                             <option value="HW" {% ifequal 'HW' issue.category %}selected{%endifequal%}>HW</option>
                             <option value="Key_Component" {% ifequal 'Key_Component' issue.category %}selected{%endifequal%}>Key_Component</option>
                             <option value="FW" {% ifequal 'FW' issue.category %}selected{%endifequal%}>FW</option>
@@ -26,7 +26,7 @@
                             <option value="SW" {% ifequal 'SW' issue.category %}selected{%endifequal%}>SW</option>
                             <option value="ME" {% ifequal 'ME' issue.category %}selected{%endifequal%}>ME</option>
                         </select></td>
-                            <th><label for="id_attribute">attribute:</label></th><td><select name="attribute" class="form-control" id="id_attribute" >
+                            <th><label for="id_attribute">Attribute:</label></th><td><select name="attribute" class="form-control" id="id_attribute" >
                                 <option value="[HW]Main Board" {% ifequal "[HW]Main Board" issue.attribute %}selected{%endifequal%}>[HW]Main Board</option>
                                 <option value="[HW]Daughter Board" {% ifequal "[HW]Daughter Board" issue.attribute %}selected{%endifequal%}>[HW]Daughter Board</option>
                                 <option value="[HW]Signal Integrity" {% ifequal "[HW]Signal Integrity" issue.attribute %}selected{%endifequal%}>[HW]Signal Integrity</option>
@@ -86,24 +86,24 @@
                                 <option value="[ME]ID" {% ifequal "[ME]ID" issue.attribute %}selected{%endifequal%}>[ME]ID</option>
                                 <option value="[ME]Others" {% ifequal "[ME]Others" issue.attribute %}selected{%endifequal%}>[ME]Others</option>
                             </select></td></tr>
-                        <tr><th><label for="id_attribute_name">attribute_name:</label></th><td><input type="text" name="attribute_name" class="form-control" id="id_attribute_name" value="{{ issue.attribute_name }}"></td>
-                            <th><label for="id_severity" >severity:</label></th><td><select name="severity" class="form-control" id="id_severity" >
+                        <tr><th><label for="id_attribute_name">Attribute_Name:</label></th><td><input type="text" name="attribute_name" class="form-control" id="id_attribute_name" value="{{ issue.attribute_name }}"></td>
+                            <th><label for="id_severity" >Severity:</label></th><td><select name="severity" class="form-control" id="id_severity" >
                                 <option value="1" {% ifequal "1" issue.severity %}selected{%endifequal%}>1</option>
                                 <option value="2" {% ifequal "2" issue.severity %}selected{%endifequal%}>2</option>
                                 <option value="3" {% ifequal "3" issue.severity %}selected{%endifequal%}>3</option>
                                 <option value="4" {% ifequal "4" issue.severity %}selected{%endifequal%}>4</option>
                             </select></td></tr>
-                        <tr><th><label for="id_description">description:</label></th><td><textarea name="description" class="form-control" id="id_description">{{ issue.description }}</textarea></td>
-                            <th><label for="id_procedure">procedure:</label></th><td><textarea name="procedure" class="form-control" id="id_procedure" >{{ issue.procedure }}</textarea></td></tr>
-                        <tr><th><label for="id_comment">comment:</label></th><td><textarea name="comment" class="form-control" id="id_comment" >{{ issue.comment }}</textarea></td></tr>
-                        <tr><th><label for="id_root_cause">root_cause:</label></th><td><textarea  name="root_cause" class="form-control" id="id_root_cause" >{{ issue.root_cause }}</textarea></td>
-                            <th><label for="id_solution">solution:</label></th><td><textarea name="solution" class="form-control" id="id_solution" >{{ issue.solution }}</textarea></td></tr>
-                        <th><label for="id_status">status:</label></th><td><select name="status" class="form-control" id="id_status" >
+                        <tr><th><label for="id_description">Description:</label></th><td><textarea name="description" class="form-control" id="id_description">{{ issue.description }}</textarea></td>
+                            <th><label for="id_procedure">Procedure:</label></th><td><textarea name="procedure" class="form-control" id="id_procedure" >{{ issue.procedure }}</textarea></td></tr>
+                        <tr><th><label for="id_comment">Comment:</label></th><td><textarea name="comment" class="form-control" id="id_comment" >{{ issue.comment }}</textarea></td></tr>
+                        <tr><th><label for="id_root_cause">Root_Cause:</label></th><td><textarea  name="root_cause" class="form-control" id="id_root_cause" >{{ issue.root_cause }}</textarea></td>
+                            <th><label for="id_solution">Solution:</label></th><td><textarea name="solution" class="form-control" id="id_solution" >{{ issue.solution }}</textarea></td></tr>
+                        <th><label for="id_status">Status:</label></th><td><select name="status" class="form-control" id="id_status" >
                         <option value="open" {% ifequal "open" issue.status %}selected{%endifequal%}>Open</option>
                         <option value="closed" {% ifequal "closed" issue.status %}selected{%endifequal%}>Closed</option>
                         <option value="verify" {% ifequal "verify" issue.status %}selected{%endifequal%}>Verify</option>
                     </select></td>
-                        <th><label for="id_solving_type">solving_type:</label></th><td><select  name="solving_type" class="form-control" id="id_solving_type" >
+                        <th><label for="id_solving_type">Solving_Type:</label></th><td><select  name="solving_type" class="form-control" id="id_solving_type" >
                         <option value="" {% ifequal "" issue.solving_type %}selected{%endifequal%}></option>
                         <option value="Fixed" {% ifequal "Fixed" issue.solving_type %}selected{%endifequal%}>Fixed</option>
                         <option value="Spec Changed" {% ifequal "Spec Changed" issue.solving_type %}selected{%endifequal%}>Spec Changed</option>
@@ -114,15 +114,15 @@
                         <option value="Duplicated" {% ifequal "Duplicated" issue.solving_type %}selected{%endifequal%}>Duplicated</option>
                         <option value="Cannot Duplicate" {% ifequal "Cannot Duplicate" issue.solving_type %}selected{%endifequal%}>Cannot Duplicate</option>
                     </select></td></tr>
-                        <th><label for="id_open_date">open_date:</label></th><td><input type="text" name="open_date" class="form-control" id="id_open_date" readonly value="{{ issue.open_date | date:'Y-m-d' }}"></td>
-                        <th><label for="id_verify_date">verify_date:</label></th><td><input type="text" name="verify_date" class="form-control" id="id_verify_date" readonly value="{{ issue.verify_date | date:'Y-m-d' }}"></td></tr>
-                        <tr><th><label for="id_close_date">close_date:</label></th><td><input type="text" name="close_date" class="form-control" id="id_close_date" readonly value="{{ issue.close_date | date:'Y-m-d' }}"></td></tr>
-                        <tr><th><label for="id_owner">owner:</label></th><td><input type="text" name="owner" class="form-control" id="id_owner" value="{{ issue.owner }}" ></td></tr>
-                        <tr><th><label for="id_motherboard_version">motherboard_version:</label></th><td><input type="text" name="motherboard_version" class="form-control" id="id_motherboard_version" value="{{ issue.motherboard_version }}"></td>
-                            <th><label for="id_bios_version">bios_version:</label></th><td><input type="text" name="bios_version" class="form-control" id="id_bios_version" value="{{ issue.bios_version }}"></td></tr>
-                        <tr><th><label for="id_os_version">os_version:</label></th><td><input type="text" name="os_version" class="form-control" id="id_os_version" value="{{ issue.os_version }}"></td>
-                            <th><label for="id_submitter">submitter:</label></th><td><input type="text" name="submitter" class="form-control" id="id_submitter" value="{{ user.last_name }}" readonly></td></tr>
-                        <tr><th><label for="id_remark">remark:</label></th><td><textarea type="text" name="remark" class="form-control" id="id_remark" >{{ issue.remark }}</textarea></td></tr>
+                        <th><label for="id_open_date">Open_Date:</label></th><td><input type="text" name="open_date" class="form-control" id="id_open_date" readonly value="{{ issue.open_date | date:'Y-m-d' }}"></td>
+                        <th><label for="id_verify_date">Verify_Date:</label></th><td><input type="text" name="verify_date" class="form-control" id="id_verify_date" readonly value="{{ issue.verify_date | date:'Y-m-d' }}"></td></tr>
+                        <tr><th><label for="id_close_date">Close_Date:</label></th><td><input type="text" name="close_date" class="form-control" id="id_close_date" readonly value="{{ issue.close_date | date:'Y-m-d' }}"></td></tr>
+                        <tr><th><label for="id_owner">Owner:</label></th><td><input type="text" name="owner" class="form-control" id="id_owner" value="{{ issue.owner }}" ></td></tr>
+                        <tr><th><label for="id_motherboard_version">Motherboard_Version:</label></th><td><input type="text" name="motherboard_version" class="form-control" id="id_motherboard_version" value="{{ issue.motherboard_version }}"></td>
+                            <th><label for="id_bios_version">Bios_Version:</label></th><td><input type="text" name="bios_version" class="form-control" id="id_bios_version" value="{{ issue.bios_version }}"></td></tr>
+                        <tr><th><label for="id_os_version">OS_Version:</label></th><td><input type="text" name="os_version" class="form-control" id="id_os_version" value="{{ issue.os_version }}"></td>
+                            <th><label for="id_submitter">Submitter:</label></th><td><input type="text" name="submitter" class="form-control" id="id_submitter" value="{{ user.last_name }}" readonly></td></tr>
+                        <tr><th><label for="id_remark">Remark:</label></th><td><textarea type="text" name="remark" class="form-control" id="id_remark" >{{ issue.remark }}</textarea></td></tr>
                         </tbody>
                     </table>
                     <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">

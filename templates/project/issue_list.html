@@ -17,7 +17,7 @@
         {#        <div class="panel panel-primary ">#}
         {#            <div class="panel-heading">#}
         <h2>{{ pj.project_name }}'s bug list</h2>
-        <button type=button id="id_hide" class="btn">隐藏</button>
+        <button type=button id="id_hide" class="btn pull-right">只显示open</button>
         <button class="btn btn-success " type="button"
                 onclick="window.location.href='{% url 'add_issue' pj.id %}'">新增
         </button>
@@ -26,33 +26,33 @@
         {#            </div>#}
         <div class="panel-body">
 
-            <table class = "table table-striped table-bordered" id="issue_table">
+            <table class = "table table-striped table-bordered" id="issue_table" width="120%">
 
                 <thead class="">
                 <tr>
-                    <th bgcolor="#0044cc" style="color: white">bug_id</th>
+                    <th bgcolor="#0044cc" style="color: white">Bug_Id</th>
                     <th bgcolor="#0044cc" style="color: white">TRID</th>
-                    <th bgcolor="#0044cc" style="color: white">bugzilla</th>
-                    <th bgcolor="#0044cc" style="color: white">category</th>
-                    <th bgcolor="#0044cc" style="color: white">attribute</th>
-                    <th bgcolor="#0044cc" style="color: white">attribute_name</th>
-                    <th bgcolor="#0044cc" style="color: white">severity</th>
-                    <th bgcolor="#0044cc" style="color: white">description</th>
-                    <th bgcolor="#0044cc" style="color: white">procedure</th>
-                    <th bgcolor="#0044cc" style="color: white">comment</th>
-                    <th bgcolor="#0044cc" style="color: white">root_cause</th>
-                    <th bgcolor="#0044cc" style="color: white">solution</th>
-                    <th bgcolor="#0044cc" style="color: white">status</th>
-                    <th bgcolor="#0044cc" style="color: white">solving_type</th>
-                    <th bgcolor="#0044cc" style="color: white">open_date</th>
-                    <th bgcolor="#0044cc" style="color: white">verify_date</th>
-                    <th bgcolor="#0044cc" style="color: white">close_date</th>
-                    <th bgcolor="#0044cc" style="color: white">owner</th>
-                    <th bgcolor="#0044cc" style="color: white">motherboard_version</th>
-                    <th bgcolor="#0044cc" style="color: white">bios_version</th>
-                    <th bgcolor="#0044cc" style="color: white">os_version</th>
-                    <th bgcolor="#0044cc" style="color: white">remark</th>
-                    <th bgcolor="#0044cc" style="color: white">submitter</th>
+                    <th bgcolor="#0044cc" style="color: white">Bbugzilla</th>
+                    <th bgcolor="#0044cc" style="color: white">Category</th>
+                    <th bgcolor="#0044cc" style="color: white">Attribute</th>
+                    <th bgcolor="#0044cc" style="color: white">Attribute_Name</th>
+                    <th bgcolor="#0044cc" style="color: white">Severity</th>
+                    <th bgcolor="#0044cc" style="color: white">Description</th>
+                    <th bgcolor="#0044cc" style="color: white">Procedure</th>
+                    <th bgcolor="#0044cc" style="color: white">Comment</th>
+                    <th bgcolor="#0044cc" style="color: white">Root_Cause</th>
+                    <th bgcolor="#0044cc" style="color: white">Solution</th>
+                    <th bgcolor="#0044cc" style="color: white">Status</th>
+                    <th bgcolor="#0044cc" style="color: white">Solving_Type</th>
+                    <th bgcolor="#0044cc" style="color: white">Open_Date</th>
+                    <th bgcolor="#0044cc" style="color: white">Verify_Date</th>
+                    <th bgcolor="#0044cc" style="color: white">Close_Date</th>
+                    <th bgcolor="#0044cc" style="color: white">Owner</th>
+                    <th bgcolor="#0044cc" style="color: white">Motherboard_Version</th>
+                    <th bgcolor="#0044cc" style="color: white">Bios_Version</th>
+                    <th bgcolor="#0044cc" style="color: white">Os_Version</th>
+                    <th bgcolor="#0044cc" style="color: white">Remark</th>
+                    <th bgcolor="#0044cc" style="color: white">Submitter</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -66,9 +66,9 @@
                         <td>{{ i.attribute }}</td>
                         <td>{{ i.attribute_name }}</td>
                         <td>{{ i.severity }}</td>
-                        <td>{{ i.description }}</td>
-                        <td>{{ i.procedure }}</td>
-                        <td>{{ i.comment }}</td>
+                        <td>{{ i.description|linebreaksbr }}</td>
+                        <td>{{ i.procedure|linebreaksbr }}</td>
+                        <td>{{ i.comment|linebreaksbr }}</td>
                         <td>{{ i.root_cause }}</td>
                         <td>{{ i.solution }}</td>
                         {% if i.status == "closed" %}

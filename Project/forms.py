@@ -44,8 +44,11 @@ class ProjectForm(Form):
     # project_sku_qty = fields.CharField(
     #     widget=widgets.TextInput(attrs={'class': 'form-control'})
     # )
-    project_is_leading_project = fields.CharField(
-        widget=widgets.TextInput(attrs={'class': 'form-control'})
+    project_is_leading_project = fields.ChoiceField(
+        choices=(('Leading', "Leading"), ("Non-Leading", "Non-Leading")),
+        initial="Non-Leading",
+        widget=widgets.Select(
+            attrs={'class': 'form-control'})
     )
     project_progress = fields.CharField(
         widget=widgets.TextInput(attrs={'class': 'form-control','readonly':'true'}),
@@ -103,11 +106,12 @@ class update_ProjectForm(Form):
         widget=widgets.Select(choices=Project.models.ProjectStyle.objects.values_list('id', 'name'),
                               attrs={'class': 'form-control'})
     )
-    project_sku_qty = fields.CharField(
-        widget=widgets.TextInput(attrs={'class': 'form-control'})
-    )
-    project_is_leading_project = fields.CharField(
-        widget=widgets.TextInput(attrs={'class': 'form-control'})
+
+    project_is_leading_project = fields.ChoiceField(
+        choices=(('Leading', "Leading"), ("Non-Leading", "Non-Leading")),
+        initial="Non-Leading",
+        widget=widgets.Select(
+            attrs={'class': 'form-control'})
     )
     project_progress = fields.CharField(
         widget=widgets.TextInput(attrs={'class': 'form-control','readonly':'true'}),
