@@ -68,7 +68,7 @@
 
                             {% endfor %}
                             <td>
-                                <select class="form-control sel_mem" name="{{ sheets.id }}" id="sheet{{ sheets.id }}" onchange="aa({{ sheets.id }})">
+                                <select style="background-color: #9acfea" class="form-control sel_mem" name="{{ sheets.id }}" id="sheet{{ sheets.id }}" onchange="aa({{ sheets.id }})">
                                     {% for u in test_user %}
                                         {% if u.last_name == 'N/A' %}
                                             <option value="{{ u.id }}" selected>{{ u.last_name }}</option>
@@ -85,178 +85,8 @@
                                 var sel = "sheet"+tt;
                                 var sels = "sheets"+tt;
                                 $("#"+sels+" ").val(document.getElementById(sel).value);
-                                {#$("#sheets1 ").val(document.getElementById("sheet1").value);#}
-                                {#$("#sheets2 ").val(document.getElementById("sheet2").value);#}
-                                {#$("#sheets3 ").val(document.getElementById("sheet3").value);#}
-                                {#$("#sheets4 ").val(document.getElementById("sheet4").value);#}
-                                {#$("#sheets5 ").val(document.getElementById("sheet5").value);#}
-                                {#$("#sheets6 ").val(document.getElementById("sheet6").value);#}
-                                {#$("#sheets7 ").val(document.getElementById("sheet7").value);#}
-                                {#$("#sheets8 ").val(document.getElementById("sheet8").value);#}
-                                {#$("#sheets9 ").val(document.getElementById("sheet9").value);#}
-                                {#$("#sheets10 ").val(document.getElementById("sheet10").value);#}
-                                {#$("#sheets11 ").val(document.getElementById("sheet11").value);#}
-                                {#$("#sheets12 ").val(document.getElementById("sheet12").value);#}
-                                {#$("#sheets13 ").val(document.getElementById("sheet13").value);#}
-                                {#$("#sheets14 ").val(document.getElementById("sheet14").value);#}
-                                {#$("#sheets15 ").val(document.getElementById("sheet15").value);#}
-                                {#$("#sheets16 ").val(document.getElementById("sheet16").value);#}
-                                {#$("#sheets17 ").val(document.getElementById("sheet17").value);#}
-                                {#$("#sheets18 ").val(document.getElementById("sheet18").value);#}
-                                {#$("#sheets19 ").val(document.getElementById("sheet19").value);#}
-                                {#$("#sheets20 ").val(document.getElementById("sheet20").value);#}
-                                {#$("#sheets21 ").val(document.getElementById("sheet21").value);#}
-                                {#$("#sheets22 ").val(document.getElementById("sheet22").value);#}
-                                {#$("#sheets23 ").val(document.getElementById("sheet23").value);#}
-                                {#$("#sheets24 ").val(document.getElementById("sheet24").value);#}
-                                {#$("#sheets25 ").val(document.getElementById("sheet25").value);#}
-                                {#$("#sheets26 ").val(document.getElementById("sheet26").value);#}
-                                {#$("#sheets27 ").val(document.getElementById("sheet27").value);#}
-                                {#$("#sheets28 ").val(document.getElementById("sheet28").value);#}
-                                {#$("#sheets29 ").val(document.getElementById("sheet29").value);#}
-                                {#$("#sheets30 ").val(document.getElementById("sheet30").value);#}
-                                {#$("#sheets31 ").val(document.getElementById("sheet31").value);#}
-                                {#$("#sheets32 ").val(document.getElementById("sheet32").value);#}
-                                {#$("#sheets33 ").val(document.getElementById("sheet33").value);#}
-                                {#$("#sheets34 ").val(document.getElementById("sheet34").value);#}
-                                {#$("#sheets35 ").val(document.getElementById("sheet35").value);#}
-                                {#$("#sheets36 ").val(document.getElementById("sheet36").value);#}
-                                {#$("#sheets37 ").val(document.getElementById("sheet37").value);#}
-                                {#$("#sheets38 ").val(document.getElementById("sheet38").value);#}
-                                {#$("#sheets39 ").val(document.getElementById("sheet39").value);#}
-                                {#$("#sheets40 ").val(document.getElementById("sheet40").value);#}
-                                {#$("#sheets41 ").val(document.getElementById("sheet41").value);#}
-                                {#$("#sheets42 ").val(document.getElementById("sheet42").value);#}
-                                {#$("#sheets43 ").val(document.getElementById("sheet43").value);#}
-                                {#$("#sheets44 ").val(document.getElementById("sheet44").value);#}
-                                {#$("#sheets45 ").val(document.getElementById("sheet45").value);#}
-                                {#$("#sheets46 ").val(document.getElementById("sheet46").value);#}
-                                {#$("#sheets47 ").val(document.getElementById("sheet47").value);#}
-                                {#$("#sheets48 ").val(document.getElementById("sheet48").value);#}
-                                {#$("#sheets49 ").val(document.getElementById("sheet49").value);#}
-                                {#$("#sheets50 ").val(document.getElementById("sheet50").value);#}
-                                {#$("#sheets51 ").val(document.getElementById("sheet51").value);#}
-                                {#$("#sheets52 ").val(document.getElementById("sheet52").value);#}
-                                {#$("#sheets53 ").val(document.getElementById("sheet53").value);#}
-                                {#$("#sheets54 ").val(document.getElementById("sheet54").value);#}
-                                {#$("#sheets55 ").val(document.getElementById("sheet55").value);#}
-                                {#$("#sheets56 ").val(document.getElementById("sheet56").value);#}
-                                {#$("#sheets57 ").val(document.getElementById("sheet57").value);#}
-                                {#$("#sheets58 ").val(document.getElementById("sheet58").value);#}
-                                {#$("#sheets59 ").val(document.getElementById("sheet59").value);#}
-                                {#$("#sheets60 ").val(document.getElementById("sheet60").value);#}
-                                {#$("#sheets61 ").val(document.getElementById("sheet61").value);#}
-                                {#$("#sheets62 ").val(document.getElementById("sheet62").value);#}
-                                {#$("#sheets63 ").val(document.getElementById("sheet63").value);#}
-                                {#$("#sheets64 ").val(document.getElementById("sheet64").value);#}
-                                {#$("#sheets65 ").val(document.getElementById("sheet65").value);#}
-                                {#$("#sheets66 ").val(document.getElementById("sheet66").value);#}
-                                {#$("#sheets67 ").val(document.getElementById("sheet67").value);#}
-                                {#$("#sheets68 ").val(document.getElementById("sheet68").value);#}
-                                {#$("#sheets69 ").val(document.getElementById("sheet69").value);#}
-                                {#$("#sheets70 ").val(document.getElementById("sheet70").value);#}
-                                {#$("#sheets71 ").val(document.getElementById("sheet71").value);#}
-                                {#$("#sheets72 ").val(document.getElementById("sheet72").value);#}
-                                {#$("#sheets73 ").val(document.getElementById("sheet73").value);#}
-                                {#$("#sheets74 ").val(document.getElementById("sheet74").value);#}
-                                {#$("#sheets75 ").val(document.getElementById("sheet75").value);#}
-                                {#$("#sheets76 ").val(document.getElementById("sheet76").value);#}
-                                {#$("#sheets77 ").val(document.getElementById("sheet77").value);#}
-                                {#$("#sheets78 ").val(document.getElementById("sheet78").value);#}
-                                {#$("#sheets79 ").val(document.getElementById("sheet79").value);#}
-                                {#$("#sheets80 ").val(document.getElementById("sheet80").value);#}
-                                {#$("#sheets81 ").val(document.getElementById("sheet81").value);#}
-                                {#$("#sheets82 ").val(document.getElementById("sheet82").value);#}
-                                {#$("#sheets83 ").val(document.getElementById("sheet83").value);#}
-                                {#$("#sheets84 ").val(document.getElementById("sheet84").value);#}
-                                {#$("#sheets85 ").val(document.getElementById("sheet85").value);#}
-                                {#$("#sheets86 ").val(document.getElementById("sheet86").value);#}
-                                {#$("#sheets87 ").val(document.getElementById("sheet87").value);#}
-                                {#$("#sheets88 ").val(document.getElementById("sheet88").value);#}
-                                {#$("#sheets89 ").val(document.getElementById("sheet89").value);#}
-                                {#$("#sheets90 ").val(document.getElementById("sheet90").value);#}
-                                {#$("#sheets91 ").val(document.getElementById("sheet91").value);#}
-                                {#$("#sheets92 ").val(document.getElementById("sheet92").value);#}
-                                {#$("#sheets93 ").val(document.getElementById("sheet93").value);#}
-                                {#$("#sheets94 ").val(document.getElementById("sheet94").value);#}
-                                {#$("#sheets95 ").val(document.getElementById("sheet95").value);#}
-                                {#$("#sheets96 ").val(document.getElementById("sheet96").value);#}
-                                {#$("#sheets97 ").val(document.getElementById("sheet97").value);#}
-                                {#$("#sheets98 ").val(document.getElementById("sheet98").value);#}
-                                {#$("#sheets99 ").val(document.getElementById("sheet99").value);#}
-                                {#$("#sheets100 ").val(document.getElementById("sheet100").value);#}
-                                {#$("#sheets101 ").val(document.getElementById("sheet101").value);#}
-                                {#$("#sheets102 ").val(document.getElementById("sheet102").value);#}
-                                {#$("#sheets103 ").val(document.getElementById("sheet103").value);#}
-                                {#$("#sheets104 ").val(document.getElementById("sheet104").value);#}
-                                {#$("#sheets105 ").val(document.getElementById("sheet105").value);#}
-                                {#$("#sheets106 ").val(document.getElementById("sheet106").value);#}
-                                {#$("#sheets107 ").val(document.getElementById("sheet107").value);#}
-                                {#$("#sheets108 ").val(document.getElementById("sheet108").value);#}
-                                {#$("#sheets109 ").val(document.getElementById("sheet109").value);#}
-                                {#$("#sheets110 ").val(document.getElementById("sheet110").value);#}
-                                {#$("#sheets111 ").val(document.getElementById("sheet111").value);#}
-                                {#$("#sheets112 ").val(document.getElementById("sheet112").value);#}
-                                {#$("#sheets113 ").val(document.getElementById("sheet113").value);#}
-                                {#$("#sheets114 ").val(document.getElementById("sheet114").value);#}
-                                {#$("#sheets115 ").val(document.getElementById("sheet115").value);#}
-                                {#$("#sheets116 ").val(document.getElementById("sheet116").value);#}
-                                {#$("#sheets117 ").val(document.getElementById("sheet117").value);#}
-                                {#$("#sheets118 ").val(document.getElementById("sheet118").value);#}
-                                {#$("#sheets119 ").val(document.getElementById("sheet119").value);#}
-                                {#$("#sheets120 ").val(document.getElementById("sheet120").value);#}
-                                {#$("#sheets121 ").val(document.getElementById("sheet121").value);#}
-                                {#$("#sheets122 ").val(document.getElementById("sheet122").value);#}
-                                {#$("#sheets123 ").val(document.getElementById("sheet123").value);#}
-                                {#$("#sheets124 ").val(document.getElementById("sheet124").value);#}
-                                {#$("#sheets125 ").val(document.getElementById("sheet125").value);#}
-                                {#$("#sheets126 ").val(document.getElementById("sheet126").value);#}
-                                {#$("#sheets127 ").val(document.getElementById("sheet127").value);#}
-                                {#$("#sheets128 ").val(document.getElementById("sheet128").value);#}
-                                {#$("#sheets129 ").val(document.getElementById("sheet129").value);#}
-                                {#$("#sheets130 ").val(document.getElementById("sheet130").value);#}
-                                {#$("#sheets131 ").val(document.getElementById("sheet131").value);#}
-                                {#$("#sheets132 ").val(document.getElementById("sheet132").value);#}
-                                {#$("#sheets133 ").val(document.getElementById("sheet133").value);#}
-                                {#$("#sheets134 ").val(document.getElementById("sheet134").value);#}
-                                {#$("#sheets135 ").val(document.getElementById("sheet135").value);#}
-                                {#$("#sheets136 ").val(document.getElementById("sheet136").value);#}
-                                {#$("#sheets137 ").val(document.getElementById("sheet137").value);#}
-                                {#$("#sheets138 ").val(document.getElementById("sheet138").value);#}
-                                {#$("#sheets139 ").val(document.getElementById("sheet139").value);#}
-                                {#$("#sheets140 ").val(document.getElementById("sheet140").value);#}
-                                {#$("#sheets141 ").val(document.getElementById("sheet141").value);#}
-                                {#$("#sheets142 ").val(document.getElementById("sheet142").value);#}
-                                {#$("#sheets143 ").val(document.getElementById("sheet143").value);#}
-                                {#$("#sheets144 ").val(document.getElementById("sheet144").value);#}
-                                {#$("#sheets145 ").val(document.getElementById("sheet145").value);#}
-                                {#$("#sheets146 ").val(document.getElementById("sheet146").value);#}
-                                {#$("#sheets147 ").val(document.getElementById("sheet147").value);#}
-                                {#$("#sheets148 ").val(document.getElementById("sheet148").value);#}
-                                {#$("#sheets149 ").val(document.getElementById("sheet149").value);#}
-                                {#$("#sheets150 ").val(document.getElementById("sheet150").value);#}
-                                {#$("#sheets151 ").val(document.getElementById("sheet151").value);#}
-                                {#$("#sheets152").val(document.getElementById("sheet152").value);#}
-                                {#$("#sheets153 ").val(document.getElementById("sheet153").value);#}
-                                {#$("#sheets154 ").val(document.getElementById("sheet154").value);#}
-                                {#$("#sheets155 ").val(document.getElementById("sheet155").value);#}
-                                {#$("#sheets156 ").val(document.getElementById("sheet156").value);#}
-                                {#$("#sheets157 ").val(document.getElementById("sheet157").value);#}
-
-                                {#$("#sheets158 ").val(document.getElementById("sheet158").value);#}
-                                {#$("#sheets159 ").val(document.getElementById("sheet159").value);#}
-                                {#$("#sheets160 ").val(document.getElementById("sheet160").value);#}
-                                {#$("#sheets161 ").val(document.getElementById("sheet161").value);#}
-                                {#$("#sheets162 ").val(document.getElementById("sheet162").value);#}
-                                {#$("#sheets163 ").val(document.getElementById("sheet163").value);#}
-                                {#$("#sheets164 ").val(document.getElementById("sheet164").value);#}
-                                {#$("#sheets165 ").val(document.getElementById("sheet165").value);#}
-                                {#$("#sheets166 ").val(document.getElementById("sheet166").value);#}
-                                {#$("#sheets167 ").val(document.getElementById("sheet167").value);#}
-                                {#$("#sheets168 ").val(document.getElementById("sheet168").value);#}
-                                {#$("#sheets169 ").val(document.getElementById("sheet169").value);#}
-                                {#$("#sheets170 ").val(document.getElementById("sheet170").value);#}
                             }
+
                         </script>
                         </tr>
                         </tbody>
@@ -268,6 +98,7 @@
         </form>
         </div>
         </div>
+
     {% else %}
         <a href="/login/"><h1>please login!</h1></a>
     {% endif %}

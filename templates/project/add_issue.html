@@ -1,153 +1,182 @@
-{% extends 'index.html' %}
-{% block page-content %}
+{#{% extends 'index.html' %}#}
+{#{% block page-content %}#}
 
-    <title>add issue</title>
-    <p>{% if user.is_authenticated %}
-        <div class="panel panel-primary ">
-            <div class="panel-heading">
-                <h2 class="panel-title">{{ pj.project_name }} -> add bug</h2>
-            </div>
-            <div class="panel-body">
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <table class = "table table-striped table-bordered">
+<title>add issue</title>
+<p>{% if user.is_authenticated %}
+    {#        <div class="panel panel-primary ">#}
+    {#            <div class="panel-heading">#}
+    {#                <h2 class="panel-title">{{ pj.project_name }} -> add bug</h2>#}
+    {#            </div>#}
+    {#            <div class="panel-body">#}
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                                                                            aria-hidden="true"></span>
+    </button>
+    <div class="modal-header">
+    <div class="panel panel-primary ">
+    <div class="panel-heading">
+        <h2 class="panel-title">{{ pj.project_name }} -> add bug</h2>
+    </div>
+    <div class="panel-body">
+
+    </div>
+
+    <form action="{% url "add_issue" pj.id%}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body">
+            <table class = "table table-striped table-bordered">
 
 
-                        <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ pj.id }}" readonly ></td></tr>
-                        <tr><th><label for="id_project_name">Project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
-                        <tr><th><label for="id_TRID">TRID:</label></th><td><input type="text" name="TRID" class="form-control" id="id_TRID"></td>
-                            <th><label for="id_bugzilla_id">Bugzilla_Id:</label></th><td><input type="text" name="bugzilla_id" class="form-control" id="id_bugzilla_id"></td></tr>
-                        <tr><th><label for="id_category">Category:</label></th><td><select name="category" class="form-control" id="id_category">
-                            <option value="HW">HW</option>
-                            <option value="Key_Component">Key_Component</option>
-                            <option value="FW">FW</option>
-                            <option value="Driver">Driver</option>
-                            <option value="SW">SW</option>
-                            <option value="ME">ME</option>
-                        </select></td></tr>
-                            <th><label for="id_attribute">Attribute:</label></th><td><select name="attribute" class="form-control" id="id_attribute" >
-                                <option value="[HW]Main Board">[HW]Main Board</option>
-                                <option value="[HW]Daughter Board">[HW]Daughter Board</option>
-                                <option value="[HW]Signal Integrity">[HW]Signal Integrity</option>
-                                <option value="[HW]Antenna">[HW]Antenna</option>
-                                <option value="[HW]EMC/Safety">[HW]EMC/Safety</option>
-                                <option value="[HW]Thermal">[HW]Thermal</option>
-                                <option value="[HW]Acoustic">[HW]Acoustic</option>
-                                <option value="[HW]Others">[HW]Others</option>
-                                <option value="[KC]Chipset">[KC]Chipset</option>
-                                <option value="[KC]CPU/APU">[KC]CPU/APU</option>
-                                <option value="[KC]VGA">[KC]VGA</option>
-                                <option value="[KC]Memory">[KC]Memory</option>
-                                <option value="[KC]HDD/SDD/mSATA">[KC]HDD/SDD/mSATA</option>
-                                <option value="[KC]ODD">[KC]ODD</option>
-                                <option value="[KC]Panel">[KC]Panel</option>
-                                <option value="[KC]Touch Panel">[KC]Touch Panel</option>
-                                <option value="[KC]Camera">[KC]Camera</option>
-                                <option value="[KC]Card Reader">[KC]Card Reader</option>
-                                <option value="[KC]LAN">[KC]LAN</option>
-                                <option value="[KC]WLAN">[KC]WLAN</option>
-                                <option value="[KC]BlueTooth">[KC]BlueTooth</option>
-                                <option value="[KC]Micphone">[KC]Micphone</option>
-                                <option value="[KC]Camera">[KC]Camera</option>
-                                <option value="[KC]KB/Mouse">[KC]KB/Mouse</option>
-                                <option value="[KC]Remote Control">[KC]Remote Control</option>
-                                <option value="[KC]Adapter/PSU">[KC]Adapter/PSU</option>
-                                <option value="[KC]USB">[KC]USB</option>
-                                <option value="[KC]Audio">[KC]Audio</option>
-                                <option value="[KC]Speaker">[KC]Speaker</option>
-                                <option value="[KC]Sensor">[KC]Sensor</option>
-                                <option value="[KC]NFC">[KC]NFC</option>
-                                <option value="[KC]TPM">[KC]TPM</option>
-                                <option value="[KC]Others">[KC]Others</option>
-                                <option value="[FW]BIOS">[FW]BIOS</option>
-                                <option value="[FW]EC">[FW]EC</option>
-                                <option value="[FW]Inter ME">[FW]Inter ME</option>
-                                <option value="[FW]Others">[FW]Others</option>
-                                <option value="[Driver]Chipset">[Driver]Chipset</option>
-                                <option value="[Driver]CPU/APU">[Driver]CPU/APU</option>
-                                <option value="[Driver]VGA">[Driver]VGA</option>
-                                <option value="[Driver]Touch Panel">[Driver]Touch Panel</option>
-                                <option value="[Driver]Camera">[Driver]Camera</option>
-                                <option value="[Driver]Card Reader">[Driver]Card Reader</option>
-                                <option value="[Driver]LAN">[Driver]LAN</option>
-                                <option value="[Driver]WLAN">[Driver]WLAN</option>
-                                <option value="[Driver]BlueTooth">[Driver]BlueTooth</option>
-                                <option value="[Driver]Hot Key">[Driver]Hot Key</option>
-                                <option value="[Driver]Audio">[Driver]Audio</option>
-                                <option value="[Driver]Sensor">[Driver]Sensor</option>
-                                <option value="[Driver]Others">[Driver]Others</option>
-                                <option value="[SW]Application">[SW]Application</option>
-                                <option value="[SW]Preload">[SW]Preload</option>
-                                <option value="[ME]Structure">[ME]Structure</option>
-                                <option value="[ME]Cosmetic">[ME]Cosmetic</option>
-                                <option value="[ME]Cable">[ME]Cable</option>
-                                <option value="[ME]Parts">[ME]Parts</option>
-                                <option value="[ME]Packing">[ME]Packing</option>
-                                <option value="[ME]ID">[ME]ID</option>
-                                <option value="[ME]Others">[ME]Others</option>
-                            </select></td></tr>
-                        <tr><th><label for="id_attribute_name">Attribute_Name:</label></th><td><input type="text" name="attribute_name" class="form-control" id="id_attribute_name" ></td>
-                            <th><label for="id_severity">Severity:</label></th><td><select name="severity" class="form-control" id="id_severity" >
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select></td></tr>
-                        <tr><th><label for="id_description">Description:</label></th><td><textarea name="description" class="form-control" id="id_description" ></textarea></td>
-                            <th><label for="id_procedure">Procedure:</label></th><td><textarea name="procedure" class="form-control" id="id_procedure" ></textarea></td></tr>
-                        <tr><th><label for="id_comment">Comment:</label></th><td><textarea name="comment" class="form-control" id="id_comment" ></textarea></td></tr>
-{#                        <tr><th><label for="id_root_cause">root_cause:</label></th><td><textarea  name="root_cause" class="form-control" id="id_root_cause" ></textarea></td>#}
-{#                            <th><label for="id_solution">solution:</label></th><td><textarea name="solution" class="form-control" id="id_solution" ></textarea></td></tr>#}
-                        <th><label for="id_status">Status:</label></th><td><select name="status" class="form-control" id="id_status" >
-                        <option value="open">Open</option>
-                        <option value="closed">Closed</option>
-                        <option value="verify">Verify</option>
-                    </select></td>
-                        {#                            <th><label for="id_solving_type">solving_type:</label></th><td><select  name="solving_type" class="form-control" id="id_solving_type" >#}
-                        {#                                <option value=""></option>#}
-                        {#                                <option value="Fixed">Fixed</option>#}
-                        {#                                <option value="Spec Changed">Spec Changed</option>#}
-                        {#                                <option value="Design">Design</option>#}
-                        {#                                <option value="Limitation">Limitation</option>#}
-                        {#                                <option value="Deferred">Deferred</option>#}
-                        {#                                <option value="Withdraw">Withdraw</option>#}
-                        {#                                <option value="Duplicated">Duplicated</option>#}
-                        {#                                <option value="Cannot Duplicate">Cannot Duplicate</option>#}
-                        {#                            </select></td></tr>#}
-                        <th><label for="id_open_date">Open_Date:</label></th><td><input type="text" name="open_date" class="form-control" id="id_open_date" readonly></td>
-                        {#                            <th><label for="id_verify_date">verify_date:</label></th><td><input type="text" name="verify_date" class="form-control" id="id_verify_date" readonly></td></tr>#}
-                        {#                        <tr><th><label for="id_close_date">close_date:</label></th><td><input type="text" name="close_date" class="form-control" id="id_close_date" readonly></td></tr>#}
-                        <tr><th><label for="id_owner">Owner:</label></th><td><input type="text" name="owner" class="form-control" id="id_owner"></td></tr>
-                        <tr><th><label for="id_motherboard_version">Motherboard_Version:</label></th><td><input type="text" name="motherboard_version" class="form-control" id="id_motherboard_version"></td>
-                            <th><label for="id_bios_version">Bios_Version:</label></th><td><input type="text" name="bios_version" class="form-control" id="id_bios_version"></td></tr>
-                        <tr><th><label for="id_os_version">Os_Version:</label></th><td><input type="text" name="os_version" class="form-control" id="id_os_version"></td>
-                            <th><label for="id_submitter">Submitter:</label></th><td><input type="text" name="submitter" class="form-control" id="id_submitter" value="{{ user.last_name }}" readonly></td></tr>
-                        <tr><th><label for="id_remark">Remark:</label></th><td><textarea name="remark" class="form-control" id="id_remark"></textarea></td></tr>
-                        </tbody>
-                    </table>
-                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                    <input class="btn btn-success pull-right" type="submit" value="提交">
-
-                </form>
-            </div>
+                <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ pj.id }}" readonly ></td></tr>
+                <tr><th><label for="id_project_name">Project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
+                <tr><th><label for="id_TRID">TRID:</label></th><td><input type="text" name="TRID" class="form-control" id="id_TRID"></td>
+                    <th><label for="id_bugzilla_id">Bugzilla_Id:</label></th><td><input type="text" name="bugzilla_id" class="form-control" id="id_bugzilla_id"></td></tr>
+                <tr><th><label for="id_category">Category:</label></th><td><select name="category" class="form-control" id="id_category">
+                    <option value="HW">HW</option>
+                    <option value="Key_Component">Key_Component</option>
+                    <option value="FW">FW</option>
+                    <option value="Driver">Driver</option>
+                    <option value="SW">SW</option>
+                    <option value="ME">ME</option>
+                </select></td></tr>
+                <th><label for="id_attribute">Attribute:</label></th><td><select name="attribute" class="form-control" id="id_attribute" >
+                <option value="[HW]Main Board">[HW]Main Board</option>
+                <option value="[HW]Daughter Board">[HW]Daughter Board</option>
+                <option value="[HW]Signal Integrity">[HW]Signal Integrity</option>
+                <option value="[HW]Antenna">[HW]Antenna</option>
+                <option value="[HW]EMC/Safety">[HW]EMC/Safety</option>
+                <option value="[HW]Thermal">[HW]Thermal</option>
+                <option value="[HW]Acoustic">[HW]Acoustic</option>
+                <option value="[HW]Others">[HW]Others</option>
+                <option value="[KC]Chipset">[KC]Chipset</option>
+                <option value="[KC]CPU/APU">[KC]CPU/APU</option>
+                <option value="[KC]VGA">[KC]VGA</option>
+                <option value="[KC]Memory">[KC]Memory</option>
+                <option value="[KC]HDD/SDD/mSATA">[KC]HDD/SDD/mSATA</option>
+                <option value="[KC]ODD">[KC]ODD</option>
+                <option value="[KC]Panel">[KC]Panel</option>
+                <option value="[KC]Touch Panel">[KC]Touch Panel</option>
+                <option value="[KC]Camera">[KC]Camera</option>
+                <option value="[KC]Card Reader">[KC]Card Reader</option>
+                <option value="[KC]LAN">[KC]LAN</option>
+                <option value="[KC]WLAN">[KC]WLAN</option>
+                <option value="[KC]BlueTooth">[KC]BlueTooth</option>
+                <option value="[KC]Micphone">[KC]Micphone</option>
+                <option value="[KC]Camera">[KC]Camera</option>
+                <option value="[KC]KB/Mouse">[KC]KB/Mouse</option>
+                <option value="[KC]Remote Control">[KC]Remote Control</option>
+                <option value="[KC]Adapter/PSU">[KC]Adapter/PSU</option>
+                <option value="[KC]USB">[KC]USB</option>
+                <option value="[KC]Audio">[KC]Audio</option>
+                <option value="[KC]Speaker">[KC]Speaker</option>
+                <option value="[KC]Sensor">[KC]Sensor</option>
+                <option value="[KC]NFC">[KC]NFC</option>
+                <option value="[KC]TPM">[KC]TPM</option>
+                <option value="[KC]Others">[KC]Others</option>
+                <option value="[FW]BIOS">[FW]BIOS</option>
+                <option value="[FW]EC">[FW]EC</option>
+                <option value="[FW]Inter ME">[FW]Inter ME</option>
+                <option value="[FW]Others">[FW]Others</option>
+                <option value="[Driver]Chipset">[Driver]Chipset</option>
+                <option value="[Driver]CPU/APU">[Driver]CPU/APU</option>
+                <option value="[Driver]VGA">[Driver]VGA</option>
+                <option value="[Driver]Touch Panel">[Driver]Touch Panel</option>
+                <option value="[Driver]Camera">[Driver]Camera</option>
+                <option value="[Driver]Card Reader">[Driver]Card Reader</option>
+                <option value="[Driver]LAN">[Driver]LAN</option>
+                <option value="[Driver]WLAN">[Driver]WLAN</option>
+                <option value="[Driver]BlueTooth">[Driver]BlueTooth</option>
+                <option value="[Driver]Hot Key">[Driver]Hot Key</option>
+                <option value="[Driver]Audio">[Driver]Audio</option>
+                <option value="[Driver]Sensor">[Driver]Sensor</option>
+                <option value="[Driver]Others">[Driver]Others</option>
+                <option value="[SW]Application">[SW]Application</option>
+                <option value="[SW]Preload">[SW]Preload</option>
+                <option value="[ME]Structure">[ME]Structure</option>
+                <option value="[ME]Cosmetic">[ME]Cosmetic</option>
+                <option value="[ME]Cable">[ME]Cable</option>
+                <option value="[ME]Parts">[ME]Parts</option>
+                <option value="[ME]Packing">[ME]Packing</option>
+                <option value="[ME]ID">[ME]ID</option>
+                <option value="[ME]Others">[ME]Others</option>
+            </select></td></tr>
+                <tr><th><label for="id_attribute_name">Attribute_Name:</label></th><td><input type="text" name="attribute_name" class="form-control" id="id_attribute_name" ></td>
+                    <th><label for="id_severity">Severity:</label></th><td><select name="severity" class="form-control" id="id_severity" >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select></td></tr>
+                <tr><th><label for="id_description">Description:</label></th><td><textarea name="description" class="form-control" id="id_description" required></textarea></td>
+                    <th><label for="id_procedure">Procedure:</label></th><td><textarea name="procedure" class="form-control" id="id_procedure" required></textarea></td></tr>
+                <tr><th><label for="id_comment">Comment:</label></th><td><textarea name="comment" class="form-control" id="id_comment" required></textarea></td></tr>
+                {#                        <tr><th><label for="id_root_cause">root_cause:</label></th><td><textarea  name="root_cause" class="form-control" id="id_root_cause" ></textarea></td>#}
+                {#                            <th><label for="id_solution">solution:</label></th><td><textarea name="solution" class="form-control" id="id_solution" ></textarea></td></tr>#}
+                <th><label for="id_status">Status:</label></th><td><select name="status" class="form-control" id="id_status" >
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+                <option value="verify">Verify</option>
+            </select></td>
+                {#                            <th><label for="id_solving_type">solving_type:</label></th><td><select  name="solving_type" class="form-control" id="id_solving_type" >#}
+                {#                                <option value=""></option>#}
+                {#                                <option value="Fixed">Fixed</option>#}
+                {#                                <option value="Spec Changed">Spec Changed</option>#}
+                {#                                <option value="Design">Design</option>#}
+                {#                                <option value="Limitation">Limitation</option>#}
+                {#                                <option value="Deferred">Deferred</option>#}
+                {#                                <option value="Withdraw">Withdraw</option>#}
+                {#                                <option value="Duplicated">Duplicated</option>#}
+                {#                                <option value="Cannot Duplicate">Cannot Duplicate</option>#}
+                {#                            </select></td></tr>#}
+                <th><label for="id_open_date">Open_Date:</label></th><td><input type="text" name="open_date" class="form-control" id="id_open_date" readonly ></td>
+                {#                            <th><label for="id_verify_date">verify_date:</label></th><td><input type="text" name="verify_date" class="form-control" id="id_verify_date" readonly></td></tr>#}
+                {#                        <tr><th><label for="id_close_date">close_date:</label></th><td><input type="text" name="close_date" class="form-control" id="id_close_date" readonly></td></tr>#}
+                <tr><th><label for="id_owner">Owner:</label></th><td><input type="text" name="owner" class="form-control" id="id_owner"></td></tr>
+                <tr><th><label for="id_motherboard_version">Motherboard_Version:</label></th><td><input type="text" name="motherboard_version" class="form-control" id="id_motherboard_version"></td>
+                    <th><label for="id_bios_version">Bios_Version:</label></th><td><input type="text" name="bios_version" class="form-control" id="id_bios_version"></td></tr>
+                <tr><th><label for="id_os_version">Os_Version:</label></th><td><input type="text" name="os_version" class="form-control" id="id_os_version"></td>
+                    <th><label for="id_submitter">Submitter:</label></th><td><input type="text" name="submitter" class="form-control" id="id_submitter" value="{{ user.last_name }}" readonly></td></tr>
+                <tr><th><label for="id_remark">Remark:</label></th><td><textarea name="remark" class="form-control" id="id_remark"></textarea></td></tr>
+                </tbody>
+            </table>
         </div>
+        <div class="modal-footer">
+            {#                    <input class="btn btn-success pull-right" type="button" onclick="javascript:history.back(-1);" value="返回">#}
 
-    {% else %}
-        <a href="/login/"><h1>please login!</h1></a>
-    {% endif %}
+
+{#            <input class="btn btn-success pull-right" type="button" value="关闭" onclick="window.close()">#}
+            <input class="btn btn-success pull-right" type="submit" value="提交">
+        </div>
+    </form>
+
+
+
+{% else %}
+    <a href="/login/"><h1>please login!</h1></a>
+{% endif %}
     <script>
-        $('#id_open_date,#id_verify_date,#id_close_date').datetimepicker({
+        $('#id_open_date').datetimepicker({
             format: 'yyyy-mm-dd',
             weekStart: 1,
             autoclose: true,
             startView: 2,
             minView: 2,
-            forceParse: false,
+            forceParse: true,
             language: 'en'
         });
+        var ddd = new Date();
+        var day = ddd.getDate();
+        if(ddd.getMonth()<10){
+            var month='0' + (ddd.getMonth()+1);
+        }
+        if(ddd.getDate()<10){
+            day = "0" + ddd.getDate();
+        }
+        var datew = ddd.getFullYear() + "-" + month + "-"+ day;
+        var datew = datew.toString();
+        $("#id_open_date").val(datew)
     </script>
 
     <br><br>
-{% endblock %}
+    {#{% endblock %}#}
 
-<!-- forloop.counter -->
+    <!-- forloop.counter -->

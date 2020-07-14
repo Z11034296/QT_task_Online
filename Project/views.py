@@ -419,9 +419,7 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
         # case id 与 result组成字典后加到数据库
         project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
         case_id_list=request.POST.getlist('case_id')
-
         result_list=request.POST.getlist('test_result')
-
         remark_list=request.POST.getlist('remark')
         result=dict(zip(case_id_list,result_list))
         remark_result=dict(zip(case_id_list,remark_list))
@@ -473,7 +471,6 @@ def task_table(request,lid):
             final_result = 'N/A'
         else:
             final_result = 'Pass'
-
         sheet_result_list[i.sheet_name] = final_result
 
     # 每个sheet中的case个数填入sheets_list
@@ -557,6 +554,7 @@ def result_review(request,lid,sid,skunum):
                           'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
             for i in result:
                 if i.test_case.id == j.id:
+                    result_dic['result_id']=i.id
                     result_dic['result'] = i.test_result
                     result_dic['remark'] = i.remark
                     if "refer to bug " in i.remark:
@@ -969,8 +967,8 @@ def export_project_report(self, lid):
         w_c.write_merge(0, 1, 0, 4,project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report',style_heading)
         w_c.write_merge(2, 3, 0, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
         # w.write_merge(2, 3, 0, 0,'',style_title1)
-        w_c.write_merge(0, 1, 5, 5 + int(sku_n),'',style_heading)
-        w_c.write_merge(2, 3, 5, 5 + int(sku_n),'',style_heading)
+        w_c.write_merge(0, 3, 5, 5 + int(sku_n),'',style_heading)
+        # w_c.write_merge(2, 3, 5, 5 + int(sku_n),'',style_heading)
         excel_row_C = 6
 
 
@@ -1171,7 +1169,7 @@ def export_project_report(self, lid):
                     w_c.write(excel_row_C, 5 + k, i['sku' + str(k + 1) + '_progress'], style_body_1)
                 k += 1
             if i['bugid'] != []:
-                w_c.write(excel_row_C, 5 + int(sku_n), 'refer to bugID: ' + str(i['bugid']), style_body_2)
+                w_c.write(excel_row_C, 5 + int(sku_n), 'Refer to bugID: ' + str(i['bugid']), style_body_2)
             else:
                 w_c.write(excel_row_C, 5 + int(sku_n), '', style_body_1)
             excel_row_C += 1

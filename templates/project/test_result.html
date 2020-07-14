@@ -63,13 +63,15 @@
                             <td>{% if cases.test_plan_pic_path %}
                                 <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
                             {% endif %}</td>
-                            <td style="text-align: center;vertical-align: middle"><select class="form form-control" name="test_result" onchange="assign_bug(this,{{ cases.id }})">
-                                <option value="Pass">Pass</option>
-                                <option value="Fail">Fail</option>
-                                <option value="N/A">N/A</option>
-                                <option selected="selected"  style='display: none' value=''></option>
-                            </select>
-                                <input class="form-control" name="fail_bug_id{{ cases.id }}" id="fail_bug_id{{ cases.id }}" type="text" style="display: none" placeholder="对应bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
+                            <td style="text-align: center;vertical-align: middle">
+                                <select class="form form-control" name="test_result" onchange="add_bug(this,{{ cases.id }})">
+                                    <option value="Pass">Pass</option>
+                                    <option value="Fail">Fail</option>
+                                    <option value="N/A">N/A</option>
+                                    <option selected="selected"  style='display: none' value=''></option>
+                                </select>
+                                {#                                <input class="form-control" name="fail_bug_id{{ cases.id }}" id="fail_bug_id{{ cases.id }}" type="text" style="display: none" placeholder="对应bug_ID" oninput="value=value.replace(/[^\d]/g,'')" data-toggle="modal" data-target="#sel_fail"></td>#}
+                                <button href="{% url 'add_issue' pj.id %}" class="form-control" name="fail_bug_id{{ cases.id }}" type="button" id="fail_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail">新增issue</button></td>
 
                             <td style="vertical-align: middle"><input type="text" class="form form-control" name="remark"></td>
                         {% endfor %}
@@ -81,13 +83,20 @@
             </form>
         </div>
 
-
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="sel_fail" tabindex="-1" role="dialog" aria-labelledby="sel_fail" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
         <script>
-            function assign_bug(obj,tt) {
+            function add_bug(obj,tt) {
                 var sel_id="fail_bug_id"+tt;
                 {#console.log(obj,tt,obj.value);#}
                 if (obj.value === "Fail") {
                     $("#" + sel_id).css({"display": 'block'});
+
                 }
                 else{
                     $("#" + sel_id).css({"display": 'none'});

@@ -21,7 +21,7 @@
     <p>{% if user.is_authenticated %}
         <div class="panel panel-primary ">
             <div class="panel-heading">
-                <h2 class="panel-title">{{ pj.name }} {{ plist.project_stage }}'s Control Table</h2>
+                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
             </div>
             <h4 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h4>
             <div class="panel-body">
@@ -44,7 +44,7 @@
                     {% for i in new_list %}
                         <tr>
                             <td style="text-align: center">{{ i.sheet_name }}</td>
-                            <td style="text-align: center">{{ i.sheet_description }}</td>
+                            <td style="text-align: left">{{ i.sheet_description }}</td>
                             <td style="text-align: center">{{ i.attend_time }}</td>
                             {% for j in SKU_Num_list %}
                                 {% if j == 1 %}

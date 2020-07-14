@@ -63,12 +63,12 @@
                             {% else %}
                                 <td  style="text-align: center;vertical-align: middle">{{ i.result }}</td>
                             {% endif %}
-                            <td style="text-align: center;vertical-align: middle"><select class="form form-control" style="width: 100px" name="test_result">
+                            <td style="text-align: center;vertical-align: middle"><select class="form form-control" style="width: 100px" name="test_result" onchange="assign_bug(this,{{ i.result_id }})">
                                 <option value="Pass">Pass</option>
                                 <option value="Fail">Fail</option>
                                 <option value="N/A">N/A</option>
                                 <option selected="selected"  style='display: none' value=''></option>
-                            </select></td>
+                            </select><input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="对应bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
                             {% if "refer to bug " in i.remark %}
                                 <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
                             {% else %}
@@ -126,7 +126,16 @@
 
 
             });
-
+         function assign_bug(obj,tt) {
+                var sel_id="fail_bug_id"+tt;
+                {#console.log(obj,tt,obj.value);#}
+                if (obj.value === "Fail") {
+                    $("#" + sel_id).css({"display": 'block'});
+                }
+                else{
+                    $("#" + sel_id).css({"display": 'none'});
+                }
+            }
         </script>
         {% if messages %}
             <script>
