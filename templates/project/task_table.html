@@ -50,9 +50,9 @@
                                 {% if j == 1 %}
                                     {% if i.sku1.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.1 %}
-                                            <td style="text-align: center"><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku1.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                            <td style="text-align: center"><a class="btn btn-info" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku1.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
                                         {% else %}
-                                            <td style="text-align: center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1.last_name }}</a></td>
+                                            <td style="text-align: center"><a class="btn btn-warning" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center"><h6>{{ i.sku1.last_name }}</h6></td>
@@ -60,9 +60,9 @@
                                 {% elif j == 2 %}
                                     {% if i.sku2.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.2 %}
-                                            <td style="text-align: center"><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku2.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                            <td style="text-align: center"><a class="btn btn-info" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku2.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
                                         {% else %}
-                                            <td style="text-align: center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku2.last_name }}</a></td>
+                                            <td style="text-align: center"><a class="btn btn-warning" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku2.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center"><h6>{{ i.sku2.last_name }}</h6></td>
@@ -70,9 +70,9 @@
                                 {% elif j == 3 %}
                                     {% if i.sku3.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.3 %}
-                                            <td style="text-align: center"><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku3.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                            <td style="text-align: center"><a class="btn btn-info" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku3.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
                                         {% else %}
-                                            <td style="text-align: center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku3.last_name }}</a></td>
+                                            <td style="text-align: center"><a class="btn btn-warning" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku3.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center"><h6>{{ i.sku3.last_name }}</h6></td>
@@ -80,9 +80,9 @@
                                 {% elif j == 4 %}
                                     {% if i.sku4.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.4 %}
-                                            <td style="text-align: center"><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                            <td style="text-align: center"><a class="btn btn-info" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
                                         {% else %}
-                                            <td style="text-align: center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }}</a></td>
+                                            <td style="text-align: center"><a class="btn btn-warning" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center"><h6>{{ i.sku4.last_name }}</h6></td>
@@ -90,9 +90,9 @@
                                 {% elif j == 5 %}
                                     {% if i.sku5.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.5 %}
-                                            <td style="text-align: center"><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                            <td style="text-align: center"><a class="btn btn-info" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
                                         {% else %}
-                                            <td style="text-align: center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }}</a></td>
+                                            <td style="text-align: center"><a class="btn btn-warning" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center"><h6>{{ i.sku5.last_name }}</h6></td>
@@ -100,9 +100,9 @@
                                 {% elif j == 6 %}
                                     {% if i.sku6.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.6 %}
-                                            <td style="text-align: center"><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                            <td style="text-align: center"><a class="btn btn-info" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
                                         {% else %}
-                                            <td style="text-align: center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }}</a></td>
+                                            <td style="text-align: center"><a class="btn btn-warning" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center"><h6>{{ i.sku6.last_name }}</h6></td>
@@ -110,9 +110,9 @@
                                 {% elif j == 7 %}
                                     {% if i.sku7.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.7 %}
-                                            <td style="text-align: center"><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                            <td style="text-align: center"><a class="btn btn-info" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
                                         {% else %}
-                                            <td style="text-align: center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }}</a></td>
+                                            <td style="text-align: center"><a class="btn btn-warning" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center"><h6>{{ i.sku7.last_name }}</h6></td>
@@ -120,9 +120,9 @@
                                 {% elif j == 8 %}
                                     {% if i.sku8.first_name == user.first_name %}
                                         {% if i.sheet_id in done_reuslt_list.8 %}
-                                            <td style="text-align: center"><a href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }} &nbsp <i class="glyphicon glyphicon-saved"></i></a></td>
+                                            <td style="text-align: center"><a class="btn btn-info" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
                                         {% else %}
-                                            <td style="text-align: center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }}</a></td>
+                                            <td style="text-align: center"><a class="btn btn-warning" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }}</a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center"><h6>{{ i.sku8.last_name }}</h6></td>

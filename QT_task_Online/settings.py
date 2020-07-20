@@ -147,6 +147,7 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/upload/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media/upload')
+
     # .replace('\\', '/')
 
 # UserInfo继承Auth表

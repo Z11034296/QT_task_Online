@@ -1,5 +1,28 @@
-<br><br><br><br><br>
 
-<h1 align="center">对不起，您无此操作权限！！！</h1>
+{% block page-content %}
+    {#    <style>#}
+    {#        body {#}
+    {##}
+    {#            background: url("../static/img/timg.jpg");#}
+    {#            background-repeat: no-repeat;#}
+    {#            background-size: 100% 100%;#}
+    {#            background-attachment: fixed;#}
+    {#        }#}
+    {##}
+    {##}
+    {#    </style>#}
+    <body>
+    <br><br><br><br><br>
 
-<br><br><br><br><br>
+    {#    <a href="javascript:;" onclick="javascript:history.back(-1);"><img src="images/timg.jpg" alt="timg.jpg" title="返回上一页"></a>#}
+    <script language="javascript" type="text/javascript">
+        setTimeout("javascript:history.back(-1);",5000)
+    </script>
+
+    <div style="align-content: center">
+        <p><h1 align="center" >对不起，您无此操作权限！！！ 5秒后自动跳转到上一页面！</h1></p>
+        <h2><p align="center"><a href="javascript:;" onclick="javascript:history.back(-1);"> 马上返回 </a></p></h2>
+    </div>
+    <br><br><br><br><br>
+    </body>
+{% endblock %}

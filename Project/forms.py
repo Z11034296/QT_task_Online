@@ -56,8 +56,8 @@ class ProjectForm(Form):
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
-        self.fields["test_leader_wzs_id"].widget.choices = UserProfile.models.UserInfo.objects.values_list("id", "job_name").filter(site='1')
-        self.fields["test_leader_whq_id"].widget.choices = UserProfile.models.UserInfo.objects.values_list("id", "job_name").filter(site='2')
+        self.fields["test_leader_wzs_id"].widget.choices = UserProfile.models.UserInfo.objects.values_list("id", "job_name").filter(site='1').order_by("job_name")
+        self.fields["test_leader_whq_id"].widget.choices = UserProfile.models.UserInfo.objects.values_list("id", "job_name").filter(site='2').order_by("job_name")
 
     def clean(self):
         project = list(Project.models.Project.objects.all().values_list('project_id'))

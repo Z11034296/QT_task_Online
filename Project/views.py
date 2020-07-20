@@ -333,7 +333,7 @@ def project_ct_content(request,lid):
         final_result = ''
         for j in res_list:
             if i.id == int(j['sheet_id']):
-                if 'refer to bug ' in j['remark']:
+                if 'Refer to bug ' in j['remark']:
                     bugid_list.append(int(re.findall(r"\d+",j['remark'])[0])) # 取 bug ID
                     bugid_list = list(set(bugid_list)) # 列表去重
                     bugid_list.sort(reverse = False) # 排序
@@ -557,7 +557,7 @@ def result_review(request,lid,sid,skunum):
                     result_dic['result_id']=i.id
                     result_dic['result'] = i.test_result
                     result_dic['remark'] = i.remark
-                    if "refer to bug " in i.remark:
+                    if "Refer to bug " in i.remark:
                         result_dic['bug_id'] = int(re.findall(r"\d+",i.remark)[0])
                     # else:result_dic['bug_id'] = ''
             result_list.append(result_dic)
@@ -576,7 +576,7 @@ def result_review(request,lid,sid,skunum):
             else:
                 if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
                     models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i],result_info_id=result_info_id['id'],tester_id=request.user.id,)
-                    if result[i] == 'Pass' and "refer to bug " in result_remark[i]:
+                    if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
                         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
                                                          sku_num=skunum).update(remark='')
                 else:
@@ -600,7 +600,7 @@ def result_check(request,lid,sid,skunum):
                 if i.test_case.id == j.id:
                     result_dic['result'] = i.test_result
                     result_dic['remark'] = i.remark
-                    if "refer to bug " in i.remark:
+                    if "Refer to bug " in i.remark:
                         result_dic['bug_id'] = int(re.findall(r"\d+", i.remark)[0])
                     # else:result_dic['bug_id'] = ''
             result_list.append(result_dic)
@@ -623,7 +623,7 @@ def result_check(request,lid,sid,skunum):
                 if models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
                     models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum).update(
                         test_result=result[i], result_info_id=result_info_id['id'], tester_id=request.user.id, )
-                    if result[i] == 'Pass' and "refer to bug " in result_remark[i]:
+                    if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
                         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
                                                          sku_num=skunum).update(remark='')
                 else:
@@ -771,8 +771,8 @@ def asign_bug(request,pid,lid,cid,sid,skunum):
         if request.POST.get("asign_bug"):
             bug=models.Issue.objects.filter(project_id=pid,issue_id=int(request.POST.get("asign_bug"))).values().first()
             if bug:
-                models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=cid,sku_num=skunum).update(remark="refer to bug "+request.POST.get("asign_bug")+":"+bug["description"])
-            else:messages.success(request, "输入错误")
+                models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=cid,sku_num=skunum).update(remark="Refer to bug "+request.POST.get("asign_bug")+":"+bug["description"])
+            else:messages.success(request, "查无此bugID ，请确认重新输入")
             return redirect("result_review",lid,sid,skunum)
         else:
             messages.success(request, "输入错误")
@@ -783,220 +783,192 @@ def export_project_report(self, lid):
     sheets_list = T.Sheet.objects.all()
     sku_n = models.ControlTableList.objects.filter(id=lid).values().first()['stage_sku_qty']
     if sheets_list:
-        ws=xlwt.Workbook(encoding='utf8')
+        # ws=xlwt.Workbook(encoding='utf8')
+        ws=xlsxwriter.Workbook('D:/report.xlsx')
 
-        style_heading = xlwt.easyxf(
-            """
-            font:
-                name Arial,
-                colour_index black,
-                bold on,
-                height 0x014A;
-            align:
-                wrap off,
-                vert center,
-                horiz center;
-            pattern:
-                pattern solid,
-                fore-colour orange ;
-            borders:
-                left THIN,
-                right THIN,
-                top THIN,
-                bottom THIN;
-            """)
 
-        style_heading_2 = xlwt.easyxf(
-            """
-            font:
-                name Arial,
-                colour_index black,
-                bold on,
-                height 0xC8;
-            align:
-                wrap on,
-                vert center,
-                horiz center;
-            pattern:
-                pattern solid,
-                fore-colour orange ;
-            borders:
-                left THIN,
-                right THIN,
-                top THIN,
-                bottom THIN;
-            """)
-
-        style_body_1 = xlwt.easyxf(
-            """
-            font:
-                name Arial,
-                colour_index black,
-                bold off,
-                height 0xC8;
-            align:
-                wrap on,
-                vert center,
-                horiz center;
-            borders:
-                left THIN,
-                right THIN,
-                top THIN,
-                bottom THIN;
-            """)
-
-        style_body_2 = xlwt.easyxf(
-            """
-            font:
-                name Arial,
-                colour_index black,
-                bold off,
-                height 0xC8;
-            align:
-                wrap on,
-                vert center,
-                horiz left;
-            borders:
-                left THIN,
-                right THIN,
-                top THIN,
-                bottom THIN;
-            """)
-        style_result_NA = xlwt.easyxf(
-            """
-            font:
-                name Arial,
-                colour_index black,
-                bold off,
-                height 0xC8;
-            align:
-                wrap on,
-                vert center,
-                horiz center;
-            borders:
-                left THIN,
-                right THIN,
-                top THIN,
-                bottom THIN;
-            """)
-        style_result_pass = xlwt.easyxf(
-            """
-            font:
-                name Arial,
-                colour_index blue,
-                bold off,
-                height 0xC8;
-            align:
-                wrap on,
-                vert center,
-                horiz center;
-            borders:
-                left THIN,
-                right THIN,
-                top THIN,
-                bottom THIN;
-            """)
-        style_result_fail = xlwt.easyxf(
-            """
-            font:
-                name Arial,
-                colour_index red,
-                bold off,
-                height 0xC8;
-            align:
-                wrap on,
-                vert center,
-                horiz center;
-            borders:
-                left THIN,
-                right THIN,
-                top THIN,
-                bottom THIN;
-            """)
-        style_back = xlwt.easyxf(
-            """
-            font:
-                name Arial,
-                colour_index blue,
-                bold on,
-                height 0xC8;
-            align:
-                wrap on,
-                vert center,
-                horiz center;
-            borders:
-                left THIN,
-                right THIN,
-                top THIN,
-                bottom THIN;
-            pattern:
-                pattern solid,
-                fore-colour orange ;    
-            """)
-        # ***********************************************
-        # ***********************************************
         # 生成table of Contents
         project_stage=models.ControlTableList.objects.filter(id=lid).values().first()['project_stage']
         project_id=models.ControlTableList.objects.filter(id=lid).values().first()['project_id']
         project=models.Project.objects.filter(id=project_id).values().first()
-        w_c = ws.add_sheet('Table_of_Contents',cell_overwrite_ok=True)
-        # w_c.add_image('F1','logo.jpg')
+        w_c = ws.add_worksheet('Table_of_Contents')
 
-        # w.write(2, 2, project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report')
-        # w.write(3, 1, 'Project:'+' '+project['project_name']+' '+project['project_model'])
-        w_c.write_merge(4, 5, 0, 0, 'Item No.',style_heading_2)
-        w_c.write_merge(4, 5, 1, 1, 'Description',style_heading_2)
-        w_c.write_merge(4, 5, 2, 2, 'Total Sub-item',style_heading_2)
-        w_c.write_merge(4, 5, 3, 3, 'Note',style_heading_2)
-        w_c.write_merge(4, 5, 4, 4, 'Result',style_heading_2)
+        style_heading = ws.add_format({
+            'font': 'Arial',
+            'font_size': '16.5',
+            'bold': True,  # 字体加粗
+            'border': 1,  # 单元格边框宽度
+            'align': 'center',  # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'fg_color': 'orange',  # 单元格背景颜色
+            'text_wrap': 1,  # 自动换行
+
+        })
+
+        style_heading_2 = ws.add_format({
+            'font':'Arial',
+            'font_size': '10',
+            'bold': True,   # 字体加粗
+            'border': 1,    # 单元格边框宽度
+            'align': 'center',   # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'fg_color': 'orange', # 单元格背景颜色
+            'text_wrap': 1,   # 自动换行
+
+        })
+        style_heading_3 = ws.add_format({
+            'font': 'Arial',
+            'font_size': '14',
+            'bold': True,  # 字体加粗
+            'border': 1,  # 单元格边框宽度
+            'align': 'center',  # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'fg_color': 'orange',  # 单元格背景颜色
+            'font_color': 'blue',  # 单元格背景颜色
+            'text_wrap': 1,  # 自动换行
+            'italic' : True
+
+        })
+        style_body_1 = ws.add_format({
+            'font': 'Arial',
+            'font_size': '10',
+            'bold': False,  # 字体加粗
+            'border': 1,  # 单元格边框宽度
+            'align': 'center',  # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'font_color': 'blue',  # 字体颜色
+            'text_wrap': 1,  # 自动换行
+
+        })
+        style_body_2= ws.add_format({
+            'font':'Arial',
+            'font_size': '10',
+            'bold': False,   # 字体加粗
+            'border': 1,    # 单元格边框宽度
+            'align': 'left',   # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'text_wrap': 1,   # 自动换行
+
+        })
+        style_body_3= ws.add_format({
+            'font':'Arial',
+            'font_size': '10',
+            'bold': False,   # 字体加粗
+            'border': 1,    # 单元格边框宽度
+            'align': 'left',   # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'font_color': 'blue',  # 字体颜色
+            'text_wrap': 1,   # 自动换行
+
+        })
+        style_result_pass= ws.add_format({
+            'font':'Arial',
+            'font_size': '10',
+            'bold': False,   # 字体加粗
+            'border': 1,    # 单元格边框宽度
+            'align': 'center',   # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'font_color': 'blue', # 字体颜色
+            'text_wrap': 1,   # 自动换行
+
+        })
+        style_result_fail = ws.add_format({
+            'font': 'Arial',
+            'font_size': '10',
+            'bold': False,  # 字体加粗
+            'border': 1,  # 单元格边框宽度
+            'align': 'center',  # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'font_color': 'red',  # 字体颜色
+            'text_wrap': 1,  # 自动换行
+
+        })
+        style_result_NA = ws.add_format({
+            'font': 'Arial',
+            'font_size': '10',
+            'bold': False,  # 字体加粗
+            'border': 1,  # 单元格边框宽度
+            'align': 'center',  # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'text_wrap': 1,  # 自动换行
+
+        })
+        style_back= ws.add_format({
+            'font': 'Arial',
+            'font_size': '10',
+            'bold': True,  # 字体加粗
+            'border': 1,  # 单元格边框宽度
+            'align': 'center',  # 对齐方式
+            'valign': 'vcenter',  # 字体对齐方式
+            'fg_color': 'orange',  # 单元格背景颜色
+            'font_color': 'blue',  # 字体颜色
+            'text_wrap': True,  # 自动换行
+
+        })
+        # 画title
+        w_c.merge_range(4, 0, 5, 0,'Item No.',style_heading_2)
+        w_c.merge_range(4, 1, 5, 1, 'Description',style_heading_2)
+        w_c.merge_range(4, 2, 5, 2, 'Total Sub-item',style_heading_2)
+        w_c.merge_range(4, 3, 5, 3, 'Note',style_heading_2)
+        w_c.merge_range(4, 4, 5, 4, 'Result',style_heading_2)
+        w_c.merge_range(4, 5, 4, 4 + int(sku_n), 'Test SKU', style_heading_2)
         k = 0
         while k < int(sku_n):
             # w.write(2, 4 + k, '')
-            w_c.write_merge(4, 4, 5, 5+k, 'Test SKU',style_heading_2)
-            w_c.write(5, 5 + k, 'SKU'+str(k+1),style_heading_2)
-            w_c.col(5+k).width = 1500
-            k += 1
-        w_c.write_merge(4, 5, 5 + int(sku_n),5 + int(sku_n), 'Remark',style_heading_2)
 
-        w_c.col(0).width = 2700
-        w_c.col(1).width = 15000
-        w_c.col(2).width = 2500
-        w_c.col(3).width = 2500
-        w_c.col(4).width = 2500
-        w_c.col(5 + int(sku_n)).width = 13000
-        w_c.write_merge(0, 1, 0, 4,project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report',style_heading)
-        w_c.write_merge(2, 3, 0, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
+            w_c.write(5, 5 + k, 'SKU'+str(k+1),style_heading_2)
+            # w_c.set_column(5,5+k,5)
+            k += 1
+        w_c.merge_range(4, 5+ int(sku_n), 5 ,5 + int(sku_n), 'Remark',style_heading_2)
+
+
+
+        # 调节列宽
+        w_c.set_column(0, 0, 10)
+        w_c.set_column(1, 1, 50)
+        w_c.set_column(2, 2, 8)
+        w_c.set_column(3, 3, 8)
+        w_c.set_column(4, 4, 8)
+        w_c.set_column(5, 5 + int(sku_n), 5)
+        w_c.set_column(5 + int(sku_n), 5 + int(sku_n),48)
+
+        w_c.merge_range(0, 0, 1, 4,project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report',style_heading)
+        w_c.merge_range(2, 0, 3, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
         # w.write_merge(2, 3, 0, 0,'',style_title1)
-        w_c.write_merge(0, 3, 5, 5 + int(sku_n),'',style_heading)
-        # w_c.write_merge(2, 3, 5, 5 + int(sku_n),'',style_heading)
+        w_c.merge_range(0, 5, 3, 5 + int(sku_n),'',style_heading)
+        w_c.insert_image(1,8,'media/images/logo.png') # 插入wistron / logo.png图片
+
         excel_row_C = 6
 
 
         # 对每个sheet进行生成
         for i in sheets_list:
-            w = ws.add_sheet(i.sheet_name,cell_overwrite_ok=True)
+            w = ws.add_worksheet(i.sheet_name)
 
             # w.write(2, 0, 'Case_id',style_heading_2)
             w.write(2, 0, 'Case_name',style_heading_2)
             w.write(2, 1, 'Procedure',style_heading_2)
             w.write(2, 2, 'Pass_critearia',style_heading_2)
+            w.merge_range(0, 1, 0, 3 + int(sku_n), 'Test Suite:' + i.sheet_name, style_heading_2)
+            w.merge_range(1, 1, 1, 3 + int(sku_n), i.sheet_description, style_heading_3)
             k = 0
             while k<int(sku_n):
-                w.write(0, 0,xlwt.Formula('HYPERLINK("#Table_of_Contents!A1","Go Back")'),style_back)
-                w.write_merge(0, 0, 1, 4 + k, 'Test Suite:' + i.sheet_name,style_heading_2)
+                # w.merge_range(0,0,1,0,'',)
+                w.write_formula(0, 0,'HYPERLINK("#Table_of_Contents!A1","Go Back")',style_back)
+                # w.merge_range(0, 1, 0, 4 + int(sku_n), 'Test Suite:' + i.sheet_name,style_heading_2)
                 w.write(1, 0, "",style_heading_2)
-                w.write_merge(1, 1, 1, 4 + k, i.sheet_description,style_heading_2)
+                # w.merge_range(1, 1, 1, 4 + k, i.sheet_description,style_heading_2)
                 w.write(2, 3+k, 'SKU'+str(k+1),style_heading_2)
-                w.col(3 + k).width = 1500
+                # w.col(3 + k).width = 1500
                 k+=1
-            # w.write(2, 4, 'SKU1')
+
             w.write(2, 3+int(sku_n), 'Notes/Comment',style_heading_2)
 
-            w.col(0).width = 4500
-            # w.col(1).width = 4500
-            w.col(1).width = 15000
-            w.col(2).width = 15000
-            w.col(3 + int(sku_n)).width = 13000
+            w.set_column(0, 0, 10)
+            w.set_column(1, 1, 50)
+            w.set_column(2, 2, 50)
+            w.set_column(3, 3+int(sku_n), 5)
+            w.set_column(3+int(sku_n), 3+int(sku_n), 50)
             excel_row = 3
 
             # result_list=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values()
@@ -1044,6 +1016,7 @@ def export_project_report(self, lid):
                 # w.write(excel_row, 5, Notes_Comment)
                 excel_row += 1
                 # *************************************************
+
         # 后写Table of Contents
         # *********************Table of Contents内容********************************
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
@@ -1072,7 +1045,7 @@ def export_project_report(self, lid):
             final_result = ''
             for j in res_list:
                 if i.id == int(j['sheet_id']):
-                    if 'refer to bug ' in j['remark']:
+                    if 'Refer to bug ' in j['remark']:
                         bugid_list.append(int(re.findall(r"\d+", j['remark'])[0]))  # 取 bug ID
                         bugid_list = list(set(bugid_list))  # 列表去重
                         bugid_list.sort(reverse=False)  # 排序
@@ -1148,10 +1121,10 @@ def export_project_report(self, lid):
         # *********************************************************
 
         for i in new_list:
-            w_c.write(excel_row_C, 0,
-                      xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'), style_body_1)
+            w_c.write_formula(excel_row_C, 0,
+                      'HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")', style_body_1)
             # "i['sheet_name'], style_body_1)
-            w_c.write(excel_row_C, 1, xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'), style_body_2)
+            w_c.write_formula(excel_row_C, 1, 'HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")', style_body_3)
             w_c.write(excel_row_C, 2, cout[i['sheet_name']], style_body_1)
             w_c.write(excel_row_C, 3, '', style_body_2)
             if i['test_result'] == "Pass":
@@ -1174,12 +1147,6 @@ def export_project_report(self, lid):
                 w_c.write(excel_row_C, 5 + int(sku_n), '', style_body_1)
             excel_row_C += 1
 
-        # 写出到IO
-        sio = BytesIO()
-        ws.save(sio)
-        sio.seek(0)
-        response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=report.xls'
-        response.write(sio.getvalue())
-        return response
-        # return HttpResponse('OKOKOKOKOK')
+        ws.close()
+
+        return redirect("projects")

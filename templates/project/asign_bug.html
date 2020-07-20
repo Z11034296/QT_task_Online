@@ -19,7 +19,7 @@
                                 <tbody>
                                 <tr>
                                     <th width="50%"><label for="id_asign_bug">填入Bug_ID:</label></th>
-                                    <th><input  type="text" name="asign_bug" class="form-control" id="id_asign_bug"></th>
+                                    <th><input  type="text" name="asign_bug" class="form-control" id="id_asign_bug" onkeyup="this.value=this.value.replace(/\D/g,'')"></th>
                                 </tr>
                                 <tr>
                                     <td><input type="submit" value="确认" class="btn btn-primary"></td>

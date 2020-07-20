@@ -69,7 +69,7 @@
                                 <option value="N/A">N/A</option>
                                 <option selected="selected"  style='display: none' value=''></option>
                             </select><input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="对应bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
-                            {% if "refer to bug " in i.remark %}
+                            {% if "Refer to bug " in i.remark %}
                                 <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
                             {% else %}
                                 <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}">{{ i.remark }}</td>
