@@ -18,6 +18,7 @@
     </style>
 
 
+
     <p>{% if user.is_authenticated %}
         <div class="panel panel-primary ">
             <form action="#" class="navbar-right navbar-form">
@@ -68,7 +69,7 @@
                                 <option value="Fail">Fail</option>
                                 <option value="N/A">N/A</option>
                                 <option selected="selected"  style='display: none' value=''></option>
-                            </select><input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="对应bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
+                            </select><input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
                             {% if "Refer to bug " in i.remark %}
                                 <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
                             {% else %}
@@ -126,7 +127,7 @@
 
 
             });
-         function assign_bug(obj,tt) {
+            function assign_bug(obj,tt) {
                 var sel_id="fail_bug_id"+tt;
                 {#console.log(obj,tt,obj.value);#}
                 if (obj.value === "Fail") {

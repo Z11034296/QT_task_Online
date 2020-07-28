@@ -42,4 +42,5 @@ urlpatterns = [
     path('change_tester/<lid>-<sid>-<skunum>', views.change_tester, name='change_tester'),
     path('asign_bug/<pid>-<lid>-<sid>-<cid>-<skunum>', views.asign_bug, name='asign_bug'),
     path('export_project_report/<lid>', views.export_project_report, name='export_project_report'),
+    path('test_time_review/<lid>', views.test_time_review, name='test_time_review'),
 ]

@@ -8,7 +8,8 @@ from collections import Counter
 from itertools import chain
 from django.contrib import messages
 import re
-import xlwt,xlsxwriter
+import xlrd,xlwt,xlsxwriter
+import datetime
 from io import BytesIO
 from django.contrib.auth.decorators import permission_required
 
@@ -542,41 +543,75 @@ def task_list(request):
 
 
 def result_review(request,lid,sid,skunum):
+    plist = models.ControlTableList.objects.filter(id=lid).values().first()
+    pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+    name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
+    cases = T.TestCase.objects.filter(sheet_id=sid)
+    result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
+    result_list = []
+    for j in cases:
+        result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
+                      'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
+        for i in result:
+            if i.test_case.id == j.id:
+                result_dic['result_id'] = i.id
+                result_dic['result'] = i.test_result
+                result_dic['remark'] = i.remark
+                if "Refer to bug " in i.remark:
+                    result_dic['bug_id'] = int(re.findall(r"\d+", i.remark)[0])
+                # else:result_dic['bug_id'] = ''
+        result_list.append(result_dic)
     if request.method == 'GET':
-        plist = models.ControlTableList.objects.filter(id=lid).values().first()
-        pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
-        name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
-        cases = T.TestCase.objects.filter(sheet_id=sid)
-        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=sid,sku_num=skunum,)
-        result_list=[]
-        for j in cases:
-            result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
-                          'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
-            for i in result:
-                if i.test_case.id == j.id:
-                    result_dic['result_id']=i.id
-                    result_dic['result'] = i.test_result
-                    result_dic['remark'] = i.remark
-                    if "Refer to bug " in i.remark:
-                        result_dic['bug_id'] = int(re.findall(r"\d+",i.remark)[0])
-                    # else:result_dic['bug_id'] = ''
-            result_list.append(result_dic)
+
         return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid})
     else:
+
         project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
+
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['project_id']).values("id").last()
         case_id_list = request.POST.getlist('case_id')
-        result_list = request.POST.getlist('test_result')
-        result = dict(zip(case_id_list, result_list))
+        result_testlist = request.POST.getlist('test_result')
+        issueid_list= request.POST.getlist('fail_bug_id')
+        result = dict(zip(case_id_list, result_testlist))
         remark_list = request.POST.getlist('remark')
         result_remark = dict(zip(case_id_list, remark_list))
+        result_issueidlist = dict(zip(case_id_list,issueid_list))
+
         for i in result:
             if result[i] =="":
                 continue
             else:
                 if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
-                    models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i],result_info_id=result_info_id['id'],tester_id=request.user.id,)
+                    # models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i],result_info_id=result_info_id['id'],tester_id=request.user.id,)
                     if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
+                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                         sku_num=skunum).update(test_result='Pass')
+                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                         sku_num=skunum).update(remark='')
+                    elif result[i] == 'Pass':
+                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                         sku_num=skunum).update(test_result='Pass')
+                    elif result[i] == "Fail":
+
+                        if result_issueidlist[i]:
+
+                            bug = models.Issue.objects.filter(project_id=project['project_id'],
+                                                              issue_id=result_issueidlist[i]).values().first()
+                            if bug:
+
+                                models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                                 sku_num=skunum).update(remark='Refer to bug '+result_issueidlist[i]+":"+bug["description"])
+                                models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                                 sku_num=skunum).update(test_result=result[i], result_info_id=result_info_id['id'],tester_id=request.user.id, )
+                            else:
+                                messages.error(request, "查无此bugID ，请确认重新输入")
+
+                                return render(request, 'Project/result_review.html',
+                                              {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases,
+                                               "skunum": skunum, "name": name, 'sid': sid})
+                    else:
+                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                         sku_num=skunum).update(test_result='N/A')
                         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
                                                          sku_num=skunum).update(remark='')
                 else:
@@ -586,50 +621,103 @@ def result_review(request,lid,sid,skunum):
 
 
 def result_check(request,lid,sid,skunum):
+    plist = models.ControlTableList.objects.filter(id=lid).values().first()
+    pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
+    name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
+    cases = T.TestCase.objects.filter(sheet_id=sid)
+    result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
+    result_list = []
+    for j in cases:
+        result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
+                      'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
+        for i in result:
+            if i.test_case.id == j.id:
+                result_dic['result_id'] = i.id
+                result_dic['result'] = i.test_result
+                result_dic['remark'] = i.remark
+                if "Refer to bug " in i.remark:
+                    result_dic['bug_id'] = int(re.findall(r"\d+", i.remark)[0])
+                # else:result_dic['bug_id'] = ''
+        result_list.append(result_dic)
+
     if request.method == 'GET':
-        plist = models.ControlTableList.objects.filter(id=lid).values().first()
-        pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
-        name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
-        cases = T.TestCase.objects.filter(sheet_id=sid)
-        result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
-        result_list = []
-        for j in cases:
-            result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
-                          'procedure': j.procedure, 'pass_criteria': j.pass_criteria, 'result': ''}
-            for i in result:
-                if i.test_case.id == j.id:
-                    result_dic['result'] = i.test_result
-                    result_dic['remark'] = i.remark
-                    if "Refer to bug " in i.remark:
-                        result_dic['bug_id'] = int(re.findall(r"\d+", i.remark)[0])
-                    # else:result_dic['bug_id'] = ''
-            result_list.append(result_dic)
-        return render(request, 'Project/result_review.html',
+
+        return render(request, 'Project/result_check.html',
                       {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases, "skunum": skunum,
                        "name": name, 'sid': sid})
     else:
-        plist = models.ControlTableList.objects.filter(id=lid).values().first()
-        project = models.Project.objects.filter(id=plist["project_id"]).values('id').first()
-        result_info_id = models.ProjectInfo.objects.filter(project_id=project['id']).values("id").last()
+
+        # plist = models.ControlTableList.objects.filter(id=lid).values().first()
+        project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
+        result_info_id = models.ProjectInfo.objects.filter(project_id=project['project_id']).values("id").last()
         case_id_list = request.POST.getlist('case_id')
-        result_list = request.POST.getlist('test_result')
-        result = dict(zip(case_id_list, result_list))
+        result_testlist = request.POST.getlist('test_result')
+        issueid_list = request.POST.getlist('fail_bug_id')
+        result = dict(zip(case_id_list, result_testlist))
         remark_list = request.POST.getlist('remark')
         result_remark = dict(zip(case_id_list, remark_list))
+        result_issueidlist = dict(zip(case_id_list, issueid_list))
         for i in result:
             if result[i] =="":
                 continue
-            else:
-                if models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
-                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum).update(
-                        test_result=result[i], result_info_id=result_info_id['id'], tester_id=request.user.id, )
-                    if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
-                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                         sku_num=skunum).update(remark='')
+            if models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
+                # models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i],result_info_id=result_info_id['id'],tester_id=request.user.id,)
+                if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
+                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                     sku_num=skunum).update(test_result='Pass')
+                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                     sku_num=skunum).update(remark='')
+                elif result[i] == 'Pass':
+                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                     sku_num=skunum).update(test_result='Pass')
+                elif result[i] == "Fail":
+
+                    if result_issueidlist[i]:
+
+                        bug = models.Issue.objects.filter(project_id=project['project_id'],
+                                                          issue_id=result_issueidlist[i]).values().first()
+                        if bug:
+
+                            models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                             sku_num=skunum).update(
+                                remark='Refer to bug ' + result_issueidlist[i] + ":" + bug["description"])
+                            models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                             sku_num=skunum).update(test_result=result[i],
+                                                                                    result_info_id=result_info_id['id'],
+                                                                                    tester_id=request.user.id, )
+                        else:
+                            messages.error(request, "查无此bugID ，请确认重新输入")
+
+                            return render(request, 'Project/result_check.html',
+                                          {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases,
+                                           "skunum": skunum,
+                                           "name": name, 'sid': sid})
                 else:
-                    models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
-                                                     test_result=result[i], tester_id=request.user.id, sheet_id=sid,
-                                                     result_info_id=result_info_id['id'])
+                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                     sku_num=skunum).update(test_result='N/A')
+                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                     sku_num=skunum).update(remark='')
+            else:
+                models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
+                                                 test_result=result[i], tester_id=request.user.id, sheet_id=sid,
+                                                 result_info_id=result_info_id['id'])
+
+
+
+
+
+
+            # else:
+            #     if models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
+            #         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum).update(
+            #             test_result=result[i], result_info_id=result_info_id['id'], tester_id=request.user.id, )
+            #         if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
+            #             models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+            #                                              sku_num=skunum).update(remark='')
+            #     else:
+            #         models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
+            #                                          test_result=result[i], tester_id=request.user.id, sheet_id=sid,
+            #                                          result_info_id=result_info_id['id'])
         return redirect("project_ct_content",lid=lid)
 
 
@@ -649,7 +737,6 @@ def stage_update(request,lid):
         ct_list_distinct = []
         for i in ct_list:
             ct_list_distinct.append(i["ControlTable_List_id_id"])
-
         return render(request, 'Project/project_ct_info.html',
                       {"CT_list": CT_list, "pj": pj, "ct_list_distinct": ct_list_distinct})
 
@@ -772,7 +859,7 @@ def asign_bug(request,pid,lid,cid,sid,skunum):
             bug=models.Issue.objects.filter(project_id=pid,issue_id=int(request.POST.get("asign_bug"))).values().first()
             if bug:
                 models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=cid,sku_num=skunum).update(remark="Refer to bug "+request.POST.get("asign_bug")+":"+bug["description"])
-            else:messages.success(request, "查无此bugID ，请确认重新输入")
+            else:messages.error(request, "查无此bugID ，请确认重新输入")
             return redirect("result_review",lid,sid,skunum)
         else:
             messages.success(request, "输入错误")
@@ -783,199 +870,264 @@ def export_project_report(self, lid):
     sheets_list = T.Sheet.objects.all()
     sku_n = models.ControlTableList.objects.filter(id=lid).values().first()['stage_sku_qty']
     if sheets_list:
-        # ws=xlwt.Workbook(encoding='utf8')
-        ws=xlsxwriter.Workbook('D:/report.xlsx')
+        ws=xlwt.Workbook(encoding='utf8')
 
+        style_heading = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0x014A;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour orange ;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
 
+        style_heading_2 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour orange ;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_heading_3 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold on,
+                height 0x0120,
+                italic True;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour orange ;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_body_1 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_body_2 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_body_3 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_result_NA = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_result_pass = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_result_fail = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index red,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_back = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold on,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            pattern:
+                pattern solid,
+                fore-colour orange ;    
+            """)
+        # ***********************************************
+        # ***********************************************
         # 生成table of Contents
         project_stage=models.ControlTableList.objects.filter(id=lid).values().first()['project_stage']
         project_id=models.ControlTableList.objects.filter(id=lid).values().first()['project_id']
         project=models.Project.objects.filter(id=project_id).values().first()
-        w_c = ws.add_worksheet('Table_of_Contents')
+        w_c = ws.add_sheet('Table_of_Contents',cell_overwrite_ok=True)
+        # w_c.insert_bitmap('logo.bmp',1,8,scale_x=0.49,scale_y=0.49)
 
-        style_heading = ws.add_format({
-            'font': 'Arial',
-            'font_size': '16.5',
-            'bold': True,  # 字体加粗
-            'border': 1,  # 单元格边框宽度
-            'align': 'center',  # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'fg_color': 'orange',  # 单元格背景颜色
-            'text_wrap': 1,  # 自动换行
-
-        })
-
-        style_heading_2 = ws.add_format({
-            'font':'Arial',
-            'font_size': '10',
-            'bold': True,   # 字体加粗
-            'border': 1,    # 单元格边框宽度
-            'align': 'center',   # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'fg_color': 'orange', # 单元格背景颜色
-            'text_wrap': 1,   # 自动换行
-
-        })
-        style_heading_3 = ws.add_format({
-            'font': 'Arial',
-            'font_size': '14',
-            'bold': True,  # 字体加粗
-            'border': 1,  # 单元格边框宽度
-            'align': 'center',  # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'fg_color': 'orange',  # 单元格背景颜色
-            'font_color': 'blue',  # 单元格背景颜色
-            'text_wrap': 1,  # 自动换行
-            'italic' : True
-
-        })
-        style_body_1 = ws.add_format({
-            'font': 'Arial',
-            'font_size': '10',
-            'bold': False,  # 字体加粗
-            'border': 1,  # 单元格边框宽度
-            'align': 'center',  # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'font_color': 'blue',  # 字体颜色
-            'text_wrap': 1,  # 自动换行
-
-        })
-        style_body_2= ws.add_format({
-            'font':'Arial',
-            'font_size': '10',
-            'bold': False,   # 字体加粗
-            'border': 1,    # 单元格边框宽度
-            'align': 'left',   # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'text_wrap': 1,   # 自动换行
-
-        })
-        style_body_3= ws.add_format({
-            'font':'Arial',
-            'font_size': '10',
-            'bold': False,   # 字体加粗
-            'border': 1,    # 单元格边框宽度
-            'align': 'left',   # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'font_color': 'blue',  # 字体颜色
-            'text_wrap': 1,   # 自动换行
-
-        })
-        style_result_pass= ws.add_format({
-            'font':'Arial',
-            'font_size': '10',
-            'bold': False,   # 字体加粗
-            'border': 1,    # 单元格边框宽度
-            'align': 'center',   # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'font_color': 'blue', # 字体颜色
-            'text_wrap': 1,   # 自动换行
-
-        })
-        style_result_fail = ws.add_format({
-            'font': 'Arial',
-            'font_size': '10',
-            'bold': False,  # 字体加粗
-            'border': 1,  # 单元格边框宽度
-            'align': 'center',  # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'font_color': 'red',  # 字体颜色
-            'text_wrap': 1,  # 自动换行
-
-        })
-        style_result_NA = ws.add_format({
-            'font': 'Arial',
-            'font_size': '10',
-            'bold': False,  # 字体加粗
-            'border': 1,  # 单元格边框宽度
-            'align': 'center',  # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'text_wrap': 1,  # 自动换行
-
-        })
-        style_back= ws.add_format({
-            'font': 'Arial',
-            'font_size': '10',
-            'bold': True,  # 字体加粗
-            'border': 1,  # 单元格边框宽度
-            'align': 'center',  # 对齐方式
-            'valign': 'vcenter',  # 字体对齐方式
-            'fg_color': 'orange',  # 单元格背景颜色
-            'font_color': 'blue',  # 字体颜色
-            'text_wrap': True,  # 自动换行
-
-        })
-        # 画title
-        w_c.merge_range(4, 0, 5, 0,'Item No.',style_heading_2)
-        w_c.merge_range(4, 1, 5, 1, 'Description',style_heading_2)
-        w_c.merge_range(4, 2, 5, 2, 'Total Sub-item',style_heading_2)
-        w_c.merge_range(4, 3, 5, 3, 'Note',style_heading_2)
-        w_c.merge_range(4, 4, 5, 4, 'Result',style_heading_2)
-        w_c.merge_range(4, 5, 4, 4 + int(sku_n), 'Test SKU', style_heading_2)
+        # w.write(2, 2, project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report')
+        # w.write(3, 1, 'Project:'+' '+project['project_name']+' '+project['project_model'])
+        w_c.write_merge(4, 5, 0, 0, 'Item No.',style_heading_2)
+        w_c.write_merge(4, 5, 1, 1, 'Description',style_heading_2)
+        w_c.write_merge(4, 5, 2, 2, 'Total Sub-item',style_heading_2)
+        w_c.write_merge(4, 5, 3, 3, 'Note',style_heading_2)
+        w_c.write_merge(4, 5, 4, 4, 'Result',style_heading_2)
         k = 0
         while k < int(sku_n):
             # w.write(2, 4 + k, '')
-
+            w_c.write_merge(4, 4, 5, 5+k, 'Test SKU',style_heading_2)
             w_c.write(5, 5 + k, 'SKU'+str(k+1),style_heading_2)
-            # w_c.set_column(5,5+k,5)
+            w_c.col(5+k).width = 1500
             k += 1
-        w_c.merge_range(4, 5+ int(sku_n), 5 ,5 + int(sku_n), 'Remark',style_heading_2)
+        w_c.write_merge(4, 5, 5 + int(sku_n),5 + int(sku_n), 'Remark',style_heading_2)
 
-
-
-        # 调节列宽
-        w_c.set_column(0, 0, 10)
-        w_c.set_column(1, 1, 50)
-        w_c.set_column(2, 2, 8)
-        w_c.set_column(3, 3, 8)
-        w_c.set_column(4, 4, 8)
-        w_c.set_column(5, 5 + int(sku_n), 5)
-        w_c.set_column(5 + int(sku_n), 5 + int(sku_n),48)
-
-        w_c.merge_range(0, 0, 1, 4,project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report',style_heading)
-        w_c.merge_range(2, 0, 3, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
+        w_c.col(0).width = 2700
+        w_c.col(1).width = 15000
+        w_c.col(2).width = 2500
+        w_c.col(3).width = 2500
+        w_c.col(4).width = 2500
+        w_c.col(5 + int(sku_n)).width = 13000
+        w_c.write_merge(0, 1, 0, 4,project['project_name']+' '+project['project_model'].replace(',','_')+' '+project_stage+' Compatibility Test Report',style_heading)
+        w_c.write_merge(2, 3, 0, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
         # w.write_merge(2, 3, 0, 0,'',style_title1)
-        w_c.merge_range(0, 5, 3, 5 + int(sku_n),'',style_heading)
-        w_c.insert_image(1,8,'media/images/logo.png') # 插入wistron / logo.png图片
-
+        w_c.write_merge(0, 3, 5, 5 + int(sku_n),'',style_heading)
+        # w_c.write_merge(2, 3, 5, 5 + int(sku_n),'',style_heading)
         excel_row_C = 6
-
 
         # 对每个sheet进行生成
         for i in sheets_list:
-            w = ws.add_worksheet(i.sheet_name)
+            w = ws.add_sheet(i.sheet_name,cell_overwrite_ok=True)
 
             # w.write(2, 0, 'Case_id',style_heading_2)
             w.write(2, 0, 'Case_name',style_heading_2)
             w.write(2, 1, 'Procedure',style_heading_2)
             w.write(2, 2, 'Pass_critearia',style_heading_2)
-            w.merge_range(0, 1, 0, 3 + int(sku_n), 'Test Suite:' + i.sheet_name, style_heading_2)
-            w.merge_range(1, 1, 1, 3 + int(sku_n), i.sheet_description, style_heading_3)
             k = 0
             while k<int(sku_n):
-                # w.merge_range(0,0,1,0,'',)
-                w.write_formula(0, 0,'HYPERLINK("#Table_of_Contents!A1","Go Back")',style_back)
-                # w.merge_range(0, 1, 0, 4 + int(sku_n), 'Test Suite:' + i.sheet_name,style_heading_2)
-                w.write(1, 0, "",style_heading_2)
-                # w.merge_range(1, 1, 1, 4 + k, i.sheet_description,style_heading_2)
+                w.write(0, 0,xlwt.Formula('HYPERLINK("#Table_of_Contents!A1","Go Back")'),style_back)
+                w.write_merge(0, 0, 1, 4 + k, 'Test Suite:' + i.sheet_name,style_heading_2)
+                # w.write(1, 0, "",style_heading_2)
+                w.write_merge(1, 1, 0, 4 + k, i.sheet_description,style_heading_3)
                 w.write(2, 3+k, 'SKU'+str(k+1),style_heading_2)
-                # w.col(3 + k).width = 1500
+                w.col(3 + k).width = 1500
                 k+=1
-
+            # w.write(2, 4, 'SKU1')
             w.write(2, 3+int(sku_n), 'Notes/Comment',style_heading_2)
 
-            w.set_column(0, 0, 10)
-            w.set_column(1, 1, 50)
-            w.set_column(2, 2, 50)
-            w.set_column(3, 3+int(sku_n), 5)
-            w.set_column(3+int(sku_n), 3+int(sku_n), 50)
+            w.col(0).width = 4500
+            # w.col(1).width = 4500
+            w.col(1).width = 15000
+            w.col(2).width = 15000
+            w.col(3 + int(sku_n)).width = 13000
             excel_row = 3
 
-            # result_list=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values()
             li=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values_list('test_case_id').distinct()
             for x in li:
-            # for j in result_list:
-            #     case_id=T.TestCase.objects.filter(id=x[0]).values().first()['case_id']
+                # for j in result_list:
+                #     case_id=T.TestCase.objects.filter(id=x[0]).values().first()['case_id']
                 case_name=T.TestCase.objects.filter(id=x[0]).values().first()['case_name']
                 procedure=T.TestCase.objects.filter(id=x[0]).values().first()['procedure']
                 pass_criteria=T.TestCase.objects.filter(id=x[0]).values().first()['pass_criteria']
@@ -983,16 +1135,20 @@ def export_project_report(self, lid):
                 # 写入数据
 
                 # w.write(excel_row, 0, case_id,style_body_2)
-                w.write(excel_row, 0, case_name,style_body_2)
-                w.write(excel_row, 1, procedure,style_body_2)
-                w.write(excel_row, 2, pass_criteria,style_body_2)
+                w.write(excel_row, 0, case_name,style_body_3)
+                w.write(excel_row, 1, procedure,style_body_3)
+                w.write(excel_row, 2, pass_criteria,style_body_3)
                 # for l in  SKU_N_list:
                 l = 1
                 while l <= int(sku_n):
                     try:
                         result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=x[0]).values().first()['test_result']
                     except :
-                        result=''
+                        # print(models.ControlTableContent.objects.filter(ControlTable_List_id=lid,sheet_id=i.id,sku_num=str(l)).values().first()['tester_id'])
+                        if models.ControlTableContent.objects.filter(ControlTable_List_id=lid,sheet_id=i.id,sku_num=str(l)).values().first()['tester_id'] == 2:
+                            result='N/A'
+                        else:
+                            result=""
                     if result == "Pass":
                         w.write(excel_row, 2+l, result, style_result_pass)
                     elif result == "Fail":
@@ -1011,12 +1167,11 @@ def export_project_report(self, lid):
                             notes=y['remark']
                         else:
                             notes=notes+';'+ y['remark']
-                w.write(excel_row, 3+int(sku_n), notes,style_body_2)
+                w.write(excel_row, 3+int(sku_n), notes,style_body_3)
 
                 # w.write(excel_row, 5, Notes_Comment)
                 excel_row += 1
                 # *************************************************
-
         # 后写Table of Contents
         # *********************Table of Contents内容********************************
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
@@ -1119,12 +1274,11 @@ def export_project_report(self, lid):
                 new_list.append(dict(new_dic))
 
         # *********************************************************
-
         for i in new_list:
-            w_c.write_formula(excel_row_C, 0,
-                      'HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")', style_body_1)
+            w_c.write(excel_row_C, 0,
+                      xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'), style_body_1)
             # "i['sheet_name'], style_body_1)
-            w_c.write_formula(excel_row_C, 1, 'HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")', style_body_3)
+            w_c.write(excel_row_C, 1, xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'), style_body_2)
             w_c.write(excel_row_C, 2, cout[i['sheet_name']], style_body_1)
             w_c.write(excel_row_C, 3, '', style_body_2)
             if i['test_result'] == "Pass":
@@ -1139,14 +1293,45 @@ def export_project_report(self, lid):
                 if i['sku' + str(k + 1) + '_progress'] == '100%':
                     w_c.write(excel_row_C, 5 + k, i['sku' + str(k + 1) + '_progress'], style_result_pass)
                 else:
-                    w_c.write(excel_row_C, 5 + k, i['sku' + str(k + 1) + '_progress'], style_body_1)
+                    w_c.write(excel_row_C, 5 + k, i['sku' + str(k + 1) + '_progress'], style_result_fail)
                 k += 1
             if i['bugid'] != []:
-                w_c.write(excel_row_C, 5 + int(sku_n), 'Refer to bugID: ' + str(i['bugid']), style_body_2)
+                w_c.write(excel_row_C, 5 + int(sku_n), 'Refer to bugID: ' + str(i['bugid']), style_body_3)
             else:
-                w_c.write(excel_row_C, 5 + int(sku_n), '', style_body_1)
+                w_c.write(excel_row_C, 5 + int(sku_n), '', style_body_3)
             excel_row_C += 1
+        # 写出到IO
+        sio = BytesIO()
+        ws.save(sio)
+        sio.seek(0)
+        response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
 
-        ws.close()
+        response['Content-Disposition'] = 'attachment; filename='+project['project_name']+' '+project['project_model'].replace(',','_')+' '+project_stage+' Compatibility Test Report'+'_'+str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))+'.xlsx'
+        response.write(sio.getvalue())
+        return response
 
-        return redirect("projects")
+
+def test_time_review(request,lid):
+    list=models.ControlTableContent.objects.filter(ControlTable_List_id_id=lid).values_list("tester__job_name",'sheet_id')
+    attend_time_dic_persheet = {}
+    tester_list=[]
+    test_time={}
+    for i in list:
+        if i[0] not in tester_list:
+            tester_list.append(i[0])
+        cases_by_sheet = T.TestCase.objects.filter(sheet_id=i[1]).values('attend_time')
+        attend_time_sum = 0
+        for j in cases_by_sheet:
+            attend_time_sum += float(j['attend_time'])
+        attend_time_dic_persheet.update({i[1]: attend_time_sum})
+        for k in tester_list:
+
+            try:
+                if k==i[0]:
+                    test_time.update({k:test_time[k]+attend_time_dic_persheet[i[1]]})
+            except:
+
+                test_time.update({k:attend_time_dic_persheet[i[1]]})
+    if "N/A" in tester_list:
+        del test_time["N/A"]
+    return render(request, "project/test_time_review.html",{"test_time":test_time,"tester_list":tester_list})

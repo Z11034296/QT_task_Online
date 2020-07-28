@@ -27,6 +27,9 @@
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
 
             </div>
+            <div>
+                <br>
+            <a class="btn btn-info pull-right" data-toggle="modal" data-target="#test_time_review" href="{% url 'test_time_review' plist.id %} ">task分配检查</a></div>
             <h4 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h4>
             <div class="panel-body">
                 {#                <form action="" method="POST">#}
@@ -157,6 +160,12 @@
             </div>
         </div>
         <div class="modal fade" id="change_tester" tabindex="-1" role="dialog" aria-labelledby="statusLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <div class="modal fade" id="test_time_review" tabindex="-1" role="dialog" aria-labelledby="statusLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                 </div><!-- /.modal-content -->

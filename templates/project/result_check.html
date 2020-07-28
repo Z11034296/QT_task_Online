@@ -7,7 +7,7 @@
             background-color: #eeedef;
             padding-right:0!important;
         }
-         th{
+        th{
             text-align: center;
             background: #9d9d9d;
             font-size: initial;
@@ -44,7 +44,7 @@
                             <tr>
                             <input type="hidden" value="{{ i.case_id }}" name="case_id">
                             <td style="text-align: center;vertical-align: middle">{{ i.test_case_id }}</td>
-                            <td style="white-space:pre-wrap; word-break:break-all;text-align: center;vertical-align: middle">{{ i.case_name }}</td>
+                            <td style="white-space:pre-wrap; word-break:break-all;text-align: left;vertical-align: middle">{{ i.case_name }}</td>
                             <td>{{ i.procedure|linebreaksbr }}</td>
                             <td>{{ i.pass_criteria|linebreaksbr }}</td>
                             {% if i.result == 'Fail' %}
@@ -54,21 +54,22 @@
                                 <td  style="text-align: center;vertical-align: middle">{{ i.result }}</td>
                             {% endif %}
 
-                            <td>
-                                <select class="form form-control" style="width: 100px" name="test_result">
+                            <td style="text-align: center;vertical-align: middle">
+                                <select class="form form-control" style="width: 100px" name="test_result" onchange="assign_bug(this,{{ i.result_id }})">
                                     <option value="Pass">Pass</option>
                                     <option value="Fail">Fail</option>
                                     <option value="N/A">N/A</option>
                                     <option selected="selected"  style='display: none' value=''></option>
-                                </select>
+                                </select><input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
                             </td>
                             {% if "Refer to bug " in i.remark %}
-                                <td><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
+                                <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
                             {% else %}
 
-                                <td><input type="hidden" name="remark" value="{{ i.remark }}">{{ i.remark }}</td>
+                                <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}">{{ i.remark }}</td>
                             {% endif %}
                         {% endfor %}
+                        </tr>
                         </tbody>
                     </table>
                     <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
@@ -89,8 +90,18 @@
             {#模态框#}
             $(function() {
                 {#模态框#}
-                $('#asign_bug').on('hide.bs.modal')
+                $('#asign_bug11').on('hide.bs.modal')
             });
+            function assign_bug(obj,tt) {
+                var sel_id="fail_bug_id"+tt;
+                {#console.log(obj,tt,obj.value);#}
+                if (obj.value === "Fail") {
+                    $("#" + sel_id).css({"display": 'block'});
+                }
+                else{
+                    $("#" + sel_id).css({"display": 'none'});
+                }
+            }
 
         </script>
 
