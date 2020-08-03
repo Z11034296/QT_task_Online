@@ -701,23 +701,6 @@ def result_check(request,lid,sid,skunum):
                 models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                  test_result=result[i], tester_id=request.user.id, sheet_id=sid,
                                                  result_info_id=result_info_id['id'])
-
-
-
-
-
-
-            # else:
-            #     if models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
-            #         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum).update(
-            #             test_result=result[i], result_info_id=result_info_id['id'], tester_id=request.user.id, )
-            #         if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
-            #             models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-            #                                              sku_num=skunum).update(remark='')
-            #     else:
-            #         models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
-            #                                          test_result=result[i], tester_id=request.user.id, sheet_id=sid,
-            #                                          result_info_id=result_info_id['id'])
         return redirect("project_ct_content",lid=lid)
 
 
@@ -1330,8 +1313,7 @@ def test_time_review(request,lid):
                 if k==i[0]:
                     test_time.update({k:test_time[k]+attend_time_dic_persheet[i[1]]})
             except:
-
                 test_time.update({k:attend_time_dic_persheet[i[1]]})
     if "N/A" in tester_list:
         del test_time["N/A"]
-    return render(request, "project/test_time_review.html",{"test_time":test_time,"tester_list":tester_list})
+    return render(request, "project/test_time_review.html",{"test_time":test_time})

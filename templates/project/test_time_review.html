@@ -1,0 +1,48 @@
+
+{% block page-content %}
+    <body class="container">
+    {% if user.is_authenticated %}
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    各member测试时间
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-20 ol-md-offset-5">
+                    <div class="col-sm-15">
+
+                        <table border="1">
+
+                                <tr>
+                                    <th style="text-align: center">Tester</th>
+                                    <th style="text-align: center">Test_Time</th>
+
+                                </tr>
+                                <tbody>
+                                {% for i,j in test_time.items %}
+                                <tr>
+                                    <td style="text-align: center">{{ i }}</td>
+                                    <td style="text-align: center">{{ j }}</td>
+
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+        <script type="text/javascript">
+        </script>
+        </body>
+    {% else %}
+        <a href="/login/">please login!</a>
+    {% endif %}
+{% endblock %}
