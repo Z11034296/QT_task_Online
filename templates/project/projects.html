@@ -4,79 +4,92 @@
         table{
             table-layout: auto;
         }
-    th{
+        th{
             text-align: center;
             background: #9d9d9d;
             font-size: initial;
         }
 
     </style>
+    <br/>
     <div class="panel panel-primary">
         <div class="panel-heading "><h2 class="panel-title">Projects</h2></div>
         <div class="panel-body ">
             <div class="row" style="margin-bottom: 15px">
-{#                <div class="col-md-4">#}
-{#                    <div class="input-group">#}
-{#                        <input type="text" class="form-control" placeholder="Search for...">#}
-{#                        <span class="input-group-btn">#}
-{#                                    <button class="btn btn-default" type="button">搜索</button>#}
-{#                                </span>#}
-{#                    </div><!-- /input-group -->#}
-{#                </div><!-- /.col-md-4 -->#}
+                {#                <div class="col-md-4">#}
+                {#                    <div class="input-group">#}
+                {#                        <input type="text" class="form-control" placeholder="Search for...">#}
+                {#                        <span class="input-group-btn">#}
+                {#                                    <button class="btn btn-default" type="button">搜索</button>#}
+                {#                                </span>#}
+                {#                    </div><!-- /input-group -->#}
+                {#                </div><!-- /.col-md-4 -->#}
                 <div class="col-md-1 pull-right">
                     <button class="btn btn-success" data-toggle="modal" data-target="#myModal"
                             onclick="window.location.href='add_project'">新增
                     </button>
                 </div>
             </div><!-- /.row -->
-            <div class="table-responsive">
+            <div class="table-responsive" >
                 <table class="table table-bordered table-striped">
                     <thead class="">
                     <tr>
+                        <th>Customer</th>
                         <th>Project&nbsp;Code</th>
                         <th>Project&nbsp;Name</th>
                         <th>Project&nbsp;Model</th>
-                        <th>TL</th>
-                        <th>PL</th>
-                        <th>开始日期</th>
-                        <th>结束日期</th>
-                        <th>Platform</th>
-                        <th>Project&nbsp;Type</th>
-                        <th>Project&nbsp;Style</th>
-                        <th>是否&nbsp;Leading</th>
-                        <th>BIOS&Driver&nbsp;Ver.</th>
-                        <th>Project&nbsp;Status</th>
-                        <th>Bug&nbsp;List</th>
+                        <th title="Test Leader">TL</th>
+                        <th title="Project Leader">PL</th>
+                        <th>EVT Start</th>
+                        <th>MDRR</th>
+                        <th width="15%">Platform / Leading Project</th>
+                        {#                        <th>Project&nbsp;Type</th>#}
+                        {#                        <th>Project&nbsp;Style</th>#}
+                        {#                        <th>是否&nbsp;Leading</th>#}
+                        {#                        <th>BIOS&Driver&nbsp;Ver.</th>#}
+                        <th>Stage</th>
+                        <th>Project info</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for i in projects %}
 
                         <tr>
+                        <td style="text-align: center" >{{ i.project_type }}</td>
                             <td style="text-align: center">
                                 <a href="edit_project/{{ i.id }}/">{{ i.project_id }} <span class="glyphicon glyphicon-edit"
                                                                                             aria-hidden="true" ></span></a>
                             </td>
-                            <td style="text-align: center">{{ i.project_name }}</td>
+
+                            <td style="text-align: center" >{{ i.project_name }}</td>
                             <td style="text-align: center">{{ i.project_model }}</td>
                             <td style="text-align: center">{{ i.test_leader_wzs.job_name }}</td>
                             <td style="text-align: center">{{ i.test_leader_whq.job_name }}</td>
                             <td style="text-align: center">{{ i.schedule_start|date:'Y-m-d' }}</td>
                             <td style="text-align: center">{{ i.schedule_end|date:'Y-m-d' }}</td>
-                            <td style="text-align: center">{{ i.project_platform }}</td>
-                            <td style="text-align: center">{{ i.project_type }}</td>
-                            <td style="text-align: center">{{ i.project_style }}</td>
-                            <td style="text-align: center">{{ i.project_is_leading_project }}</td>
-                            <td style="text-align: center">
-                                <a  title="查看版本信息"  href="project_info/{{ i.id }}" >查看
-                                </a>
-                            </td>
+                            <td style="text-align: center">{{ i.project_platform }} / {{ i.project_is_leading_project }}</td>
+                            {#                            <td style="text-align: center">{{ i.project_type }}</td>#}
+                            {#                            <td style="text-align: center">{{ i.project_style }}</td>#}
+                            {#                            <td style="text-align: center">{{ i.project_is_leading_project }}</td>#}
+                            {#                            <td style="text-align: center">#}
+                            {#                                <a  title="查看版本信息"  href="project_info/{{ i.id }}" >查看#}
+                            {#                                </a>#}
+                            {#                            </td>#}
                             {% if i.id in CT_list %}
-                                <td style="text-align: center"><a href="project_ct_info/{{ i.id }}">查看</a></td>
+                                <td style="text-align: center"><a href="project_ct_info/{{ i.id }}">详情</a></td>
                             {% else %}
-                                <td style="text-align: center"><a href="project_ct_list/{{ i.id }}">查看</a></td>
+                                <td style="text-align: center"><a href="project_ct_list/{{ i.id }}">详情</a></td>
                             {% endif %}
-                            <td style="text-align: center"><a href="{% url 'issue_list' i.id %}">查看</a></td>
+                            <td style="text-align: center">
+                                    <li role="presentation" class="dropdown">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">详情 <span class="fa fa-caret-down"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a title="查看版本信息"  href="project_info/{{ i.id }}" >BIOS & Driver Ver.</a></li>
+                                            <li><a title="issue_list" href="{% url 'issue_list' i.id %}">Bug_List</a></li>
+                                        </ul>
+                                    </li>
+
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>

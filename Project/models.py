@@ -302,6 +302,9 @@ class ControlTableList(models.Model):
     stage_end = models.DateField(verbose_name="结束日期",blank=True, null=True)
     stage_sku_qty = models.CharField(verbose_name="sku 数量", max_length=255, blank=True, null=True,default="")
     stage_note = models.CharField(max_length=255, unique=False, verbose_name="Project_stage",default="")
+    system_qty = models.CharField(verbose_name="测试系统数量", max_length=255, blank=True, null=True,default="")
+    OS_Ver = models.CharField(max_length=255, unique=False, verbose_name="OS_Version",null=True,default="")
+    buffer_activity = models.CharField(max_length=255, unique=False, verbose_name="测试buffer",null=True,default="")
 
     def __str__(self):
         return self.project_stage

@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% block page-content %}
+    <br/>
     <div class="panel panel-primary">
         <div class="panel-heading "><h3 class="panel-title">Project info</h3></div>
         <div class="panel-body ">
@@ -35,7 +36,7 @@
                     <tr><th><label for="id_Camera">Camera Diver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera" value="{{ ret.dr_camera }}" ></td>
                         <th><label for="id_USB">USB Driver:</label></th><td><input type="text" name="USB" class="form-control" id="id_USB" value="{{ ret.dr_usb }}" ></td></tr>
                     <tr><th><label for="id_Com_parallel">Com_Parallel Driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel" value="{{ ret.dr_com_parallel }}" ></td>
-                        <th><label for="id_Serial_io">Serial_IO dDriver:</label></th><td><input type="text" name="Serial_io" class="form-control" id="id_Serial_io" value="{{ ret.dr_serial_io }}" ></td></tr>
+                        <th><label for="id_Serial_io">Serial_IO Driver:</label></th><td><input type="text" name="Serial_io" class="form-control" id="id_Serial_io" value="{{ ret.dr_serial_io }}" ></td></tr>
                     <tr><th><label for="id_SGX">SGX Driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX" value="{{ ret.dr_sgx }}" ></td></tr>
                         <tr><th><label for="id_Others">Others Driver:</label></th><td><textarea  name="Others" class="form-control" id="id_Others" >{{ ret.dr_others|linebreaksbr }}</textarea></td></tr>
 

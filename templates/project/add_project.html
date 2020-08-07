@@ -1,8 +1,9 @@
 {% extends 'index.html' %}
 {% block page-content %}
+    <br/>
     <div class="panel panel-primary">
         <div class="panel-heading "><h3 class="panel-title">Add Project</h3></div>
-        <div class="panel-body ">
+        <div class="panel-body">
             <div class="row" style="margin-bottom: 15px">
                 <div class="col-md-4">
 
@@ -11,20 +12,24 @@
             </div><!-- /.row -->
             <form action="add_project" method="post" class="form-horizontal" novalidate>
                 {% csrf_token %}
-                <div class="form-content col-sm-6">
-
+                <div class="form-content col-sm-5 col-sm-offset-2">
                     <div>
-                        <label for="{{ obj.project_id.id_for_label }}">Project_code:</label>
+                        <label for="{{ obj.project_type_id.id_for_label }}">Customer:</label>
+                        <div>{{ obj.project_type_id }} {{ obj.project_type_id.errors.0 }}</div>
+
+                    </div>
+                    <div>
+                        <label for="{{ obj.project_id.id_for_label }}">* Project_code:</label>
                         <div>{{ obj.project_id }} {{ obj.project_id.errors.0 }}</div>
 
                     </div>
                     <div>
-                        <label for="{{ obj.project_name.id_for_label }}">Project_name:</label>
+                        <label for="{{ obj.project_name.id_for_label }}">* Project_name:</label>
                         <div>{{ obj.project_name }} {{ obj.project_name.errors.0 }}</div>
 
                     </div>
                     <div>
-                        <label for="{{ obj.project_model.id_for_label }}">Project_model:</label>
+                        <label for="{{ obj.project_model.id_for_label }}">* Project_model:</label>
                         <div>{{ obj.project_model }} {{ obj.project_model.errors.0 }}</div>
 
                     </div>
@@ -39,12 +44,12 @@
 
                     </div>
                     <div>
-                        <label for="{{ obj.schedule_start.id_for_label }}">Schedule_start:</label>
+                        <label for="{{ obj.schedule_start.id_for_label }}">* Start_time:</label>
                         <div>{{ obj.schedule_start }} {{ obj.schedule_start.errors.0 }}</div>
 
                     </div>
                     <div>
-                        <label for="{{ obj.schedule_end.id_for_label }}">Schedule_end:</label>
+                        <label for="{{ obj.schedule_end.id_for_label }}">* MDRR:</label>
                         <div>{{ obj.schedule_end }} {{ obj.schedule_end.errors.0 }}</div>
 
                     </div>
@@ -53,21 +58,16 @@
                         <div>{{ obj.project_platform_id }} {{ obj.project_platform_id.errors.0 }}</div>
 
                     </div>
-                    <div>
-                        <label for="{{ obj.project_type_id.id_for_label }}">Family:</label>
-                        <div>{{ obj.project_type_id }} {{ obj.project_type_id.errors.0 }}</div>
 
-                    </div>
                     <div>
                         <label for="{{ obj.project_style_id.id_for_label }}">Type:</label>
                         <div>{{ obj.project_style_id }} {{ obj.project_style_id.errors.0 }}</div>
-
                     </div>
-{#                    <div>#}
-{#                        <label for="{{ obj.project_sku_qty.id_for_label }}">project_sku_qty:</label>#}
-{#                        <div>{{ obj.project_sku_qty }} {{ obj.project_sku_qty.errors.0 }}</div>#}
-{##}
-{#                    </div>#}
+                    {#                    <div>#}
+                    {#                        <label for="{{ obj.project_sku_qty.id_for_label }}">project_sku_qty:</label>#}
+                    {#                        <div>{{ obj.project_sku_qty }} {{ obj.project_sku_qty.errors.0 }}</div>#}
+                    {##}
+                    {#                    </div>#}
                     <div>
                         <label for="{{ obj.project_is_leading_project.id_for_label }}">leading_project:</label>
                         <div>{{ obj.project_is_leading_project }} {{ obj.project_is_leading_project.errors.0 }}</div>
@@ -77,21 +77,14 @@
 
                         <div>
                             <input type="hidden" name="project_progress" class="form-control" required="" id="id_project_progress" value=0%>
-
                         </div>
 
                     </div>
 
-
+                    <input class="btn btn-success pull-right" type="submit" name="submit" onclick="checkDate()"
+                           placeholder="下一步" value="下一步">
                 </div>
 
-                <div>
-                    <div class="col-sm-offset-6 col-sm-6">
-                        <input class="btn btn-success " type="submit" name="submit"
-                               placeholder="下一步" value="下一步">
-                        <input class="btn btn-success " type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                    </div>
-                </div>
 
 
             </form>
@@ -111,6 +104,23 @@
             forceParse: false,
             language: 'en'
         });
+        function checkDate() {
+            var str_date = document.getElementById("id_schedule_start").value;
+            var end_date = document.getElementById("id_schedule_end").value;
+            if (getDate(end_date)-getDate(str_date)<0){
+                alert("结束时间不能早于开始时间")
+                document.getElementById("id_schedule_end").value = '';
+            }
+        }
+        function getDate(date) {
+            var dates = date.split('-');
+            var dateReturn = '';
+            for (var i=0;i<dates.length;i++){
+                dateReturn+=dates[i];
+            }
+            return dateReturn;
+
+        }
 
     </script>
 {% endblock %}

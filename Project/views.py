@@ -21,7 +21,7 @@ def index(request):
 # @permission_required('Tester')
 def projects(request):
 
-    result = models.Project.objects.all()
+    result = models.Project.objects.all().order_by('-schedule_end')
     # 搜索此project是否已经有了Control table
     CT_lists = models.ControlTableList.objects.values('project_id')
     CT_list=[]
@@ -65,6 +65,7 @@ def edit_project(request, nid):
 def project_info(request, nid):
     if request.method == "GET":
         ret = models.ProjectInfo.objects.filter(project_id=nid).values().last()
+
         ret['project_name']=models.Project.objects.filter(id=nid).values().first()['project_name']
         return render(request, 'Project/project_info.html', {'nid': nid, 'ret': ret})
 
@@ -107,6 +108,7 @@ def add_project_info(request, nid):
 def edit_project_info(request, nid):
     if request.method == "GET":
         ret = models.ProjectInfo.objects.filter(id=nid).values().last()
+
         ret['project_name'] = models.Project.objects.filter(id=ret['project_id']).values().first()['project_name']
         return render(request, 'Project/edit_project_info.html', {'ret': ret})
     else:
@@ -256,11 +258,11 @@ def project_ct_info(request,nid):
         progress.update({i["ControlTable_List_id_id"]:'{:.2%}'.format(float(attend_time_finished)/sum(attend_time_dic.values()))})
     for i in CT_list:
         if i.id in progress.keys():
-            i.attend_time=att_time[i.id]
+            i.attend_time='%.2f' % (att_time[i.id]/60)
             i.progressed = progress[i.id]
         else:
             i.attend_time="N/A"
-            i.progressed="未开始"
+            i.progressed="0%"
 
     return render(request, 'Project/project_ct_info.html', {"CT_list":CT_list, "pj":pj,"ct_list_distinct":ct_list_distinct,"progress":progress})
 
@@ -272,6 +274,7 @@ def project_ct_list(request,nid):
         return render(request,'Project/project_ct_list.html',{"pj":pj})
     else:
         result= request.POST
+        print(result)
         pj = models.Project.objects.filter(id=nid).values().first()
         result_list = list(models.ControlTableList.objects.values_list('project_id', 'project_stage'))
         project_id = request.POST.get("project_id")
@@ -284,25 +287,41 @@ def project_ct_list(request,nid):
             error='该project已经有这个stage了'
             return render(request, 'Project/project_ct_list.html', {"pj":pj,'error':error})
         if result["stage_end"] and result["stage_begin"] != "":
-            models.ControlTableList.objects.create(project_stage=project_stage,project_id=result["project_id"],
-                                                   stage_sku_qty=result["stage_sku_qty"],stage_note=result["stage_note"],stage_end=result["stage_end"],stage_begin=result["stage_begin"])
+            models.ControlTableList.objects.create(project_stage=project_stage,
+                                                   project_id=result["project_id"],
+                                                   stage_sku_qty=result["stage_sku_qty"],
+                                                   stage_note=result["stage_note"],
+                                                   system_qty=result["system_qty"],
+                                                   OS_Ver=result["OS_Ver"],
+                                                   buffer_activity=result["buffer"],
+                                                   stage_end=result["stage_end"],
+                                                   stage_begin=result["stage_begin"])
         elif result["stage_end"] == "":
             models.ControlTableList.objects.create(project_stage=result["project_stage"],
                                                    project_id=result["project_id"],
                                                    stage_sku_qty=result["stage_sku_qty"],
                                                    stage_note=result["stage_note"],
+                                                   system_qty=result["system_qty"],
+                                                   os_ver=result["OS_Ver"],
+                                                   buffer_activity=result["buffer"],
                                                    stage_begin=result["stage_begin"])
         elif result["stage_begin"] == "":
             models.ControlTableList.objects.create(project_stage=result["project_stage"],
                                                    project_id=result["project_id"],
                                                    stage_sku_qty=result["stage_sku_qty"],
                                                    stage_note=result["stage_note"],
+                                                   system_qty=result["system_qty"],
+                                                   os_ver=result["OS_Ver"],
+                                                   buffer_activity=result["buffer"],
                                                    stage_end=result["stage_end"])
         else:
             models.ControlTableList.objects.create(project_stage=result["project_stage"],
                                                    project_id=result["project_id"],
                                                    stage_sku_qty=result["stage_sku_qty"],
                                                    stage_note=result["stage_note"],
+                                                   system_qty=result["system_qty"],
+                                                   os_ver=result["OS_Ver"],
+                                                   buffer_activity=result["buffer"],
                                                    )
         return redirect('project_ct_info',nid)
 
@@ -539,6 +558,39 @@ def task_list(request):
     for i in CT_lists:
         project = models.Project.objects.filter(id=i['project_id']).values().first()
         i['project']=project
+        # *******计算tester在这个task下的attend time********
+        list = models.ControlTableContent.objects.filter(ControlTable_List_id_id=i['id']).values_list("tester__job_name",
+                                                                                                'sheet_id')
+        attend_time_dic_persheet = {}
+        tester_list = []
+        test_time = {}
+        for j in list:
+            if j[0] not in tester_list:
+                tester_list.append(j[0])
+            cases_by_sheet = T.TestCase.objects.filter(sheet_id=j[1]).values('attend_time')
+            attend_time_sum = 0
+            for k in cases_by_sheet:
+                attend_time_sum += float(k['attend_time'])
+            attend_time_dic_persheet.update({j[1]: attend_time_sum})
+            for v in tester_list:
+
+                try:
+                    if v == j[0]:
+                        test_time.update({v: test_time[v] + attend_time_dic_persheet[j[1]]})
+                except:
+                    test_time.update({v: attend_time_dic_persheet[j[1]]})
+
+        # i['test_time']=test_time[request.user.last_name]
+        i['test_time']='%.1f' % (test_time[request.user.last_name]/60)
+        # *************************************************
+        # *******计算progress*******************************
+        finish_case=models.TestResult.objects.filter(ControlTableList_id=i['id'],tester=request.user.id).values('test_case_id')
+        finish_time = 0
+        for j in finish_case:
+            finish_time += float(T.TestCase.objects.filter(id=j['test_case_id']).values('attend_time').first()['attend_time'])
+
+        i['finish_progress'] = '%.2f' % (finish_time/test_time[request.user.last_name]*100)
+        # *************************************************
     return render(request,'Project/task_list.html',{"CT_list":CT_lists})
 
 
@@ -711,7 +763,15 @@ def stage_update(request,lid):
         info = models.ControlTableList.objects.filter(id=lid).values().first()
         return render(request,'Project/stage_update.html',{'info':info,'pj':pj})
     else:
-        models.ControlTableList.objects.filter(id=lid).update(project_stage=request.POST.get("project_stage"),stage_sku_qty=request.POST.get("stage_sku_qty"),stage_begin=request.POST.get("stage_begin"),stage_end=request.POST.get("stage_end"),stage_note=request.POST.get("stage_note"),)
+        models.ControlTableList.objects.filter(id=lid).update(project_stage=request.POST.get("project_stage"),
+                                                              stage_sku_qty=request.POST.get("stage_sku_qty"),
+                                                              stage_begin=request.POST.get("stage_begin"),
+                                                              stage_end=request.POST.get("stage_end"),
+                                                              stage_note=request.POST.get("stage_note"),
+                                                              system_qty=request.POST.get("system_qty"),
+                                                              OS_Ver=request.POST.get("OS_Ver"),
+                                                              buffer_activity=request.POST.get("buffer"),
+                                                              )
         # plist = models.ControlTableList.objects.filter(id=lid).values().first()
         # pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
         CT_list = models.ControlTableList.objects.filter(project_id=request.POST.get("project_id"))

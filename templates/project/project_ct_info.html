@@ -25,7 +25,13 @@
                 <h2 class="panel-title">{{ pj.project_name }}'s Control Table</h2>
             </div>
             <div class="panel-body">
+                <div class="col-md-5 pull-right">
 
+                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                    <button class="btn btn-success pull-right" type="button"
+                            onclick="window.location.href='{% url 'project_ct_list' pj.id %}'">新增stage
+                    </button>
+                </div>
                 <table class = "table table-striped table-bordered">
 
                     <thead class="">
@@ -33,10 +39,13 @@
                         <th>Project Name</th>
                         <th>Poject Stage</th>
                         <th>Stage Sku qty</th>
+                        <th>System qty</th>
+                        <th>OS Version</th>
                         <th>Stage Start</th>
                         <th>Stage End</th>
                         <th>Attend Time</th>
                         <th>Test Progress</th>
+                        <th>Buffer Activity</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -48,27 +57,29 @@
                             <td style="text-align: center"><a href="{% url 'stage_update' i.id %}">{{ i.project_stage }} <span class="glyphicon glyphicon-edit"
                                                                                                                                aria-hidden="true" ></span></a></td>
                             <td style="text-align: center">{{ i.stage_sku_qty }}</td>
+                            <td style="text-align: center">{{ i.system_qty }}</td>
+                            <td style="text-align: center">{{ i.OS_Ver }}</td>
                             <td style="text-align: center">{{ i.stage_begin|date:'Y-m-d' }}</td>
                             <td style="text-align: center">{{ i.stage_end|date:'Y-m-d' }}</td>
                             <td style="text-align: center">{{ i.attend_time }}</td>
-                            <td style="text-align: center">{{ i.progressed }}</td>
+                            <td style="text-align: center">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="{{ i.progressed }}" style="width: {{ i.progressed }};color: #0f0f0f">{{ i.progressed }}</div>
+                                </div>
+                            </td>
+                            <td style="text-align: center">{{ i.buffer_activity }}</td>
+
                             {% if i.id in ct_list_distinct %}
-                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'project_ct_content' i.id %}">查看Control Table</a></td>
-                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'export_project_report' i.id %}">生成报告</a></td>
+                                <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'project_ct_content' i.id %}">查看Control Table</a></td>
+                                <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'export_project_report' i.id %}">生成报告</a></td>
                             {% else %}
-                                <td style="text-align: center"><a class="btn btn-info" href="{% url 'project_ct' i.id %}">创建Control Table</a></td>
+                                <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'project_ct' i.id %}">创建Control Table</a></td>
                                 <td style="text-align: center"></td>
                             {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
-
-                {#                    <input class="btn btn-success" type="submit" value="提交">#}
-                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                <button class="btn btn-success pull-right" type="button"
-                        onclick="window.location.href='{% url 'project_ct_list' pj.id %}'">新增stage
-                </button>
             </div>
         </div>
     {% else %}

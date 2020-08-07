@@ -35,7 +35,10 @@
                         <th style="text-align: center">Stage Sku qty</th>
                         <th style="text-align: center">Stage Start</th>
                         <th style="text-align: center">Stage End</th>
-                        <th style="text-align: center">Issue List</th>
+                        <th style="text-align: center">Attend Hours</th>
+                        <th style="text-align: center">My Progress</th>
+                        <th style="text-align: center"></th>
+                        <th style="text-align: center"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -43,11 +46,28 @@
                         <tr>
                             <td hidden>{{ i.id }}</td>
                             <td style="text-align: center">{{ i.project.project_name }}</td>
-                            <td style="text-align: center"><a href="{% url 'task_table' i.id %}">{{ i.project_stage }}</a></td>
+                            <td style="text-align: center">{{ i.project_stage }}</td>
                             <td style="text-align: center">{{ i.stage_sku_qty }}</td>
                             <td style="text-align: center">{{ i.stage_begin|date:'Y-m-d' }}</td>
                             <td style="text-align: center">{{ i.stage_end|date:'Y-m-d' }}</td>
-                            <td style="text-align: center"><a href="{% url 'issue_list' i.project_id %}">查看</a></td>
+                            <td style="text-align: center">{{ i.test_time }}</td>
+                            <td style="text-align: center">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="{{ i.finish_progress }}" style="width: {{ i.finish_progress }}%;color: #0f0f0f">{{ i.finish_progress }}%</div>
+                                </div>
+
+                            </td>
+                            <td style="text-align: center"><a class="btn btn-default" href="{% url 'task_table' i.id %}">My task</a></td>
+                            <td style="text-align: center">
+                                <li role="presentation" class="dropdown ">
+                                    <a class="dropdown-toggle btn btn-info" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                        Project info <span class="fa fa-caret-down"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a title="Bug List" href="{% url 'issue_list' i.project_id %}">Bug List</a></li>
+                                        <li><a title="查看版本信息" href="project_info/{{ i.id }}" >BIOS & Driver Ver.</a></li>
+                                    </ul>
+                                </li></td>
+                            {#                        <a href="{% url 'issue_list' i.project_id %}">#}
                         </tr>
                     {% endfor %}
                     </tbody>

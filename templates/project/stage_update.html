@@ -37,8 +37,11 @@
                         <tr><th><label for="id_project_name">Project:</label></th><td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ pj.project_name }}" readonly></td></tr>
                         <tr><th><label for="id_project_stage">Project_Stage:</label></th><td><input type="text" name="project_stage" class="form-control" id="id_project_stage" value="{{ info.project_stage }}"></td></tr>
                         <tr><th><label for="id_stage_sku_qty">Stage_Sku_qty:</label></th><td><input type="text" name="stage_sku_qty" class="form-control" id="id_stage_sku_qty" value="{{ info.stage_sku_qty }}"></td></tr>
+                        <tr><th><label for="id_system_qty">System_qty:</label></th><td><input type="text" name="system_qty" class="form-control" id="id_system_qty" value="{{ info.system_qty }}" onkeyup="this.value=this.value.replace(/\D/g,'')"></td></tr>
+                        <tr><th><label for="id_os_Version">OS:</label></th><td><input type="text" name="OS_Ver" class="form-control" id="id_os_Version" value="{{ info.OS_Ver }}"></td></tr>
                         <tr><th><label for="id_stage_begin">Stage_Begin:</label></th><td><input type="text" name="stage_begin" class="form-control" id="id_stage_begin" value="{{ info.stage_begin |date:'Y-m-d' }}" readonly></td></tr>
-                        <tr><th><label for="id_stage_end">Stage_End:</label></th><td><input type="text" name="stage_end" class="form-control" id="id_stage_end" value="{{ info.stage_end |date:'Y-m-d' }}" readonly></td></tr>
+                        <tr><th><label for="id_stage_end">Stage_End:</label></th><td><input type="text" name="stage_end" class="form-control" id="id_stage_end" onchange="checkDate()" value="{{ info.stage_end |date:'Y-m-d' }}" readonly></td></tr>
+                        <tr><th><label for="id_buffer">Buffer_activity:</label></th><td><input type="text" name="buffer" class="form-control" id="id_buffer" placeholder="请输入百分数" value="{{ info.buffer_activity }}"></td></tr>
                         <tr><th><label for="id_stage_note">Stage_Note:</label></th><td><input type="text" name="stage_note" class="form-control" id="id_stage_note" placeholder="多个model不同sku，在这里说明，如:SKU1,SKU2,SKU3为TC-330,SKU4为XC-330" value="{{ info.stage_note }}"></td></tr>
                         </tbody>
                     </table>
@@ -64,6 +67,23 @@
             forceParse: false,
             language: 'en'
         });
+         function checkDate() {
+            var str_date = document.getElementById("id_stage_begin").value;
+            var end_date = document.getElementById("id_stage_end").value;
+            if (getDate(end_date)-getDate(str_date)<0){
+                alert("结束时间不能早于开始时间")
+                document.getElementById("id_stage_end").value = str_date;
+            }
+        }
+        function getDate(date) {
+            var dates = date.split('-');
+            var dateReturn = '';
+            for (var i=0;i<dates.length;i++){
+                dateReturn+=dates[i];
+            }
+            return dateReturn;
+
+        }
     </script>
 
     <br><br>

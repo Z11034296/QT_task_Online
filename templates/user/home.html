@@ -10,10 +10,10 @@
 
 {% if user.is_authenticated %}
 
-    <h3>{{ user.first_name }},工号:{{ user.username }} 个人信息维护页</h3>
+{#    <h3>{{ user.first_name }},工号:{{ user.username }} 个人信息维护页</h3>#}
     <div class="container">
         <div class="row">
-            <div class="col-md-5 col-md-offset-3">
+            <div class="col-md-5 col-md-offset-5">
                 <form action="" method="post">
                     {% csrf_token %}
                     <div class="col-sm-8">
@@ -62,8 +62,9 @@
                             </tr>
                             </tbody>
                         </table>
-                        <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                        <input class="btn btn-success pull-right" value="提交" type="submit" >
+                        <input class="btn btn-success" value="提交" type="submit" >
+                        <input class="btn btn-success" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+
                         <p class = "text-danger">{{ error }}</p>
                     </div>
                 </form>

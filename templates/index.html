@@ -2,27 +2,77 @@
 
 {% block body %}
     <body>
-    <style>
-        *{zoom:0.98}
-    </style>
-
+{#    <style>#}
+{#        *{zoom:0.98}#}
+{#    </style>#}
+    {#    上右导航#}
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                {#                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"#}
-                {#                        aria-expanded="false" aria-controls="navbar">#}
-                {#                    <span class="sr-only">Toggle navigation</span>#}
-                {#                    <span class="icon-bar"></span>#}
-                {#                    <span class="icon-bar"></span>#}
-                {#                    <span class="icon-bar"></span>#}
-                {#                </button>#}
-                <a class="navbar-brand" href="#">Annie Test Management System</a>
+                <a class="navbar-brand " href="#" style="color: #a6e1ec;margin-top: 5px;font-size: 26px;font-style: oblique">Annie Test Management System</a>
             </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
+            <div class="navbar-header" style="width: 80px">
+                <a>&nbsp;</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse" >
+                <ul class="nav navbar-nav navbar-left" >
+
+                    {# Test Management#}
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            欢迎 {{ user.first_name }} <span class="fa fa-caret-down"></span></a>
+                            Test Management <span class="fa fa-caret-down"></span></a>
+
+                        <ul class="dropdown-menu">
+                            <li><a class="nav" href="{% url 'projects' %}">On-going Project</a></li>
+                            <li><a class="nav" href="{% url 'task_list' %}">My task</a></li>
+                        </ul>
+                    </li>
+
+                    {# prject summery#}
+                    <li role="presentation"><a  href="#">Project Summery</a></li>
+
+                    {# Test Case Management#}
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggl active" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            Test Plan maintain <span class="fa fa-caret-down"></span></a>
+
+                        <ul class="dropdown-menu">
+                            <li><a class="nav" href="{% url 'caseinfo' %}">Add / Edit Case</a></li>
+                            <li ><a class="nav" href="{% url 'table_of_contents' %}">Common Test Plan</a></li>
+                        </ul>
+                    </li>
+
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+
+                    {# Test Case Management#}
+{#                    <li role="presentation" class="dropdown">#}
+{#                        <a class="dropdown-toggl active" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+{#                            Test Case Management <span class="fa fa-caret-down"></span></a>#}
+{##}
+{#                        <ul class="dropdown-menu">#}
+{#                            <li><a class="nav" href="{% url 'caseinfo' %}">Add / Edit Case</a></li>#}
+{#                            <li ><a class="nav" href="{% url 'table_of_contents' %}">Common Test Plan</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+
+                    {# Test Management#}
+{#                    <li role="presentation" class="dropdown">#}
+{#                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+{#                            Task Management <span class="fa fa-caret-down"></span></a>#}
+{##}
+{#                        <ul class="dropdown-menu">#}
+{#                            <li><a class="nav" href="{% url 'projects' %}">On-going Project</a></li>#}
+{#                            <li><a class="nav" href="{% url 'task_list' %}">My task</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+                    {# 账户管理#}
+                    <li role="presentation"><a  href="{% url 'userinfo' %}">账户管理</a></li>
+                    {# 个人信息#}
+                    <li role="presentation" class="dropdown ">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            欢迎 {{ user.first_name }}<span class="fa fa-caret-down"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'home' user.id %}">信息维护</a></li>
                             <li><a href="{% url 'set_password' %}">密码修改</a></li>
@@ -32,66 +82,85 @@
                             <li><a href="{% url 'logout' %}">注销登录</a></li>
                         </ul>
                     </li>
-
-                    {#                    <li><a href="{% url 'task_list' %}"> My task</a></li>#}
-                    {#                    <li><a href="{% url 'set_password' %}">修改密码</a></li>#}
-                    {#                    <li><a href="{% url 'logout' %}">注销</a></li>#}
                 </ul>
             </div>
         </div>
     </nav>
-    <div id="wrapper" class="toggled">
-            <div class="overlay" style="display: block;"></div>
-        <div class="container-fluid col-sm-1 sidebar ">
-            <nav class="navbar navbar-fixed-left" id="sidebar-wrapper" role="navigation">
+    {#    左侧导航#}
+{#    <div id="wrapper" class="toggled">#}
+{#        <div class="overlay" style="display: block;"></div>#}
+{#        <div class="container-fluid col-sm-1 sidebar ">#}
+{#            <nav class="navbar navbar-fixed-left" id="sidebar-wrapper" role="navigation">#}
 
                 {#                    <div class="row">#}
                 {#        <div class="" style="background-color: lightgray ">#}
 
 
                 {#            <ul class="nav sidebar-nav" id="tabs_nav">#}
-                <ul class="nav sidebar-nav">
+{#                <ul class="nav sidebar-nav">#}
                     {#            navbar-inverse#}
-                    <li role="presentation"> <a href="{% url 'caseinfo' %}">Test_Case</a></li>
-                    <li role="presentation"> <a href="{% url 'table_of_contents' %}">Test_Plan</a></li>
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            Projects&nbsp;<span class="fa fa-caret-down"></span></a>
+{#                    <li role="presentation" class="dropdown">#}
+{#                        <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+{#                            Case Manage <span class="fa fa-caret-down"></span></a>#}
 
-                        <ul class="dropdown-menu">
-                            <li><a class="nav" href="{% url 'projects' %}">Compatibility</a></li>
-                            <li><a class="nav" href="#">Regression</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a class="nav" href="#">others</a></li>
-                        </ul>
-                    </li>
-                    <li role="presentation"><a href="{% url 'userinfo' %}">人员管理</a></li>
+{#                        <ul class="dropdown-menu">#}
+{#                            <li><a class="nav" href="{% url 'caseinfo' %}">Add/Edit Case</a></li>#}
+{#                            <li><a class="nav" href="{% url 'table_of_contents' %}">Common Test Plan</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+{#                    <li role="presentation" class="dropdown">#}
+{#                        <a class="dropdown-toggle btn btn-default btn-xs" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+{#                            Test Manage <span class="fa fa-caret-down"></span></a>#}
+{##}
+{#                        <ul class="dropdown-menu">#}
+{#                            <li><a class="nav" href="{% url 'projects' %}">On-going Project</a></li>#}
+{#                            <li><a class="nav" href="{% url 'task_list' %}">My task</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+
+
+
+                    {#                    <li role="presentation"> <a href="{% url 'caseinfo' %}">Test_Case</a></li>#}
+                    {#                    <li role="presentation"> <a href="{% url 'table_of_contents' %}">Test_Plan</a></li>#}
+                    {#                    <li role="presentation" class="dropdown">#}
+                    {#                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+                    {#                            Projects&nbsp;<span class="fa fa-caret-down"></span></a>#}
+                    {##}
+                    {#                        <ul class="dropdown-menu">#}
+                    {#                            <li><a class="nav" href="{% url 'projects' %}">Compatibility</a></li>#}
+                    {#                            <li><a class="nav" href="#">Regression</a></li>#}
+                    {#                            <li role="separator" class="divider"></li>#}
+                    {#                            <li><a class="nav" href="#">others</a></li>#}
+                    {#                        </ul>#}
+                    {#                    </li>#}
+{#                    <li role="presentation"><a class="btn btn-default btn-xs" href="{% url 'userinfo' %}">账户管理</a></li>#}
 
                     {#                    {% for role in request.user.userprofile.role.all %}#}
                     {#                        {% for menu in role.menu.all %}#}
                     {#                            <li class=""><a href="{%  url menu.url_name %}">{{ menu.name }}</a></li>#}
                     {#                        {% endfor %}#}
                     {#                    {% endfor %}#}
-                </ul>
+{#                </ul>#}
                 {#            </ul>#}
                 {#        </div>#}
                 {#    </div>#}
                 {#    </div>#}
-            </nav>
-        </div>
+{#            </nav>#}
+{#        </div>#}
         {#    <div class="col-sm-9 col-sm-offset-2 col-md-11 col-md-offset-1 main">#}
-        <div id="page-content-wrapper">
-            <button type="button" class="hamburger animated fadeInLeft is-open" data-toggle="offcanvas">
-                <span class="hamb-top"></span>
-                <span class="hamb-middle"></span>
-                <span class="hamb-bottom"></span>
-            </button>
+{#        <div id="page-content-wrapper">#}
+{#            <button type="button" class="hamburger animated fadeInLeft is-open" data-toggle="offcanvas">#}
+{#                <span class="hamb-top"></span>#}
+{#                <span class="hamb-middle"></span>#}
+{#                <span class="hamb-bottom"></span>#}
+{#            </button>#}
             {#        <div class="container">#}
-            <div class="row">
-                <div class="col-sm-10 col-sm-offset-1 col-md-11">
+            <div class="container">
+                <div class="row">
 
 
                     {% block page-content %}
+
                         {#            <h1 class="page-header">Dashboard</h1>#}
                         {##}
                         {#            <div class="row placeholders">#}
@@ -127,9 +196,9 @@
                 </div>
 
             </div>
-
-        </div>
-    </div>
+{##}
+{#        </div>#}
+{#    </div>#}
 
 
 
