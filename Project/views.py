@@ -248,6 +248,7 @@ def project_ct_info(request,nid):
             for k in cases_by_sheet:
                 attend_time_sum += float(k['attend_time'])
             attend_time_dic_persheet.update({sheets.id: attend_time_sum})
+            print(test_sku_num_list)
             attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
             att_time.update({i["ControlTable_List_id_id"]:sum(attend_time_dic.values())})
         y=models.TestResult.objects.filter(ControlTableList_id=i["ControlTable_List_id_id"]).values("test_case_id")
@@ -255,6 +256,7 @@ def project_ct_info(request,nid):
         for k in y:
             attend_time_finished += float(T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
         # progress.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:'{:.2%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
+        print(attend_time_dic)
         progress.update({i["ControlTable_List_id_id"]:'{:.2%}'.format(float(attend_time_finished)/sum(attend_time_dic.values()))})
     for i in CT_list:
         if i.id in progress.keys():
@@ -263,7 +265,6 @@ def project_ct_info(request,nid):
         else:
             i.attend_time="N/A"
             i.progressed="0%"
-
     return render(request, 'Project/project_ct_info.html', {"CT_list":CT_list, "pj":pj,"ct_list_distinct":ct_list_distinct,"progress":progress})
 
 
@@ -274,7 +275,6 @@ def project_ct_list(request,nid):
         return render(request,'Project/project_ct_list.html',{"pj":pj})
     else:
         result= request.POST
-        print(result)
         pj = models.Project.objects.filter(id=nid).values().first()
         result_list = list(models.ControlTableList.objects.values_list('project_id', 'project_stage'))
         project_id = request.POST.get("project_id")
@@ -1377,3 +1377,147 @@ def test_time_review(request,lid):
     if "N/A" in tester_list:
         del test_time["N/A"]
     return render(request, "project/test_time_review.html",{"test_time":test_time})
+
+
+def project_sum(request):
+    if request.method == 'GET':
+        # ********************************************
+        now_date=datetime.datetime.now().strftime("%Y-%m-%d")
+        str_time=datetime.datetime.now().strftime("%Y")+'-01-01'
+        sum_project=[]
+        pro_model_list=[]
+        sum_model=0
+        sum_at_time=0
+        sum_buffer=0
+        sum_list={}
+        progress = {}
+        stage_list=models.ControlTableList.objects.filter(stage_begin__gte=str_time,stage_begin__lte=now_date).order_by("-stage_begin")
+
+
+        # ********************************************
+        sheets_list = T.Sheet.objects.all()
+
+        att_time={}
+
+        for i in stage_list:
+            if i.buffer_activity == '':
+                i.buffer_activity = '0%'
+            sum_project.append(i.project.project_name)
+            pro_model_list.append(i.project.project_model)
+            sum_buffer += float(i.buffer_activity.split('%')[0])
+            attend_time_dic = {}
+            attend_time_dic_persheet = {}
+            test_sku_num_list = {}
+            for sheets in sheets_list:
+                # *******计算非N/A的SKU的sku数量*********
+                test_sku_num = 0
+                x = models.ControlTableContent.objects.filter(sheet_id=sheets.id,ControlTable_List_id=i.id)
+                for j in x:
+                    if j.tester.job_name != "N/A":
+                        test_sku_num += 1
+                test_sku_num_list.update({sheets.id: test_sku_num})
+
+                cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+                attend_time_sum = 0
+                for k in cases_by_sheet:
+                    attend_time_sum += float(k['attend_time'])
+                attend_time_dic_persheet.update({sheets.id: attend_time_sum})
+                attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
+
+                att_time.update({i.id: sum(attend_time_dic.values())})
+            y = models.TestResult.objects.filter(ControlTableList_id=i.id).values(
+                    "test_case_id")
+            attend_time_finished = 0
+            for k in y:
+                attend_time_finished += float(T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
+            if att_time[i.id] != 0:
+                progress.update({i.id: '{:.2%}'.format(float(attend_time_finished) / att_time[i.id])})
+                i.attend_hours = '%.2f' % (att_time[i.id] / 60)
+                i.progress = progress[i.id]
+                sum_at_time += float(i.attend_hours)
+            else:
+                i.attend_hours = "N/A"
+                i.progress = "0%"
+        for i in set(pro_model_list):
+            if ',' in i:
+                sum_model += len(i.split(','))
+            else:sum_model += 1
+        sum_list={"sum_project":len(list(set(sum_project))),"sum_model":sum_model,"sum_at_time":sum_at_time,"sum_buffer":sum_buffer/stage_list.count(),"sum_stage":stage_list.count()}
+
+        return render(request,'project/project_summary.html',{'sum_list':sum_list,'stage_list':stage_list,"now_date":now_date,"str_time":str_time})
+
+    else:
+        # ********************************************
+        end_date = request.POST.get("serch_endtime")
+        str_date = request.POST.get("serch_strtime")
+        customer = request.POST.get("customer")
+        sum_project = []
+        pro_model_list = []
+        sum_model = 0
+        sum_at_time = 0
+        sum_buffer = 0
+        sum_list = []
+        progress = {}
+        if customer == '0':
+            stage_list = models.ControlTableList.objects.filter(stage_begin__gte=str_date, stage_begin__lte=end_date,
+                                                                ).order_by("-stage_begin")
+        else:
+            stage_list = models.ControlTableList.objects.filter(stage_begin__gte=str_date, stage_begin__lte=end_date,
+                                                                project__project_type=customer).order_by("-stage_begin")
+        # ********************************************
+        sheets_list = T.Sheet.objects.all()
+
+        att_time = {}
+
+        for i in stage_list:
+            if i.buffer_activity == '':
+                i.buffer_activity = '0%'
+
+            sum_project.append(i.project.project_name)
+            pro_model_list.append(i.project.project_model)
+            sum_buffer += float(i.buffer_activity.split('%')[0])
+            attend_time_dic = {}
+            attend_time_dic_persheet = {}
+            test_sku_num_list = {}
+            for sheets in sheets_list:
+                # *******计算非N/A的SKU的sku数量*********
+                test_sku_num = 0
+                x = models.ControlTableContent.objects.filter(sheet_id=sheets.id, ControlTable_List_id=i.id)
+                for j in x:
+                    if j.tester.job_name != "N/A":
+                        test_sku_num += 1
+                test_sku_num_list.update({sheets.id: test_sku_num})
+
+                cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+                attend_time_sum = 0
+                for k in cases_by_sheet:
+                    attend_time_sum += float(k['attend_time'])
+                attend_time_dic_persheet.update({sheets.id: attend_time_sum})
+                attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
+
+                att_time.update({i.id: sum(attend_time_dic.values())})
+            y = models.TestResult.objects.filter(ControlTableList_id=i.id).values(
+                "test_case_id")
+            attend_time_finished = 0
+            for k in y:
+                attend_time_finished += float(
+                    T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
+
+            if att_time[i.id] != 0:
+                progress.update({i.id: '{:.2%}'.format(float(attend_time_finished) / att_time[i.id])})
+                i.attend_hours = '%.2f' % (att_time[i.id] / 60)
+                i.progress = progress[i.id]
+                sum_at_time += float(i.attend_hours)
+            else:
+                i.attend_hours = "N/A"
+                i.progress = "0%"
+        for i in set(pro_model_list):
+            if ',' in i:
+                sum_model += len(i.split(','))
+            else:sum_model += 1
+        sum_list={"sum_project":len(list(set(sum_project))),"sum_model":sum_model,"sum_at_time":sum_at_time,"sum_buffer":'%.1f' % (sum_buffer/stage_list.count()),"sum_stage":stage_list.count()}
+        return render(request, 'project/project_summary.html',
+                      {'sum_list': sum_list, 'stage_list': stage_list, "now_date": end_date, "str_time": str_date})
+
+
+#
