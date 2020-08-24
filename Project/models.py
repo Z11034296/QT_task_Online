@@ -271,7 +271,7 @@ class TestResult(models.Model):
     tester = models.ForeignKey(UserProfile.models.UserInfo, on_delete=models.CASCADE)
     result_datetime = models.DateTimeField(auto_now_add=True, blank=True)
     test_case = models.ForeignKey(TestCase.models.TestCase, verbose_name='test case', on_delete=models.CASCADE)
-    test_result = models.CharField(max_length=16,blank=True, null=True, default="")
+    test_result = models.CharField(max_length=128,blank=True, null=True, default="")
     sku_num = models.CharField(max_length=16, blank=True, null=True, default="")
     issue_id = models.ForeignKey('Issue', on_delete=models.CASCADE, blank=True, null=True)
     remark = models.CharField(max_length=255, blank=True, null=True,default="",verbose_name="result_remark")
@@ -311,3 +311,12 @@ class ControlTableList(models.Model):
 
     class Meta:
         unique_together = ('project', 'project_stage',)
+
+
+class sheet_prepared(models.Model):
+    sheet = models.ForeignKey(TestCase.models.Sheet,on_delete=models.CASCADE,unique=False,default="")
+    sheet_prepared = models.TextField(blank=True, null=True,)
+    ControlTable_List = models.ForeignKey("ControlTableList", on_delete=models.CASCADE, unique=False, default="")
+
+    def __str__(self):
+        return str(self.sheet)

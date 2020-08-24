@@ -13,26 +13,54 @@
             font-size: initial;
 
         }
+        .loading {
+            width: 160px;
+            height: 56px;
+            position: absolute;
+            top: 50%;
+            left: 45%;
+            line-height: 56px;
+            color: #fff;
+            padding-left: 60px;
+            font-size: 15px;
+            background: #000 url(../../static/img/loading.gif) no-repeat 10px 50%;
+            opacity: 0.7;
+            z-index: 9999;
+            -moz-border-radius: 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
+        }
     </style>
 
 
     <p>{% if user.is_authenticated %}
         <div class="panel panel-primary ">
-            <form action="#" class="navbar-right navbar-form">
-            </form>
             <div class="panel-heading">
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table -> {{ name }} -> SKU{{ skunum }}</h2>
             </div>
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="panel-body">
+                    <table border="T2" class="table">
+                        {% if sheet_prepare %}
+                            <tr style="solid-color: #fde19a "><td colspan="2" style="background: lightyellow;text-align: center;vertical-align: middle;font-size: 20px">Preparation</td>
+                                <td colspan="7" style="background: lightyellow;vertical-align: center " >
+                                    <textarea name="prepare" id="prepare" cols="150" rows="6" style="white-space: pre-wrap !important" spellcheck="false">{{ sheet_prepare }}
+                                    </textarea>
+                                </td>
+                            </tr>
+                            {#                        <td colspan="4" style="background: #fde19a;vertical-align: center" ></td>#}
+                        {% endif %}
+                        {#                    <tr><td style="background: white;font-weight: bold" colspan="8">Test Scope</td></tr>#}
+                    </table>
                     <table border="" class = "table table-striped">
                         <thead >
                         <tr>
-                            <th width="200px">Case_ID</th>
-                            <th>Case_Name</th>
-                            <th>Procedure</th>
-                            <th>Pass_Criteria</th>
+                            <th width="10%">Case_ID</th>
+                            <th width="12%">Case_Name</th>
+                            <th width="25%">Procedure</th>
+                            <th width="25%">Pass_Criteria</th>
                             <th width="80px">SKU{{ skunum }}</th>
                             <th width="120px">Update</th>
                             <th>Remark</th>
@@ -55,12 +83,15 @@
                             {% endif %}
 
                             <td style="text-align: center;vertical-align: middle">
-                                <select class="form form-control" style="width: 100px" name="test_result" onchange="assign_bug(this,{{ i.result_id }})">
+                                <select class="form form-control" style="width: 100px" name="test_result" onchange="assign_bug(this,{{ i.result_id }});custom(this,{{ i.case_id }})">
                                     <option value="Pass">Pass</option>
                                     <option value="Fail">Fail</option>
                                     <option value="N/A">N/A</option>
+                                    <option value="custom">自定义</option>
                                     <option selected="selected"  style='display: none' value=''></option>
-                                </select><input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
+                                </select>
+                                <textarea spellcheck="false" class="form-control" name="custom-input{{ i.case_id }}" id="custom-input{{ i.case_id }}" style="display: none;white-space: pre-wrap" ></textarea></td>
+                            <input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
                             </td>
                             {% if "Refer to bug " in i.remark %}
                                 <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
@@ -73,7 +104,7 @@
                         </tbody>
                     </table>
                     <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                    <input class="btn btn-success pull-right" type="submit" value="提交">
+                    <input class="btn btn-success pull-right" type="submit" value="提交" onclick="HtmlLoad()">
 
                 </div>
             </form>
@@ -102,7 +133,16 @@
                     $("#" + sel_id).css({"display": 'none'});
                 }
             }
-
+            function custom(obj,tt) {
+                var sel_id="custom-input"+tt;
+                console.log(obj,tt,obj.value);
+                if (obj.value === "custom") {
+                    $("#" + sel_id).css({"display": 'block'});
+                }
+                else{
+                    $("#" + sel_id).css({"display": 'none'});
+                }
+            }
         </script>
 
         {% if messages %}

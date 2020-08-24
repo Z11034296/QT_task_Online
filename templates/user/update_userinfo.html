@@ -39,13 +39,17 @@
                                         autoclose: 1,
                                     });
                                 </script>
-                                <tr><td>
-                                    <p><input class="btn btn-success" value="提交" type="submit" >
-                                        <input type="button" class="btn btn-success" data-dismiss="modal" value="取消"></p>
-                                    <p class = "text-danger">{{ error }}</p>
-                                </td></tr>
+
+
                                 </tbody>
                             </table>
+                            <br/>
+                            <div class="col-md-10">
+                                <input type="button" class="btn btn-success pull-right" data-dismiss="modal" value="取消">
+                                <input class="btn btn-success pull-right" value="提交" type="submit" >
+
+                                <p class = "text-danger">{{ error }}</p>
+                            </div>
                         </div>
                     </form>
                 </div>

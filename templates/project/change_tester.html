@@ -1,5 +1,25 @@
 
 {% block page-content %}
+    <style>
+        .loading {
+            width: 160px;
+            height: 56px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            line-height: 56px;
+            color: #fff;
+            padding-left: 60px;
+            font-size: 15px;
+            background: #000 url(../../static/img/loading.gif) no-repeat 10px 50%;
+            opacity: 0.7;
+            z-index: 9999;
+            -moz-border-radius: 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
+        }
+    </style>
     <body class="container">
     {% if user.is_authenticated %}
         <div class="modal-content">
@@ -10,6 +30,16 @@
                     tester修改
                 </h4>
             </div>
+            {#            ********loading**************#}
+            <div class="container">
+
+                <div id="myModal" class="modal fade" data-keyboard="false"
+                     data-backdrop="static" data-role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div id="loading" class="loading">加载中。。。</div>
+                </div>
+            </div>
+            {#            ****************************#}
             <div class="modal-body">
                 <div class="col-md-8 ol-md-offset-3">
                     <div class="col-sm-5">
@@ -34,8 +64,8 @@
                                         </select></td>
                                 </tr>
                                 <tr><td>
-                                    <input type="submit" value="确认修改" class="btn btn-primary">
-{#                                    <input type="button" class="btn btn-default" data-dismiss="modal" value="暂不修改">#}
+                                    <input type="submit" value="确认修改" class="btn btn-primary" onclick="HtmlLoad()">
+                                    {#                                    <input type="button" class="btn btn-default" data-dismiss="modal" value="暂不修改">#}
                                 </td></tr>
                                 </tbody>
                             </table>
@@ -48,6 +78,14 @@
         </div>
 
         <script type="text/javascript">
+         function  HtmlLoad(url){
+            $('#myModal').modal('show');
+
+            setTimeout(function () {
+                $('#myModal').modal('hide');
+            }, 3000);
+
+        }
         </script>
         </body>
     {% else %}

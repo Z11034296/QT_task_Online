@@ -1,0 +1,174 @@
+{% extends 'index.html' %}
+{% block page-content %}
+
+    <title>Project stage</title>
+    <style>
+        body {
+            background-color: #eeedef;
+            padding-right:0!important;
+        }
+        table {
+            table-layout:  fixed;
+        }
+        th,td{
+            text-align: center;
+
+
+        }
+
+
+    </style>
+
+
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary ">
+            <div class="panel-heading">
+                <h2 class="panel-title">Project Summary</h2>
+            </div>
+            <div class="panel-body">
+
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="col-md-2">
+                        <div class="thumbnail">
+                            <table class="panel-body">
+                                <tr><th><label for="id_serch_strtime">开始时间:</label></th><td><input type="text" name="serch_strtime" class="form-control" id="id_serch_strtime" value="{{ str_time }}" required readonly></td></tr>
+                                <tr><th><label for="id_serch_endtime">结束时间:</label></th><td><input type="text" name="serch_endtime" class="form-control" id="id_serch_endtime" value="{{ now_date }}" onchange="checkDate()" required readonly></td></tr>
+                                <tr><th><label for="id_customer">Customer:</label></th><td><select type="text" name="customer" class="form-control" id="id_customer">
+                                    <option value="0">All</option>
+                                    <option value="1">Annie</option>
+                                    <option value="2">Yama</option>
+                                </select></td></tr></table>
+                            <div class="caption" style="text-align: center">
+                                <input id="load" class="btn btn-success" type="submit" value="查看" onclick="HtmlLoad()">
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+
+                <div class="col-md-2 pull-right">
+                    <div class="thumbnail">
+                        <table class="panel-body table-bordered table-hover col-md-offset-2" style="background: #c7ddef" >
+                            <tr><th colspan="2" style="background: #9d9d9d;"><h4 style=""><b>Summary</b></h4></th></tr>
+                            <tr><th>Project数量:</th><td>{{ sum_list.sum_project }}</td></tr>
+                            <tr><th>Model数量:</th><td>{{ sum_list.sum_model }}</td></tr>
+                            <tr><th>Stage数量:</th><td>{{ sum_list.sum_stage }}</td></tr>
+                            <tr><th>Attend Hours:</th><td>{{ sum_list.sum_at_time }}</td></tr>
+                            <tr><th>Buffer Activity:</th><td>{{ sum_list.sum_buffer }}%</td></tr>
+                        </table>
+                    </div>
+
+                </div>
+                <br/>
+                <table class = "table table-striped table-hover table-bordered">
+
+                    <thead class="">
+                    <tr>
+                        <th width="5%">Customer</th>
+                        <th width="8%">Project Code</th>
+                        <th>Project Name</th>
+                        <th>Project Model</th>
+                        <th>Platform / leading</th>
+                        <th>PL</th>
+                        <th>TL</th>
+                        <th>MDRR</th>
+                        <th>Stage</th>
+                        <th width="3%">SKU Q'TY</th>
+                        <th width="3%">SUT Q'TY</th>
+                        <th>OS</th>
+                        <th>Stage Start</th>
+                        <th>Stage End</th>
+                        <th>Attend Hours</th>
+                        <th width="5%" title="Test Progress">Test Progress</th>
+                        <th width="4%">Buffer Activity</th>
+                        <th width="4%">Control Table</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in stage_list %}
+                        <tr>
+
+                            <td style="text-align: center">{{ i.project.project_type }}</td>
+                            <td style="text-align: center">{{ i.project.project_id }}</td>
+                            <td style="text-align: center">{{ i.project }}</td>
+                            <td style="text-align: center">{{ i.project.project_model }}</td>
+                            <td style="text-align: center">{{ i.project.project_platform }} / {{ i.project.project_is_leading_project }}</td>
+                            <td style="text-align: center">{{ i.project.test_leader_whq.last_name }}</td>
+                            <td style="text-align: center">{{ i.project.test_leader_wzs.last_name }}</td>
+                            <td style="text-align: center">{{ i.project.schedule_end|date:'Y-m-d' }}</td>
+                            <td style="text-align: center">{{ i.project_stage }}</td>
+                            <td style="text-align: center">{{ i.stage_sku_qty }}</td>
+                            <td style="text-align: center">{{ i.system_qty }}</td>
+                            <td style="text-align: center">{{ i.OS_Ver }}</td>
+                            <td style="text-align: center">{{ i.stage_begin|date:'Y-m-d'}}</td>
+                            <td style="text-align: center">{{ i.stage_end|date:'Y-m-d' }}</td>
+                            <td style="text-align: center">{{ i.attend_hours }}</td>
+                            <td style="text-align: center">{{ i.progress }}</td>
+                            <td style="text-align: center">{{ i.buffer_activity }}</td>
+                            <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'project_ct_content' i.id %}" onclick="HtmlLoad()">查看</a></td>
+
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
+    <script>
+        $('#id_serch_strtime,#id_serch_endtime').datetimepicker({
+            format: 'yyyy-mm-dd',
+            weekStart: 1,
+            autoclose: true,
+            startView: 2,
+            minView: 2,
+            forceParse: true,
+            language: 'en'
+        });
+        var ddd = new Date();
+        var day = ddd.getDate();
+        if(ddd.getMonth()<10){
+            var month='0' + (ddd.getMonth()+1);
+        }
+        if(ddd.getDate()<10){
+            day = "0" + ddd.getDate();
+        }
+        var datew = ddd.getFullYear() + "-" + month + "-"+ day;
+        var datew = datew.toString();
+        $("#id_open_date").val(datew)
+
+
+        function checkDate() {
+            var str_date = document.getElementById("id_serch_strtime").value;
+            var end_date = document.getElementById("id_serch_endtime").value;
+            if (getDate(end_date)-getDate(str_date)<0){
+                alert("结束时间不能早于开始时间")
+                document.getElementById("id_serch_endtime").value = '';
+            }
+        }
+        function getDate(date) {
+            var dates = date.split('-');
+            var dateReturn = '';
+            for (var i=0;i<dates.length;i++){
+                dateReturn+=dates[i];
+            }
+            return dateReturn;
+
+        }
+
+
+    </script>
+
+    <br><br>
+{% endblock %}
+
+<!-- forloop.counter --></title>
+</head>
+<body>
+
+</body>
+</html>

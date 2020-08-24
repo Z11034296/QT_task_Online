@@ -13,7 +13,24 @@
             background: #9d9d9d;
             font-size: initial;
         }
-
+        .loading {
+            width: 160px;
+            height: 56px;
+            position: absolute;
+            top: 50%;
+            left: 45%;
+            line-height: 56px;
+            color: #fff;
+            padding-left: 60px;
+            font-size: 15px;
+            background: #000 url(../../static/img/loading.gif) no-repeat 10px 50%;
+            opacity: 0.7;
+            z-index: 9999;
+            -moz-border-radius: 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
+        }
 
     </style>
 
@@ -21,94 +38,106 @@
 
     <p>{% if user.is_authenticated %}
         <div class="panel panel-primary ">
-            <form action="#" class="navbar-right navbar-form">
-                {#            <div class="form-group has-feedback">#}
-                {#                <!--has-feedback样式/反馈控制/ form-control-feedback 增加这两个样式后，span代表的放大镜就可以放在搜索栏里面-->#}
-                {#                <label for="search" class="sr-only">搜索关键字</label>#}
-                {#                <input type="search" placeholder="按照case_name搜索" id="search" class="form-control" title="输入关键字后按enter">#}
-                {#                <span class="glyphicon glyphicon-search  form-control-feedback"></span>#}
-                {#            </div>#}
-            </form>
+            {#            <form action="#" class="navbar-right navbar-form">#}
+            {#            <div class="form-group has-feedback">#}
+            {#                <!--has-feedback样式/反馈控制/ form-control-feedback 增加这两个样式后，span代表的放大镜就可以放在搜索栏里面-->#}
+            {#                <label for="search" class="sr-only">搜索关键字</label>#}
+            {#                <input type="search" placeholder="按照case_name搜索" id="search" class="form-control" title="输入关键字后按enter">#}
+            {#                <span class="glyphicon glyphicon-search  form-control-feedback"></span>#}
+            {#            </div>#}
+            {#            </form>#}
             <div class="panel-heading">
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table {{ iss_id }} -> {{ name }} -> SKU{{ skunum }}</h2>
             </div>
+
             <form action="" method="post">
                 {% csrf_token %}
-                <div class="panel-body">
-                    <table border="" class = "table table-striped">
-                        <thead >
+                <table border="T2" class="table">
+                    {% if sheet_prepare %}
+                        <tr style="solid-color: #fde19a "><td colspan="2" style="background: lightyellow;text-align: center;vertical-align: middle;font-size: 20px">Preparation</td>
+                            <td colspan="7" style="background: lightyellow;vertical-align: center " ><textarea
+                                    name="prepare" id="prepare" cols="150" rows="6" style="white-space: pre-wrap !important" spellcheck="false">{{ sheet_prepare }}</textarea></td></tr>
+                        {#                        <td colspan="4" style="background: #fde19a;vertical-align: center" ></td>#}
+                    {% endif %}
+                    {#                    <tr><td style="background: white;font-weight: bold" colspan="8">Test Scope</td></tr>#}
+                </table>
+                <table border="" class = "table table-striped">
+                    <thead >
+                    <tr>
+
+                        <th width="10%">Case_ID</th>
+                        <th width="12%">Case_Name</th>
+                        <th width="25%">Procedure</th>
+                        <th width="25%">Pass_Critearia</th>
+                        <th width="80px"  style="text-align: center">SKU{{ skunum }}</th>
+                        <th width="120px"  style="text-align: center">Update</th>
+                        <th  style="text-align: center">Remark</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {%  for i in result_list %}
                         <tr>
-
-                            <th width="200px">Case_ID</th>
-                            <th>Case_Name</th>
-                            <th>Procedure</th>
-                            <th>Pass_Critearia</th>
-                            <th width="80px"  style="text-align: center">SKU{{ skunum }}</th>
-                            <th width="120px"  style="text-align: center">Update</th>
-                            <th  style="text-align: center">Remark</th>
-
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        {%  for i in result_list %}
-                            <tr>
-                            <input type="hidden" value="{{ i.case_id }}" name="case_id">
-                            <td style="text-align: center;vertical-align: middle">{{ i.test_case_id }}</td>
-                            <td style="white-space:pre-wrap; word-break:break-all;vertical-align: middle">{{ i.case_name }}</td>
-                            <td>{{ i.procedure|linebreaksbr }}</td>
-                            <td>{{ i.pass_criteria|linebreaksbr }}</td>
-                            {% if i.result == 'Fail' %}
-                                <td bgcolor="red" style="text-align: center;vertical-align: middle"><a href="{% url 'asign_bug' pj.id plist.id i.case_id sid skunum %}" data-toggle="modal" data-target="#asign_bug">{{ i.result }}</a></td>
-                                {#                            data-toggle="modal" data-target="#asign_bug"#}
-                            {% else %}
-                                <td  style="text-align: center;vertical-align: middle">{{ i.result }}</td>
-                            {% endif %}
-                            <td style="text-align: center;vertical-align: middle"><select class="form form-control" style="width: 100px" name="test_result" onchange="assign_bug(this,{{ i.result_id }})">
-                                <option value="Pass">Pass</option>
-                                <option value="Fail">Fail</option>
-                                <option value="N/A">N/A</option>
-                                <option selected="selected"  style='display: none' value=''></option>
-                            </select><input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
-                            {% if "Refer to bug " in i.remark %}
-                                <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
-                            {% else %}
-                                <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}">{{ i.remark }}</td>
-                            {% endif %}
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                    <input class="btn btn-success pull-right" type="submit" value="提交">
-                </div>
-            </form>
-            {#        <nav aria-label="Page navigation">#}
-            {#            <ul class="pagination">#}
-            {#                {% if case_list.has_previous %}#}
-            {#                    <li>#}
-            {#                        <a href="?page={{ case_list.previous_page_number }}" aria-label="Previous">#}
-            {#                            <span aria-hidden="true">&laquo;</span>#}
-            {#                        </a>#}
-            {#                    </li>#}
-            {#                {% endif %}#}
-            {#                {% for pg in case_list.paginator.page_range %}#}
-            {#                    {% circle_page case_list.number pg %}#}
-            {#                    {% if case_list.number == pg %}#}
-            {#                        <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>#}
-            {#                    {% else %}#}
-            {#                        <li><a href="?page={{ pg }}">{{ pg }}</a></li>#}
-            {#                    {% endif %}#}
-            {#                {% endfor %}#}
-            {##}
-            {#                {% if case_list.has_next %}#}
-            {#                    <li>#}
-            {#                        <a href="?page={{ case_list.next_page_number }}" aria-label="Next">#}
-            {#                            <span aria-hidden="true">&raquo;</span>#}
-            {#                        </a>#}
-            {#                    </li>#}
-            {#                {% endif %}#}
-            {#            </ul>#}
-            {#        </nav>#}
+                        <input type="hidden" value="{{ i.case_id }}" name="case_id">
+                        <td style="text-align: center;vertical-align: middle">{{ i.test_case_id }}</td>
+                        <td style="white-space:pre-wrap; word-break:break-all;vertical-align: middle">{{ i.case_name }}</td>
+                        <td>{{ i.procedure|linebreaksbr }}</td>
+                        <td>{{ i.pass_criteria|linebreaksbr }}</td>
+                        {% if i.result == 'Fail' %}
+                            <td bgcolor="red" style="text-align: center;vertical-align: middle"><a href="{% url 'asign_bug' pj.id plist.id i.case_id sid skunum %}" data-toggle="modal" data-target="#asign_bug">{{ i.result }}</a></td>
+                            {#                            data-toggle="modal" data-target="#asign_bug"#}
+                        {% else %}
+                            <td  style="text-align: center;vertical-align: middle">{{ i.result }}</td>
+                        {% endif %}
+                        <td style="text-align: center;vertical-align: middle"><select class="form form-control" style="width: 100px" name="test_result" onchange="assign_bug(this,{{ i.result_id }});custom(this,{{ i.case_id }})">
+                            <option value="Pass">Pass</option>
+                            <option value="Fail">Fail</option>
+                            <option value="N/A">N/A</option>
+                            <option value="custom">自定义</option>
+                            <option selected="selected"  style='display: none' value=''></option>
+                        </select>
+                            <input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" oninput="value=value.replace(/[^\d]/g,'')">
+                            <textarea spellcheck="false" class="form-control" name="custom-input{{ i.case_id }}" id="custom-input{{ i.case_id }}" style="display: none;white-space: pre-wrap" ></textarea></td>
+                        {% if "Refer to bug " in i.remark %}
+                            <td style="vertical-align: middle"><input type="hidden" name="remark" value="{{ i.remark }}"><a href="{% url 'refer_issue' pj.id i.bug_id %}">{{ i.remark }}</a></td>
+                        {% else %}
+                            <td style="vertical-align: middle"><textarea type="hidden" name="remark">{{ i.remark }}</textarea></td>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                <input class="btn btn-success pull-right" type="submit" value="提交" onclick="HtmlLoad()">
+        </div>
+        </form>
+        {#        <nav aria-label="Page navigation">#}
+        {#            <ul class="pagination">#}
+        {#                {% if case_list.has_previous %}#}
+        {#                    <li>#}
+        {#                        <a href="?page={{ case_list.previous_page_number }}" aria-label="Previous">#}
+        {#                            <span aria-hidden="true">&laquo;</span>#}
+        {#                        </a>#}
+        {#                    </li>#}
+        {#                {% endif %}#}
+        {#                {% for pg in case_list.paginator.page_range %}#}
+        {#                    {% circle_page case_list.number pg %}#}
+        {#                    {% if case_list.number == pg %}#}
+        {#                        <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>#}
+        {#                    {% else %}#}
+        {#                        <li><a href="?page={{ pg }}">{{ pg }}</a></li>#}
+        {#                    {% endif %}#}
+        {#                {% endfor %}#}
+        {##}
+        {#                {% if case_list.has_next %}#}
+        {#                    <li>#}
+        {#                        <a href="?page={{ case_list.next_page_number }}" aria-label="Next">#}
+        {#                            <span aria-hidden="true">&raquo;</span>#}
+        {#                        </a>#}
+        {#                    </li>#}
+        {#                {% endif %}#}
+        {#            </ul>#}
+        {#        </nav>#}
         </div>
 
         <!-- 模态框（Modal） -->
@@ -137,6 +166,17 @@
                     $("#" + sel_id).css({"display": 'none'});
                 }
             }
+            function custom(obj,tt) {
+                var sel_id="custom-input"+tt;
+                console.log(obj,tt,obj.value);
+                if (obj.value === "custom") {
+                    $("#" + sel_id).css({"display": 'block'});
+                }
+                else{
+                    $("#" + sel_id).css({"display": 'none'});
+                }
+            }
+
         </script>
         {% if messages %}
             <script>

@@ -15,7 +15,24 @@
             background: #9d9d9d;
             font-size: initial;
         }
-
+        .loading {
+            width: 160px;
+            height: 56px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            line-height: 56px;
+            color: #fff;
+            padding-left: 60px;
+            font-size: 15px;
+            background: #000 url(../../static/img/loading.gif) no-repeat 10px 50%;
+            opacity: 0.7;
+            z-index: 9999;
+            -moz-border-radius: 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
+        }
     </style>
 
 
@@ -24,9 +41,18 @@
             <div class="panel-heading">
                 <h2 class="panel-title">{{ pj.project_name }}'s Control Table</h2>
             </div>
+            {#            ********loading**************#}
+            <div class="container">
+                <div id="myModal" class="modal fade" data-keyboard="false"
+                     data-backdrop="static" data-role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div id="loading" class="loading">加载中。。。</div>
+                </div>
+            </div>
+            {#            ****************************#}
             <div class="panel-body">
-                <div class="col-md-5 pull-right">
 
+                <div class="pull-right">
                     <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
                     <button class="btn btn-success pull-right" type="button"
                             onclick="window.location.href='{% url 'project_ct_list' pj.id %}'">新增stage
@@ -70,8 +96,8 @@
                             <td style="text-align: center">{{ i.buffer_activity }}</td>
 
                             {% if i.id in ct_list_distinct %}
-                                <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'project_ct_content' i.id %}">查看Control Table</a></td>
-                                <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'export_project_report' i.id %}">生成报告</a></td>
+                                <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'project_ct_content' i.id %}" onclick="HtmlLoad()"><span class="glyphicon glyphicon-eye-open"></span> 查看Control Table</a></td>
+                                <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'export_project_report' i.id %}" onclick="HtmlLoad()"><span class="glyphicon glyphicon-download-alt"></span>  生成报告</a></td>
                             {% else %}
                                 <td style="text-align: center"><a class="btn btn-info btn-xs" href="{% url 'project_ct' i.id %}">创建Control Table</a></td>
                                 <td style="text-align: center"></td>
@@ -88,11 +114,9 @@
 
 
     <br><br>
+
 {% endblock %}
 
-<!-- forloop.counter --></title>
-</head>
-<body>
+<!-- forloop.counter -->
 
-</body>
-</html>
+

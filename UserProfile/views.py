@@ -66,7 +66,7 @@ def userinfo(request):
         user_list_active = UserInfo.objects.filter(is_active=1)
         return render(request, "user/userinfo.html", {"user_list": user_list_active,"i": "0"})
     else:
-        user_list_all = UserInfo.objects.all()
+        user_list_all=UserInfo.objects.all()
         return render(request, "user/userinfo.html", {"user_list": user_list_all, "i": "1"})
 
 

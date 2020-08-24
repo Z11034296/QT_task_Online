@@ -208,5 +208,6 @@ def table_of_contents(request):
 def sheet_detail(request, sid):
     if request.method == "GET":
         case_list_by_sheet = TestCase.objects.filter(sheet_id=sid).order_by('case_id')
+        sheet_prepare=Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
         name = Sheet.objects.filter(id=sid).values().first()['sheet_name']
-        return render(request, "case/sheet_case.html", {"case_list": case_list_by_sheet,"name":name})
+        return render(request, "case/sheet_case.html", {"case_list": case_list_by_sheet,"name":name,'sheet_prepare':sheet_prepare})

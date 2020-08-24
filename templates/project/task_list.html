@@ -20,7 +20,19 @@
         }
 
     </style>
+    <script>
+        function  HtmlLoad(url){
+            $('#myModal').modal('show');
+
+            setTimeout(function () {
+                $('#myModal').modal('hide');
+            }, 3000);
+
+        }
+
+    </script>
     <p>{% if user.is_authenticated %}
+
         <div class="panel panel-primary ">
             <div class="panel-heading">
                 <h2 class="panel-title">{{ user.last_name }}'s Task list</h2>
@@ -35,7 +47,7 @@
                         <th style="text-align: center">Stage Sku qty</th>
                         <th style="text-align: center">Stage Start</th>
                         <th style="text-align: center">Stage End</th>
-                        <th style="text-align: center">Attend Hours</th>
+                        <th style="text-align: center">My Attend Hours</th>
                         <th style="text-align: center">My Progress</th>
                         <th style="text-align: center"></th>
                         <th style="text-align: center"></th>
@@ -57,14 +69,14 @@
                                 </div>
 
                             </td>
-                            <td style="text-align: center"><a class="btn btn-default" href="{% url 'task_table' i.id %}">My task</a></td>
+                            <td style="text-align: center"><a class="btn btn-default" href="{% url 'task_table' i.id %}" onclick="HtmlLoad()">My task</a></td>
                             <td style="text-align: center">
                                 <li role="presentation" class="dropdown ">
                                     <a class="dropdown-toggle btn btn-info" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                         Project info <span class="fa fa-caret-down"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a title="Bug List" href="{% url 'issue_list' i.project_id %}">Bug List</a></li>
-                                        <li><a title="查看版本信息" href="project_info/{{ i.id }}" >BIOS & Driver Ver.</a></li>
+                                        <li><a title="查看版本信息" href="project_info/{{ i.project_id }}" >BIOS & Driver Ver.</a></li>
                                     </ul>
                                 </li></td>
                             {#                        <a href="{% url 'issue_list' i.project_id %}">#}
@@ -79,10 +91,3 @@
     {% endif %}
     <br><br>
 {% endblock %}
-
-<!-- forloop.counter --></title>
-</head>
-<body>
-
-</body>
-</html>

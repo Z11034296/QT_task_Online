@@ -83,58 +83,65 @@
                 </table>
             </div><!-- /.row -->
         </div>
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                {% if case_list.has_previous %}
-                    <li>
-                        <a href="?page={{ case_list.previous_page_number }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                {% endif %}
-
-                {#                    {% for pg in case_list.paginator.page_range %}#}
-                {#                                            {% circle_page case_list.number pg %}#}
-                {#                        {% if case_list.number == pg %}#}
-                {#                            <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>#}
-                {#                        {% else %}#}
-                {#                            <li><a href="?page={{ pg }}">{{ pg }}</a></li>#}
-                {#                        {% endif %}#}
-                {#                    {% endfor %}#}
-
-                {% for num in dis_range %}
-                    {% if case_list.number == num %}
-                        <li class="active" ><a href="?page={{ num }}">{{ num }}</a></li>
-                    {% else %}
-                        <li><a href="?page={{ num }}">{{ num }}</a></li>
-                    {% endif %}
-
-                {% endfor %}
-
-                {% if case_list.has_next %}
-                    <li>
-                        <a href="?page={{ case_list.next_page_number }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                {% endif %}
-                <br>
-                <br>
-                <nav aria-label="Page navigation">
-                    <h4>选择跳转页:</h4><select class="form-control" style="width: 73px" name="topage" onchange="window.open('?page='+this.options[this.selectedIndex].value,'_self')">
-                    {% for i in page_sumrange %}
-                        {% if i == case_list.number %}
-                            <option value={{ i }} selected>{{ i }}</option>
-                        {% else %}
-                            <option value={{ i }} >{{ i }}</option>
+        <div class="col-md-12">
+            <nav aria-label="Page navigation">
+                <div class="col-md-3">
+                    <ul class="pagination">
+                        {% if case_list.has_previous %}
+                            <li>
+                                <a href="?page={{ case_list.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
                         {% endif %}
-                    {% endfor %}
 
-                </select>
-                </nav>
-            </ul>
+                        {#                    {% for pg in case_list.paginator.page_range %}#}
+                        {#                                            {% circle_page case_list.number pg %}#}
+                        {#                        {% if case_list.number == pg %}#}
+                        {#                            <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>#}
+                        {#                        {% else %}#}
+                        {#                            <li><a href="?page={{ pg }}">{{ pg }}</a></li>#}
+                        {#                        {% endif %}#}
+                        {#                    {% endfor %}#}
 
-        </nav>
+                        {% for num in dis_range %}
+                            {% if case_list.number == num %}
+                                <li class="active" ><a href="?page={{ num }}">{{ num }}</a></li>
+                            {% else %}
+                                <li><a href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if case_list.has_next %}
+                            <li>
+                                <a href="?page={{ case_list.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul></div>
+
+                <div class="col-md-2" style="margin-top: 20px">
+{#                    <ul>#}
+{#                        <li aria-label="Page navigation">#}
+                            <label for="id_topage" style="vertical-align: middle">选择跳转页:</label><select id="id_topage" class="form-control"  style="width: 73px;vertical-align: middle;display: inline-block" name="topage" onchange="window.open('?page='+this.options[this.selectedIndex].value,'_self')">
+                            {#                            <p>选择跳转页:<select class="form-control" style="width: 73px" name="topage" onchange="window.open('?page='+this.options[this.selectedIndex].value,'_self')"></p>#}
+                            {% for i in page_sumrange %}
+                                {% if i == case_list.number %}
+                                    <option value={{ i }} selected>{{ i }}</option>
+                                {% else %}
+                                    <option value={{ i }} >{{ i }}</option>
+                                {% endif %}
+                            {% endfor %}
+
+                        </select>
+{#                        </li>#}
+{#                    </ul>#}
+                </div>
+
+            </nav>
+        </div>
 
 
 

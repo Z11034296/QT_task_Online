@@ -15,6 +15,24 @@
             background: #9d9d9d;
             font-size: initial;
         }
+        .loading {
+            width: 160px;
+            height: 56px;
+            position: absolute;
+            top: 50%;
+            left: 45%;
+            line-height: 56px;
+            color: #fff;
+            padding-left: 60px;
+            font-size: 15px;
+            background: #000 url(../../static/img/loading.gif) no-repeat 10px 50%;
+            opacity: 0.7;
+            z-index: 9999;
+            -moz-border-radius: 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
+        }
 
     </style>
 
@@ -25,6 +43,16 @@
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
             </div>
             <div class="panel-body">
+                {#            ********loading**************#}
+                <div class="container">
+
+                    <div id="myModal" class="modal fade" data-keyboard="false"
+                         data-backdrop="static" data-role="dialog"
+                         aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div id="loading" class="loading">加载中。。。</div>
+                    </div>
+                </div>
+                {#            ****************************#}
                 <form action="" method="POST">
                     {% csrf_token %}
                     <table class = "table table-striped table-bordered" id="control_table">
@@ -92,12 +120,10 @@
                         </tbody>
                     </table>
                     <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                    <input class="btn btn-success pull-right" type="submit" value="提交" title="提交过程大约需要3分钟，请耐心等待！">
+                    <input class="btn btn-success pull-right" type="submit" value="提交" title="提交过程大约需要3分钟，请耐心等待！" onclick="HtmlLoad()">
         <p class="pull-right">提交过程大约需要3分钟，请耐心等待！</p>
 
-        </form>
-        </div>
-        </div>
+
 
     {% else %}
         <a href="/login/"><h1>please login!</h1></a>

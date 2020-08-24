@@ -1,7 +1,6 @@
 {% extends 'index.html' %}
 {% block page-content %}
 
-    <title>project control table</title>
     <style>
         body {
             background-color: #eeedef;
@@ -15,6 +14,7 @@
             background: #9d9d9d;
             font-size: initial;
         }
+
     </style>
 
 
@@ -24,13 +24,25 @@
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
             </div>
             <div>
-                <br>
-            <a class="btn btn-info pull-right" data-toggle="modal" data-target="#test_time_review" href="{% url 'test_time_review' plist.id %} ">task分配检查</a></div>
-            <h6 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h6>
+
+                <a class="btn btn-info pull-right" data-toggle="modal" data-target="#test_time_review" href="{% url 'test_time_review' plist.id %} ">task分配检查</a></div>
+            {% if plist.stage_note %}
+                <h6 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h6>
+            {% endif %}
+            {#            ********loading**************#}
+            <div class="container">
+
+                <div id="myModal" class="modal fade" data-keyboard="false"
+                     data-backdrop="static" data-role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div id="loading" class="loading">加载中。。。</div>
+                </div>
+            </div>
+            {#            ****************************#}
             <div class="panel-body">
                 {#                <form action="" method="POST">#}
                 {% csrf_token %}
-                <table class = "table table-striped table-bordered">
+                <table class = "table table-striped table-hover table-bordered">
                     <thead>
                     <tr>
                         <th style="text-align: center" width="8%">Test Sheet</th>
@@ -53,11 +65,11 @@
                                 {% if j == 1 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 1 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku1.last_name }}</a></td>
                                     {% if i.sku1.last_name != 'N/A' %}
-                                         {% if i.sku1_progress != '100%' %}
+                                        {% if i.sku1_progress != '100%' %}
                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku1_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
-                                         {% else %}
-                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku1_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
-                                         {% endif %}
+                                        {% else %}
+                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku1_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                        {% endif %}
                                     {% else %}
                                         <td style="text-align: center">N/A</td>
                                     {% endif %}
@@ -67,10 +79,10 @@
                                         {% if i.sku2_progress != '100%' %}
                                             <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku2_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
                                         {% else %}
-                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku2_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku2_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
                                         {% endif %}
                                     {% else %}
-                                     <td style="text-align: center">N/A</td>
+                                        <td style="text-align: center">N/A</td>
                                     {% endif %}
                                 {% elif j == 3 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 3 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku3.last_name }}</a></td>
@@ -78,7 +90,7 @@
                                         {% if i.sku3_progress != '100%' %}
                                             <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku3_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
                                         {% else %}
-                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku3_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku3_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center">N/A</td>
@@ -88,8 +100,8 @@
                                     {% if i.sku4.last_name != 'N/A' %}
                                         {% if i.sku4_progress != '100%' %}
                                             <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku4_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
-                                         {% else %}
-                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku4_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                        {% else %}
+                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku4_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
                                         {% endif %}
                                     {% else %}<td style="text-align: center">N/A</td>
                                     {% endif %}
@@ -98,8 +110,8 @@
                                     {% if i.sku5.last_name != 'N/A' %}
                                         {% if i.sku5_progress != '100%' %}
                                             <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku5_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
-                                         {% else %}
-                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku5_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                        {% else %}
+                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku5_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center">N/A</td>
@@ -109,8 +121,8 @@
                                     {% if i.sku6.last_name != 'N/A' %}
                                         {% if i.sku6_progress != '100%' %}
                                             <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku6_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
-                                         {% else %}
-                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku6_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                        {% else %}
+                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku6_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center">N/A</td>
@@ -120,8 +132,8 @@
                                     {% if i.sku7.last_name != 'N/A' %}
                                         {% if i.sku7_progress != '100%' %}
                                             <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku7_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
-                                         {% else %}
-                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku7_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                        {% else %}
+                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku7_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center">N/A</td>
@@ -131,8 +143,8 @@
                                     {% if i.sku8.last_name != 'N/A' %}
                                         {% if i.sku8_progress != '100%' %}
                                             <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku8_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
-                                         {% else %}
-                                             <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku8_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                        {% else %}
+                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku8_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
                                         {% endif %}
                                     {% else %}
                                         <td style="text-align: center">N/A</td>
@@ -171,6 +183,7 @@
         $(function () {
             $('#change_tester').on('hide.bs.modal',)
         });
+
     </script>
     <br><br>
 {% endblock %}

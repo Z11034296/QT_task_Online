@@ -1,12 +1,20 @@
 {% extends 'base.html' %}
 
 {% block body %}
+
     <body>
-{#    <style>#}
-{#        *{zoom:0.98}#}
-{#    </style>#}
-    {#    上右导航#}
+
     <nav class="navbar navbar-inverse navbar-fixed-top">
+        {#            ********loading**************#}
+        <div class="container">
+
+            <div id="myModal" class="modal fade" data-keyboard="false"
+                 data-backdrop="static" data-role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div id="loading" class="loading">加载中。。。</div>
+            </div>
+        </div>
+        {#            ****************************#}
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand " href="#" style="color: #a6e1ec;margin-top: 5px;font-size: 26px;font-style: oblique">Annie Test Management System</a>
@@ -14,31 +22,32 @@
             <div class="navbar-header" style="width: 80px">
                 <a>&nbsp;</a>
             </div>
+
             <div id="navbar" class="navbar-collapse collapse" >
                 <ul class="nav navbar-nav navbar-left" >
 
                     {# Test Management#}
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            Test Management <span class="fa fa-caret-down"></span></a>
+                            <span class="glyphicon glyphicon-list"></span> Test Management <span class="fa fa-caret-down"></span></a>
 
                         <ul class="dropdown-menu">
-                            <li><a class="nav" href="{% url 'projects' %}">On-going Project</a></li>
-                            <li><a class="nav" href="{% url 'task_list' %}">My task</a></li>
+                            <li><a class="nav" href="{% url 'projects' %}"><span class="glyphicon glyphicon-time"></span> On-going Project</a></li>
+                            <li><a class="nav" href="{% url 'task_list' %}"><span class="glyphicon glyphicon-tasks"></span>&nbsp&nbsp My &nbsp task</a></li>
                         </ul>
                     </li>
 
                     {# prject summery#}
-                    <li role="presentation"><a  href="{% url 'project_sum' %}">Project Summery</a></li>
+                    <li role="presentation"><a  href="{% url 'project_sum' %}" onclick="HtmlLoad()"> <span class="glyphicon glyphicon-align-justify"></span> Project Summary</a></li>
 
                     {# Test Case Management#}
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggl active" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            Test Plan maintain <span class="fa fa-caret-down"></span></a>
+                            <span class="glyphicon glyphicon-list"></span> Test Plan maintain <span class="fa fa-caret-down"></span></a>
 
                         <ul class="dropdown-menu">
-                            <li><a class="nav" href="{% url 'caseinfo' %}">Add / Edit Case</a></li>
-                            <li ><a class="nav" href="{% url 'table_of_contents' %}">Common Test Plan</a></li>
+                            <li><a class="nav" href="{% url 'caseinfo' %}"><span class="glyphicon glyphicon-list-alt"></span> Add / Edit Case</a></li>
+                            <li ><a class="nav" href="{% url 'table_of_contents' %}"><span class="glyphicon glyphicon-th"></span> Common Test Plan</a></li>
                         </ul>
                     </li>
 
@@ -46,159 +55,139 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
 
-                    {# Test Case Management#}
-{#                    <li role="presentation" class="dropdown">#}
-{#                        <a class="dropdown-toggl active" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
-{#                            Test Case Management <span class="fa fa-caret-down"></span></a>#}
-{##}
-{#                        <ul class="dropdown-menu">#}
-{#                            <li><a class="nav" href="{% url 'caseinfo' %}">Add / Edit Case</a></li>#}
-{#                            <li ><a class="nav" href="{% url 'table_of_contents' %}">Common Test Plan</a></li>#}
-{#                        </ul>#}
-{#                    </li>#}
-
-                    {# Test Management#}
-{#                    <li role="presentation" class="dropdown">#}
-{#                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
-{#                            Task Management <span class="fa fa-caret-down"></span></a>#}
-{##}
-{#                        <ul class="dropdown-menu">#}
-{#                            <li><a class="nav" href="{% url 'projects' %}">On-going Project</a></li>#}
-{#                            <li><a class="nav" href="{% url 'task_list' %}">My task</a></li>#}
-{#                        </ul>#}
-{#                    </li>#}
                     {# 账户管理#}
-                    <li role="presentation"><a  href="{% url 'userinfo' %}">账户管理</a></li>
+                    <li role="presentation"><a  href="{% url 'userinfo' %}"><span class="glyphicon glyphicon-user"></span> 账户管理</a></li>
                     {# 个人信息#}
                     <li role="presentation" class="dropdown ">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            欢迎 {{ user.first_name }}<span class="fa fa-caret-down"></span></a>
+                            <span class="glyphicon glyphicon-home"></span> {{ user.first_name }} <span class="fa fa-caret-down"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="{% url 'home' user.id %}">信息维护</a></li>
-                            <li><a href="{% url 'set_password' %}">密码修改</a></li>
+                            <li><a href="{% url 'home' user.id %}"><span class="glyphicon glyphicon-list-alt"></span> 信息维护</a></li>
+                            <li><a href="{% url 'set_password' %}"><span class="glyphicon glyphicon-lock"></span> 密码修改</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="{% url 'task_list' %}">My task</a></li>
+                            <li><a href="{% url 'task_list' %}"><span class="glyphicon glyphicon-tasks"></span> My &nbsp; task</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="{% url 'logout' %}">注销登录</a></li>
+                            <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> 注销登录</a></li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-    {#    左侧导航#}
-{#    <div id="wrapper" class="toggled">#}
-{#        <div class="overlay" style="display: block;"></div>#}
-{#        <div class="container-fluid col-sm-1 sidebar ">#}
-{#            <nav class="navbar navbar-fixed-left" id="sidebar-wrapper" role="navigation">#}
 
-                {#                    <div class="row">#}
-                {#        <div class="" style="background-color: lightgray ">#}
+    {#    左侧导航 舍弃#}
+    {#    <div id="wrapper" class="toggled">#}
+    {#        <div class="overlay" style="display: block;"></div>#}
+    {#        <div class="container-fluid col-sm-1 sidebar ">#}
+    {#            <nav class="navbar navbar-fixed-left" id="sidebar-wrapper" role="navigation">#}
 
-
-                {#            <ul class="nav sidebar-nav" id="tabs_nav">#}
-{#                <ul class="nav sidebar-nav">#}
-                    {#            navbar-inverse#}
-{#                    <li role="presentation" class="dropdown">#}
-{#                        <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
-{#                            Case Manage <span class="fa fa-caret-down"></span></a>#}
-
-{#                        <ul class="dropdown-menu">#}
-{#                            <li><a class="nav" href="{% url 'caseinfo' %}">Add/Edit Case</a></li>#}
-{#                            <li><a class="nav" href="{% url 'table_of_contents' %}">Common Test Plan</a></li>#}
-{#                        </ul>#}
-{#                    </li>#}
-{#                    <li role="presentation" class="dropdown">#}
-{#                        <a class="dropdown-toggle btn btn-default btn-xs" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
-{#                            Test Manage <span class="fa fa-caret-down"></span></a>#}
-{##}
-{#                        <ul class="dropdown-menu">#}
-{#                            <li><a class="nav" href="{% url 'projects' %}">On-going Project</a></li>#}
-{#                            <li><a class="nav" href="{% url 'task_list' %}">My task</a></li>#}
-{#                        </ul>#}
-{#                    </li>#}
+    {#                    <div class="row">#}
+    {#        <div class="" style="background-color: lightgray ">#}
 
 
+    {#            <ul class="nav sidebar-nav" id="tabs_nav">#}
+    {#                <ul class="nav sidebar-nav">#}
+    {#            navbar-inverse#}
+    {#                    <li role="presentation" class="dropdown">#}
+    {#                        <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+    {#                            Case Manage <span class="fa fa-caret-down"></span></a>#}
 
-                    {#                    <li role="presentation"> <a href="{% url 'caseinfo' %}">Test_Case</a></li>#}
-                    {#                    <li role="presentation"> <a href="{% url 'table_of_contents' %}">Test_Plan</a></li>#}
-                    {#                    <li role="presentation" class="dropdown">#}
-                    {#                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
-                    {#                            Projects&nbsp;<span class="fa fa-caret-down"></span></a>#}
-                    {##}
-                    {#                        <ul class="dropdown-menu">#}
-                    {#                            <li><a class="nav" href="{% url 'projects' %}">Compatibility</a></li>#}
-                    {#                            <li><a class="nav" href="#">Regression</a></li>#}
-                    {#                            <li role="separator" class="divider"></li>#}
-                    {#                            <li><a class="nav" href="#">others</a></li>#}
-                    {#                        </ul>#}
-                    {#                    </li>#}
-{#                    <li role="presentation"><a class="btn btn-default btn-xs" href="{% url 'userinfo' %}">账户管理</a></li>#}
-
-                    {#                    {% for role in request.user.userprofile.role.all %}#}
-                    {#                        {% for menu in role.menu.all %}#}
-                    {#                            <li class=""><a href="{%  url menu.url_name %}">{{ menu.name }}</a></li>#}
-                    {#                        {% endfor %}#}
-                    {#                    {% endfor %}#}
-{#                </ul>#}
-                {#            </ul>#}
-                {#        </div>#}
-                {#    </div>#}
-                {#    </div>#}
-{#            </nav>#}
-{#        </div>#}
-        {#    <div class="col-sm-9 col-sm-offset-2 col-md-11 col-md-offset-1 main">#}
-{#        <div id="page-content-wrapper">#}
-{#            <button type="button" class="hamburger animated fadeInLeft is-open" data-toggle="offcanvas">#}
-{#                <span class="hamb-top"></span>#}
-{#                <span class="hamb-middle"></span>#}
-{#                <span class="hamb-bottom"></span>#}
-{#            </button>#}
-            {#        <div class="container">#}
-            <div class="container">
-                <div class="row">
+    {#                        <ul class="dropdown-menu">#}
+    {#                            <li><a class="nav" href="{% url 'caseinfo' %}">Add/Edit Case</a></li>#}
+    {#                            <li><a class="nav" href="{% url 'table_of_contents' %}">Common Test Plan</a></li>#}
+    {#                        </ul>#}
+    {#                    </li>#}
+    {#                    <li role="presentation" class="dropdown">#}
+    {#                        <a class="dropdown-toggle btn btn-default btn-xs" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+    {#                            Test Manage <span class="fa fa-caret-down"></span></a>#}
+    {##}
+    {#                        <ul class="dropdown-menu">#}
+    {#                            <li><a class="nav" href="{% url 'projects' %}">On-going Project</a></li>#}
+    {#                            <li><a class="nav" href="{% url 'task_list' %}">My task</a></li>#}
+    {#                        </ul>#}
+    {#                    </li>#}
 
 
-                    {% block page-content %}
 
-                        {#            <h1 class="page-header">Dashboard</h1>#}
-                        {##}
-                        {#            <div class="row placeholders">#}
-                        {#                <div class="col-xs-6 col-sm-3 placeholder">#}
-                        {#                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="#}
-                        {#                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">#}
-                        {#                    <h4>Label</h4>#}
-                        {#                    <span class="text-muted">Something else</span>#}
-                        {#                </div>#}
-                        {#                <div class="col-xs-6 col-sm-3 placeholder">#}
-                        {#                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="#}
-                        {#                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">#}
-                        {#                    <h4>Label</h4>#}
-                        {#                    <span class="text-muted">Something else</span>#}
-                        {#                </div>#}
-                        {#                <div class="col-xs-6 col-sm-3 placeholder">#}
-                        {#                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="#}
-                        {#                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">#}
-                        {#                    <h4>Label</h4>#}
-                        {#                    <span class="text-muted">Something else</span>#}
-                        {#                </div>#}
-                        {#                <div class="col-xs-6 col-sm-3 placeholder">#}
-                        {#                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="#}
-                        {#                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">#}
-                        {#                    <h4>Label</h4>#}
-                        {#                    <span class="text-muted">Something else</span>#}
-                        {#                </div>#}
-                        {#            </div>#}
-                        {##}
-                        {#            <h2 class="sub-header">Section title</h2>#}
-                    {% endblock %}
-                    {#                </div>#}
-                </div>
+    {#                    <li role="presentation"> <a href="{% url 'caseinfo' %}">Test_Case</a></li>#}
+    {#                    <li role="presentation"> <a href="{% url 'table_of_contents' %}">Test_Plan</a></li>#}
+    {#                    <li role="presentation" class="dropdown">#}
+    {#                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+    {#                            Projects&nbsp;<span class="fa fa-caret-down"></span></a>#}
+    {##}
+    {#                        <ul class="dropdown-menu">#}
+    {#                            <li><a class="nav" href="{% url 'projects' %}">Compatibility</a></li>#}
+    {#                            <li><a class="nav" href="#">Regression</a></li>#}
+    {#                            <li role="separator" class="divider"></li>#}
+    {#                            <li><a class="nav" href="#">others</a></li>#}
+    {#                        </ul>#}
+    {#                    </li>#}
+    {#                    <li role="presentation"><a class="btn btn-default btn-xs" href="{% url 'userinfo' %}">账户管理</a></li>#}
 
-            </div>
-{##}
-{#        </div>#}
-{#    </div>#}
+    {#                    {% for role in request.user.userprofile.role.all %}#}
+    {#                        {% for menu in role.menu.all %}#}
+    {#                            <li class=""><a href="{%  url menu.url_name %}">{{ menu.name }}</a></li>#}
+    {#                        {% endfor %}#}
+    {#                    {% endfor %}#}
+    {#                </ul>#}
+    {#            </ul>#}
+    {#        </div>#}
+    {#    </div>#}
+    {#    </div>#}
+    {#            </nav>#}
+    {#        </div>#}
+    {#    <div class="col-sm-9 col-sm-offset-2 col-md-11 col-md-offset-1 main">#}
+    {#        <div id="page-content-wrapper">#}
+    {#            <button type="button" class="hamburger animated fadeInLeft is-open" data-toggle="offcanvas">#}
+    {#                <span class="hamb-top"></span>#}
+    {#                <span class="hamb-middle"></span>#}
+    {#                <span class="hamb-bottom"></span>#}
+    {#            </button>#}
+    {#        <div class="container">#}
+    <div class="container">
+        <div class="row">
+
+
+            {% block page-content %}
+
+                {#            <h1 class="page-header">Dashboard</h1>#}
+                {##}
+                {#            <div class="row placeholders">#}
+                {#                <div class="col-xs-6 col-sm-3 placeholder">#}
+                {#                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="#}
+                {#                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">#}
+                {#                    <h4>Label</h4>#}
+                {#                    <span class="text-muted">Something else</span>#}
+                {#                </div>#}
+                {#                <div class="col-xs-6 col-sm-3 placeholder">#}
+                {#                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="#}
+                {#                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">#}
+                {#                    <h4>Label</h4>#}
+                {#                    <span class="text-muted">Something else</span>#}
+                {#                </div>#}
+                {#                <div class="col-xs-6 col-sm-3 placeholder">#}
+                {#                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="#}
+                {#                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">#}
+                {#                    <h4>Label</h4>#}
+                {#                    <span class="text-muted">Something else</span>#}
+                {#                </div>#}
+                {#                <div class="col-xs-6 col-sm-3 placeholder">#}
+                {#                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="#}
+                {#                         class="img-responsive" alt="Generic placeholder thumbnail" width="200" height="200">#}
+                {#                    <h4>Label</h4>#}
+                {#                    <span class="text-muted">Something else</span>#}
+                {#                </div>#}
+                {#            </div>#}
+                {##}
+                {#            <h2 class="sub-header">Section title</h2>#}
+            {% endblock %}
+            {#                </div>#}
+        </div>
+
+    </div>
+    {##}
+    {#        </div>#}
+    {#    </div>#}
 
 
 
@@ -228,6 +217,14 @@
                 $('#wrapper').toggleClass('toggled');
             });
         });
+        function  HtmlLoad(url){
+            $('#myModal').modal('show');
+
+            setTimeout(function () {
+                $('#myModal').modal('hide');
+            }, 3000);
+
+        }
 
 
     </script>

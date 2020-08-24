@@ -64,8 +64,8 @@ def edit_project(request, nid):
 
 def project_info(request, nid):
     if request.method == "GET":
+        # pro_id=models.ControlTableList.objects.filter(id=nid).values().first()['project_id']
         ret = models.ProjectInfo.objects.filter(project_id=nid).values().last()
-
         ret['project_name']=models.Project.objects.filter(id=nid).values().first()['project_name']
         return render(request, 'Project/project_info.html', {'nid': nid, 'ret': ret})
 
@@ -248,7 +248,6 @@ def project_ct_info(request,nid):
             for k in cases_by_sheet:
                 attend_time_sum += float(k['attend_time'])
             attend_time_dic_persheet.update({sheets.id: attend_time_sum})
-            print(test_sku_num_list)
             attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
             att_time.update({i["ControlTable_List_id_id"]:sum(attend_time_dic.values())})
         y=models.TestResult.objects.filter(ControlTableList_id=i["ControlTable_List_id_id"]).values("test_case_id")
@@ -256,7 +255,6 @@ def project_ct_info(request,nid):
         for k in y:
             attend_time_finished += float(T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
         # progress.update({models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).values("project_stage").first()['project_stage']:'{:.2%}'.format(int(attend_time_finished)/sum(attend_time_dic.values()))})
-        print(attend_time_dic)
         progress.update({i["ControlTable_List_id_id"]:'{:.2%}'.format(float(attend_time_finished)/sum(attend_time_dic.values()))})
     for i in CT_list:
         if i.id in progress.keys():
@@ -388,7 +386,6 @@ def project_ct_content(request,lid):
             attend_time_sum += float(i['attend_time'])
         attend_time_dic_persheet.update({sheets.id: attend_time_sum})
         attend_time_dic.update({sheets.id: attend_time_sum * int(test_sku_num_list[sheets.id])})
-
     # progress_sheet=models.TestResult.objects.filter(ControlTableList_id=lid).values("sheet_id").distinct()
     # for i in progress_sheet:
     #     result_case_time=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i['sheet_id'])
@@ -433,22 +430,36 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
         pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
         cases = T.TestCase.objects.filter(sheet_id=sid)
         name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
-        return render(request, "Project/test_result.html", {"case_list": cases,"name":name,"pj":pj,"plist":plist,"skunum":skunum})
-    else:
 
+        if models.sheet_prepared.objects.filter(sheet_id=sid,ControlTable_List_id=lid).values():
+            sheet_prepare = models.sheet_prepared.objects.filter(sheet_id=sid,ControlTable_List_id=lid).values().first()['sheet_prepared']
+        else:sheet_prepare = T.Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
+        return render(request, "Project/test_result.html", {"case_list": cases,"name":name,"pj":pj,"plist":plist,"skunum":skunum,'sheet_prepare':sheet_prepare})
+    else:
         # case id 与 result组成字典后加到数据库
         project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
         case_id_list=request.POST.getlist('case_id')
         result_list=request.POST.getlist('test_result')
         remark_list=request.POST.getlist('remark')
         result=dict(zip(case_id_list,result_list))
+        for i in result:
+           if result[i] == 'custom':
+              result[i] = request.POST.get('custom-input'+i)
         remark_result=dict(zip(case_id_list,remark_list))
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['project_id']).values("id").last()
+        if models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).values():
+            models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).update(sheet_prepared=request.POST.get('prepare'))
+        else:
+            print(request.POST.get('prepare'))
+            if request.POST.get('prepare'):
+                models.sheet_prepared.objects.create(ControlTable_List_id=lid, sheet_id=sid,
+                                                 sheet_prepared=request.POST.get('prepare'))
         for i in result:
             if result[i] != "":
                 models.TestResult.objects.create(ControlTableList_id=lid,sku_num=skunum,test_case_id=int(i),
                                                  test_result=result[i],tester_id=request.user.id,sheet_id=sid,
                                                  remark=remark_result[i],result_info_id = result_info_id['id'])
+
             else:
                 pass
             # result_info_id = result_info_id['id']
@@ -600,6 +611,7 @@ def result_review(request,lid,sid,skunum):
     name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
     cases = T.TestCase.objects.filter(sheet_id=sid)
     result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
+
     result_list = []
     for j in cases:
         result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
@@ -614,8 +626,10 @@ def result_review(request,lid,sid,skunum):
                 # else:result_dic['bug_id'] = ''
         result_list.append(result_dic)
     if request.method == 'GET':
-
-        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid})
+        if models.sheet_prepared.objects.filter(sheet_id=sid,ControlTable_List_id=lid).values():
+            sheet_prepare = models.sheet_prepared.objects.filter(sheet_id=sid,ControlTable_List_id=lid).values().first()['sheet_prepared']
+        else:sheet_prepare = T.Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
+        return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid,'sheet_prepare':sheet_prepare})
     else:
 
         project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
@@ -625,12 +639,22 @@ def result_review(request,lid,sid,skunum):
         result_testlist = request.POST.getlist('test_result')
         issueid_list= request.POST.getlist('fail_bug_id')
         result = dict(zip(case_id_list, result_testlist))
+
         remark_list = request.POST.getlist('remark')
         result_remark = dict(zip(case_id_list, remark_list))
+        print(result_remark)
         result_issueidlist = dict(zip(case_id_list,issueid_list))
-
+        models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).update(sheet_prepared=request.POST.get('prepare'))
         for i in result:
-            if result[i] =="":
+            if result[i] == 'custom':
+                print(request.POST.get('custom-input' + i))
+                if request.POST.get('custom-input' + i):
+                    result[i] = request.POST.get('custom-input' + i)
+
+            if result[i] =="" and result_remark[i] != "":
+                models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                 sku_num=skunum).update(remark=result_remark[i])
+            elif result[i] =="" and result_remark[i] == "":
                 continue
             else:
                 if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
@@ -660,12 +684,14 @@ def result_review(request,lid,sid,skunum):
 
                                 return render(request, 'Project/result_review.html',
                                               {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases,
+
                                                "skunum": skunum, "name": name, 'sid': sid})
+                    elif result[i] == "N/A":
+                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                         sku_num=skunum).update(test_result='N/A', remark=result_remark[i])
                     else:
                         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                         sku_num=skunum).update(test_result='N/A')
-                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                         sku_num=skunum).update(remark='')
+                                                         sku_num=skunum).update(test_result=result[i])
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                      test_result=result[i], tester_id=request.user.id, sheet_id=sid,result_info_id=result_info_id['id'])
@@ -693,12 +719,18 @@ def result_check(request,lid,sid,skunum):
         result_list.append(result_dic)
 
     if request.method == 'GET':
-
+        if models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).values():
+            sheet_prepare = \
+            models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).values().first()[
+                'sheet_prepared']
+        else:
+            sheet_prepare = T.Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
         return render(request, 'Project/result_check.html',
                       {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases, "skunum": skunum,
-                       "name": name, 'sid': sid})
+                       "name": name, 'sid': sid,'sheet_prepare':sheet_prepare})
     else:
-
+        models.sheet_prepared.objects.filter(sheet_id=sid,ControlTable_List_id=lid).update(
+            sheet_prepared=request.POST.get('prepare'))
         # plist = models.ControlTableList.objects.filter(id=lid).values().first()
         project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['project_id']).values("id").last()
@@ -710,9 +742,12 @@ def result_check(request,lid,sid,skunum):
         result_remark = dict(zip(case_id_list, remark_list))
         result_issueidlist = dict(zip(case_id_list, issueid_list))
         for i in result:
+            if result[i] == 'custom':
+                result[i] = request.POST.get('custom-input' + i)
+        for i in result:
             if result[i] =="":
                 continue
-            if models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
+            elif models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i, sku_num=skunum):
                 # models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i],result_info_id=result_info_id['id'],tester_id=request.user.id,)
                 if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
                     models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
@@ -744,11 +779,16 @@ def result_check(request,lid,sid,skunum):
                                           {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases,
                                            "skunum": skunum,
                                            "name": name, 'sid': sid})
+                elif result[i] == "N/A":
+                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                     sku_num=skunum).update(test_result='N/A', remark='')
+
+
+
                 else:
                     models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                     sku_num=skunum).update(test_result='N/A')
-                    models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                     sku_num=skunum).update(remark='')
+                                                     sku_num=skunum).update(test_result=result[i])
+
             else:
                 models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                  test_result=result[i], tester_id=request.user.id, sheet_id=sid,
@@ -928,7 +968,7 @@ def export_project_report(self, lid):
                 horiz center;
             pattern:
                 pattern solid,
-                fore-colour orange ;
+                fore-colour 52 ;
             borders:
                 left THIN,
                 right THIN,
@@ -949,7 +989,7 @@ def export_project_report(self, lid):
                 horiz center;
             pattern:
                 pattern solid,
-                fore-colour orange ;
+                fore-colour 52 ;
             borders:
                 left THIN,
                 right THIN,
@@ -957,6 +997,22 @@ def export_project_report(self, lid):
                 bottom THIN;
             """)
 
+        style_heading_4 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour 52 ;
+        
+            """)
         style_heading_3 = xlwt.easyxf(
             """
             font:
@@ -971,7 +1027,7 @@ def export_project_report(self, lid):
                 horiz center;
             pattern:
                 pattern solid,
-                fore-colour orange ;
+                fore-colour 52 ;
             borders:
                 left THIN,
                 right THIN,
@@ -1021,6 +1077,23 @@ def export_project_report(self, lid):
                 colour_index black,
                 bold off,
                 height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_body_4 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0xDD;
             align:
                 wrap on,
                 vert center,
@@ -1100,8 +1173,53 @@ def export_project_report(self, lid):
                 bottom THIN;
             pattern:
                 pattern solid,
-                fore-colour orange ;    
+                fore-colour 52 ;    
             """)
+        style_prepare = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            pattern:
+                pattern solid,
+                fore-colour 26 ;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_heading_5 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour 52 ;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+
+            """,num_format_str='0.00%')
+
+
+
         # ***********************************************
         # ***********************************************
         # 生成table of Contents
@@ -1109,7 +1227,7 @@ def export_project_report(self, lid):
         project_id=models.ControlTableList.objects.filter(id=lid).values().first()['project_id']
         project=models.Project.objects.filter(id=project_id).values().first()
         w_c = ws.add_sheet('Table_of_Contents',cell_overwrite_ok=True)
-        # w_c.insert_bitmap('logo.bmp',1,8,scale_x=0.49,scale_y=0.49)
+        w_c.insert_bitmap('../logo.bmp',1,8,scale_x=0.15,scale_y=0.49)
 
         # w.write(2, 2, project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report')
         # w.write(3, 1, 'Project:'+' '+project['project_name']+' '+project['project_model'])
@@ -1134,6 +1252,8 @@ def export_project_report(self, lid):
         w_c.col(4).width = 2500
         w_c.col(5 + int(sku_n)).width = 13000
         w_c.write_merge(0, 1, 0, 4,project['project_name']+' '+project['project_model'].replace(',','_')+' '+project_stage+' Compatibility Test Report',style_heading)
+        w_c.row(0).height_mismatch = True
+        w_c.row(0).height = 700
         w_c.write_merge(2, 3, 0, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
         # w.write_merge(2, 3, 0, 0,'',style_title1)
         w_c.write_merge(0, 3, 5, 5 + int(sku_n),'',style_heading)
@@ -1144,43 +1264,55 @@ def export_project_report(self, lid):
         for i in sheets_list:
             w = ws.add_sheet(i.sheet_name,cell_overwrite_ok=True)
 
-            # w.write(2, 0, 'Case_id',style_heading_2)
-            w.write(2, 0, 'Case_name',style_heading_2)
-            w.write(2, 1, 'Procedure',style_heading_2)
-            w.write(2, 2, 'Pass_critearia',style_heading_2)
+
+            w.write(6, 0, 'Case_ID',style_heading_2)
+            w.write(6, 1, 'Case_Name',style_heading_2)
+            w.write(6, 2, 'Procedure',style_heading_2)
+            w.write(6, 3, 'Pass_Critearia',style_heading_2)
             k = 0
             while k<int(sku_n):
                 w.write(0, 0,xlwt.Formula('HYPERLINK("#Table_of_Contents!A1","Go Back")'),style_back)
-                w.write_merge(0, 0, 1, 4 + k, 'Test Suite:' + i.sheet_name,style_heading_2)
+                w.write_merge(0, 0, 1, 5 + k, 'Test Suite:' + i.sheet_name,style_heading_2)
                 # w.write(1, 0, "",style_heading_2)
-                w.write_merge(1, 1, 0, 4 + k, i.sheet_description,style_heading_3)
-                w.write(2, 3+k, 'SKU'+str(k+1),style_heading_2)
-                w.col(3 + k).width = 1500
+                w.write_merge(1, 1, 0, 5 + k, i.sheet_description,style_heading_3)
+                w.write(6, 4+k, 'SKU'+str(k+1),style_heading_2)
+                w.col(4 + k).width = 1500
                 k+=1
             # w.write(2, 4, 'SKU1')
-            w.write(2, 3+int(sku_n), 'Notes/Comment',style_heading_2)
+            w.write(6, 4+int(sku_n), 'Notes/Comment',style_heading_2)
 
-            w.col(0).width = 4500
-            # w.col(1).width = 4500
-            w.col(1).width = 15000
+            w.col(0).width = 3500
+            w.col(1).width = 5000
             w.col(2).width = 15000
-            w.col(3 + int(sku_n)).width = 13000
-            excel_row = 3
+            w.col(3).width = 15000
+            w.col(4 + int(sku_n)).width = 13000
+
+            # *********preparation***************
+            if models.sheet_prepared.objects.filter(ControlTable_List_id=lid, sheet_id=i.id):
+                excel_row = 8
+                sheet_prepare=models.sheet_prepared.objects.filter(ControlTable_List_id=lid,sheet_id=i.id).values().first()['sheet_prepared']
+                w.write_merge(excel_row-1, excel_row-1, 0, 1, 'Preparation', style_prepare)
+                w.write_merge(excel_row-1, excel_row-1, 2, 4 + int(sku_n), sheet_prepare, style_prepare)
+                w.row(excel_row-1).height_mismatch = True
+                w.row(excel_row-1).height=2000
+            else:excel_row = 7
+            # ***********************************
+
 
             li=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values_list('test_case_id').distinct()
             for x in li:
                 # for j in result_list:
-                #     case_id=T.TestCase.objects.filter(id=x[0]).values().first()['case_id']
+                case_id=T.TestCase.objects.filter(id=x[0]).values().first()['case_id']
                 case_name=T.TestCase.objects.filter(id=x[0]).values().first()['case_name']
                 procedure=T.TestCase.objects.filter(id=x[0]).values().first()['procedure']
                 pass_criteria=T.TestCase.objects.filter(id=x[0]).values().first()['pass_criteria']
                 # Notes_Comment=T.TestCase.objects.filter(id=x[0]).values().first()['remark']
                 # 写入数据
 
-                # w.write(excel_row, 0, case_id,style_body_2)
-                w.write(excel_row, 0, case_name,style_body_3)
-                w.write(excel_row, 1, procedure,style_body_3)
-                w.write(excel_row, 2, pass_criteria,style_body_3)
+                w.write(excel_row, 0, case_id,style_body_4)
+                w.write(excel_row, 1, case_name,style_body_4)
+                w.write(excel_row, 2, procedure,style_body_3)
+                w.write(excel_row, 3, pass_criteria,style_body_3)
                 # for l in  SKU_N_list:
                 l = 1
                 while l <= int(sku_n):
@@ -1191,13 +1323,13 @@ def export_project_report(self, lid):
                         if models.ControlTableContent.objects.filter(ControlTable_List_id=lid,sheet_id=i.id,sku_num=str(l)).values().first()['tester_id'] == 2:
                             result='N/A'
                         else:
-                            result=""
+                            result="-"
                     if result == "Pass":
-                        w.write(excel_row, 2+l, result, style_result_pass)
+                        w.write(excel_row, 3+l, result, style_result_pass)
                     elif result == "Fail":
-                        w.write(excel_row, 2+l, result, style_result_fail)
+                        w.write(excel_row, 3+l, result, style_result_fail)
                     else:
-                        w.write(excel_row, 2+l, result, style_result_NA)
+                        w.write(excel_row, 3+l, result, style_result_NA)
                     # w.write(excel_row, 3+l, result,style_body_1)
                     l += 1
                 #****************************************************
@@ -1209,12 +1341,39 @@ def export_project_report(self, lid):
                         if notes=='':
                             notes=y['remark']
                         else:
-                            notes=notes+';'+ y['remark']
-                w.write(excel_row, 3+int(sku_n), notes,style_body_3)
+                            notes=notes+';'+'\n'+ y['remark']
+                w.write(excel_row, 4+int(sku_n), notes,style_body_3)
 
                 # w.write(excel_row, 5, Notes_Comment)
                 excel_row += 1
+
                 # *************************************************
+            w.write(2, 2, "Progress  %", style_heading_2)
+            w.write(2, 3, xlwt.Formula('SUM(D4:D6)'), style_heading_5)
+            w.write(3, 2, "Pass rate %", style_heading_2)
+            w.write(3, 3, xlwt.Formula('COUNTIF(E8:$H200,"pass")/E4'), style_heading_5)
+
+            w.write(4, 2, "Fail rate %", style_heading_2)
+            w.write(4, 3, xlwt.Formula('COUNTIF(E8:$H200,"fail")/E4'), style_heading_5)
+            w.write(5, 2, "N/A rate  %", style_heading_2)
+            w.write(5, 3, xlwt.Formula('COUNTIF(E8:$H200,"N/A")/E4'), style_heading_5)
+            w.write_merge(2, 2, 4, 3+int(sku_n), "Item", style_heading_2)
+            w.write_merge(3,3, 4, 3+int(sku_n),  xlwt.Formula(
+                'COUNTIF(E8:$H200,"pass")+COUNTIF(E8:$H200,"fail")+COUNTIF(E8:$H200,"N/A")+COUNTIF(E8:$H200,"-")'),
+                          style_heading_2)
+            w.write(2, 0, "", style_heading_4)
+            w.write(2, 1, "", style_heading_4)
+            w.write(3, 0, "", style_heading_4)
+            w.write(3, 1, "", style_heading_4)
+            w.write(4, 0, "", style_heading_4)
+            w.write(4, 1, "", style_heading_4)
+            w.write(5, 0, "", style_heading_4)
+            w.write(5, 1, "", style_heading_4)
+            w.write(2, 7, "", style_heading_4)
+            w.write(3, 7, "", style_heading_4)
+            w.write(4, 7, "", style_heading_4)
+            w.write(5, 7, "", style_heading_4)
+            w.write_merge(4, 5, 4, 3+int(sku_n), "SKU", style_heading_2)
         # 后写Table of Contents
         # *********************Table of Contents内容********************************
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
@@ -1349,7 +1508,7 @@ def export_project_report(self, lid):
         sio.seek(0)
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
 
-        response['Content-Disposition'] = 'attachment; filename='+project['project_name']+' '+project['project_model'].replace(',','_')+' '+project_stage+' Compatibility Test Report'+'_'+str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))+'.xlsx'
+        response['Content-Disposition'] = 'attachment; filename='+project['project_name']+' '+project['project_model'].replace(',','_')+' '+project_stage+' Compatibility Test Report'+'_'+str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))+'.xls'
         response.write(sio.getvalue())
         return response
 
@@ -1389,7 +1548,6 @@ def project_sum(request):
         sum_model=0
         sum_at_time=0
         sum_buffer=0
-        sum_list={}
         progress = {}
         stage_list=models.ControlTableList.objects.filter(stage_begin__gte=str_time,stage_begin__lte=now_date).order_by("-stage_begin")
 
@@ -1442,8 +1600,11 @@ def project_sum(request):
             if ',' in i:
                 sum_model += len(i.split(','))
             else:sum_model += 1
-        sum_list={"sum_project":len(list(set(sum_project))),"sum_model":sum_model,"sum_at_time":sum_at_time,"sum_buffer":sum_buffer/stage_list.count(),"sum_stage":stage_list.count()}
-
+        try:
+            buffer_lev = sum_buffer / stage_list.count()
+        except:
+            buffer_lev = 0
+        sum_list={"sum_project":len(list(set(sum_project))),"sum_model":sum_model,"sum_at_time":sum_at_time,"sum_buffer":'%.1f' % buffer_lev,"sum_stage":stage_list.count()}
         return render(request,'project/project_summary.html',{'sum_list':sum_list,'stage_list':stage_list,"now_date":now_date,"str_time":str_time})
 
     else:
@@ -1456,7 +1617,6 @@ def project_sum(request):
         sum_model = 0
         sum_at_time = 0
         sum_buffer = 0
-        sum_list = []
         progress = {}
         if customer == '0':
             stage_list = models.ControlTableList.objects.filter(stage_begin__gte=str_date, stage_begin__lte=end_date,
@@ -1515,9 +1675,12 @@ def project_sum(request):
             if ',' in i:
                 sum_model += len(i.split(','))
             else:sum_model += 1
-        sum_list={"sum_project":len(list(set(sum_project))),"sum_model":sum_model,"sum_at_time":sum_at_time,"sum_buffer":'%.1f' % (sum_buffer/stage_list.count()),"sum_stage":stage_list.count()}
+        try:
+            buffer_lev =sum_buffer/stage_list.count()
+        except:
+            buffer_lev = 0
+        sum_list={"sum_project":len(list(set(sum_project))),"sum_model":sum_model,"sum_at_time":sum_at_time,"sum_buffer":'%.1f' % buffer_lev,"sum_stage":stage_list.count()}
         return render(request, 'project/project_summary.html',
                       {'sum_list': sum_list, 'stage_list': stage_list, "now_date": end_date, "str_time": str_date})
 
 
-#

@@ -19,6 +19,7 @@
         {#word-wrap:break-word;#}
         }
 
+
     </style>
 
 
@@ -38,11 +39,20 @@
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="panel-body">
+                    <table border="T2" class="table">
+                        {% if sheet_prepare %}
+                            <tr style="solid-color: #fde19a "><td colspan="2" style="background: lightyellow;text-align: center;vertical-align: middle;font-size: 20px">Preparation</td>
+                                <td colspan="7" style="background: lightyellow;vertical-align: center " ><textarea
+                                        spellcheck="false" name="prepare" id="prepare" cols="150" rows="6" style="white-space: pre-wrap">{{ sheet_prepare }}</textarea></td></tr>
+                            {#                        <td colspan="4" style="background: #fde19a;vertical-align: center" ></td>#}
+                        {% endif %}
+                        {#                    <tr><td style="background: white;font-weight: bold" colspan="8">Test Scope</td></tr>#}
+                    </table>
                     <table border="" class = "table table-striped">
                         <thead >
                         <tr>
 
-                            <th width="12%">Case_ID</th>
+                            <th width="8%">Case_ID</th>
                             <th width="10%">Case_Name</th>
                             <th width="20%">Procedure</th>
                             <th width="20%">Pass_Criteria</th>
@@ -55,30 +65,31 @@
 
                         {%  for cases in case_list %}
                             <tr>
-                            <input type="hidden" value="{{ cases.id }}" name="case_id">
-                            <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
-                            <td style="white-space:pre-wrap; word-break:break-all;text-align: left;vertical-align: middle">{{ cases.case_name }}</td>
-                            <td>{{ cases.procedure|linebreaksbr  }}</td>
-                            <td>{{ cases.pass_criteria|linebreaksbr  }}</td>
-                            <td>{% if cases.test_plan_pic_path %}
-                                <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
-                            {% endif %}</td>
-                            <td style="text-align: center;vertical-align: middle">
-                                <select class="form form-control" name="test_result" onchange="add_bug(this,{{ cases.id }})">
-                                    <option value="Pass">Pass</option>
-                                    <option value="Fail">Fail</option>
-                                    <option value="N/A">N/A</option>
-                                    <option selected="selected"  style='display: none' value=''></option>
-                                </select>
-                                {#                                <input class="form-control" name="fail_bug_id{{ cases.id }}" id="fail_bug_id{{ cases.id }}" type="text" style="display: none" placeholder="对应bug_ID" oninput="value=value.replace(/[^\d]/g,'')" data-toggle="modal" data-target="#sel_fail"></td>#}
-                                <button href="{% url 'add_issue' pj.id %}" class="form-control" name="fail_bug_id{{ cases.id }}" type="button" id="fail_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail">新增issue</button></td>
-
-                            <td style="vertical-align: middle"><input type="text" class="form form-control" name="remark"></td>
+                                <input type="hidden" value="{{ cases.id }}" name="case_id">
+                                <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
+                                <td style="white-space:pre-wrap; word-break:break-all;text-align: left;vertical-align: middle">{{ cases.case_name }}</td>
+                                <td>{{ cases.procedure|linebreaksbr  }}</td>
+                                <td>{{ cases.pass_criteria|linebreaksbr  }}</td>
+                                <td>{% if cases.test_plan_pic_path %}
+                                    <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
+                                {% endif %}</td>
+                                <td style="text-align: center;vertical-align: middle">
+                                    <select class="form form-control" name="test_result" onchange="add_bug(this,{{ cases.id }});custom(this,{{ cases.id }})">
+                                        <option value="Pass">Pass</option>
+                                        <option value="Fail">Fail</option>
+                                        <option value="N/A">N/A</option>
+                                        <option value="custom">自定义</option>
+                                        <option selected="selected"  style='display: none' value=''></option>
+                                    </select>
+                                    <button href="{% url 'add_issue' pj.id %}" class="form-control" name="fail_bug_id{{ cases.id }}" type="button" id="fail_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail">新增issue</button>
+                                    <textarea spellcheck="false" class="form-control" name="custom-input{{ cases.id }}" id="custom-input{{ cases.id }}" style="display: none;white-space: pre-wrap" ></textarea></td>
+                                <td style="vertical-align: middle"><textarea class="form form-control" name="remark" style="height: 100px" placeholder="{{ cases.case_note }}"></textarea></td>
+                            </tr>
                         {% endfor %}
                         </tbody>
                     </table>
                     <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                    <input class="btn btn-success pull-right" type="submit" value="提交">
+                    <input class="btn btn-success pull-right" type="submit" value="提交" onclick="HtmlLoad()">
                 </div>
             </form>
         </div>
@@ -102,8 +113,16 @@
                     $("#" + sel_id).css({"display": 'none'});
                 }
             }
-
-
+            function custom(obj,tt) {
+                var sel_id="custom-input"+tt;
+                console.log(obj,tt,obj.value);
+                if (obj.value === "custom") {
+                    $("#" + sel_id).css({"display": 'block'});
+                }
+                else{
+                    $("#" + sel_id).css({"display": 'none'});
+                }
+            }
 
         </script>
 
@@ -111,8 +130,6 @@
     {% else %}
         <a href="/login/"><h1>please login!</h1></a>
     {% endif %}
-
-
 {% endblock %}
 
 <!-- forloop.counter -->
