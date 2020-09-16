@@ -37,7 +37,7 @@
     <p>{% if user.is_authenticated %}
         <div class="panel panel-primary ">
             <div class="panel-heading">
-                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table -> {{ name }} -> SKU{{ skunum }}</h2>
+                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table -> {{ name }} -> SKU{{ skunum }}  1111111111111111111</h2>
             </div>
             <form action="" method="post">
                 {% csrf_token %}
@@ -90,7 +90,7 @@
                                     <option value="custom">自定义</option>
                                     <option selected="selected"  style='display: none' value=''></option>
                                 </select>
-                                <textarea spellcheck="false" class="form-control" name="custom-input{{ i.case_id }}" id="custom-input{{ i.case_id }}" style="display: none;white-space: pre-wrap" ></textarea></td>
+                                <textarea spellcheck="false" class="form-control" name="custom-input{{ i.case_id }}" id="custom-input{{ i.case_id }}" style="display: none;white-space: pre-wrap" ></textarea>
                             <input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" oninput="value=value.replace(/[^\d]/g,'')"></td>
                             </td>
                             {% if "Refer to bug " in i.remark %}
@@ -135,7 +135,7 @@
             }
             function custom(obj,tt) {
                 var sel_id="custom-input"+tt;
-                console.log(obj,tt,obj.value);
+                {#console.log(obj,tt,obj.value);#}
                 if (obj.value === "custom") {
                     $("#" + sel_id).css({"display": 'block'});
                 }

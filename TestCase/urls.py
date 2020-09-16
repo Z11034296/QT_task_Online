@@ -16,4 +16,5 @@ urlpatterns = [
     path('upload_files', views.upload_files, name='upload_files'),
     path('table_of_contents', views.table_of_contents, name='table_of_contents'),
     path('sheet_detail/<sid>', views.sheet_detail, name='sheet_detail'),
+    path('search', views.search, name='search'),
 ]

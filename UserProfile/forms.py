@@ -186,8 +186,7 @@ class UpdateUserForm(Form):
     join_in_time = fields.DateField(
         # max_length=32,
         label="入职时间",
-        widget=widgets.DateInput(attrs={'class': 'form-control',
-                                        'value': '2018-01-01',
+        widget=widgets.DateInput(attrs={'class': 'form-control date-picker',
                                         'readonly': 'true'}),
         required=False
     )

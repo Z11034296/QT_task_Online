@@ -106,8 +106,8 @@
                         <option value="3">3</option>
                         <option value="4">4</option>
                     </select></td></tr>
-                <tr><th><label for="id_description">Description:</label></th><td><textarea name="description" class="form-control" id="id_description" required></textarea></td>
-                    <th><label for="id_procedure">Procedure:</label></th><td><textarea name="procedure" class="form-control" id="id_procedure" required></textarea></td></tr>
+                <tr><th><label for="id_description">* Description:</label></th><td><textarea name="description" class="form-control" id="id_description" required></textarea></td>
+                    <th><label for="id_procedure">* Procedure:</label></th><td><textarea name="procedure" class="form-control" id="id_procedure" required></textarea></td></tr>
                 <tr><th><label for="id_comment">Comment:</label></th><td><textarea name="comment" class="form-control" id="id_comment"></textarea></td></tr>
                 {#                        <tr><th><label for="id_root_cause">root_cause:</label></th><td><textarea  name="root_cause" class="form-control" id="id_root_cause" ></textarea></td>#}
                 {#                            <th><label for="id_solution">solution:</label></th><td><textarea name="solution" class="form-control" id="id_solution" ></textarea></td></tr>#}
@@ -163,7 +163,8 @@
             startView: 2,
             minView: 2,
             forceParse: true,
-            language: 'en'
+            language: 'en',
+            todayBtn: true
         });
         var ddd = new Date();
         var day = ddd.getDate();
@@ -175,7 +176,7 @@
         }
         var datew = ddd.getFullYear() + "-" + month + "-"+ day;
         var datew = datew.toString();
-        $("#id_open_date").val(datew)
+        $("#id_open_date").val(datew);
     </script>
 
     <br><br>

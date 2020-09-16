@@ -83,7 +83,7 @@
                             <td style="text-align: center">{{ sheets.attend_time }}</td>
 
                             {% for i in SKU_Num_list %}
-                                <td id="{{ sheets.id }}"><select class="form-control sel_mems" style="width: 120px;text-align: center" name="{{ sheets.id }}-SKU{{ i }}" id="sheets{{ sheets.id }}">
+                                <td id="{{ sheets.id }}"><select class="form-control" style="text-align: center" name="{{ sheets.id }}-SKU{{ i }}" id="sheets{{ sheets.id }}">
                                     {% for i in test_user %}
                                         {% if i.last_name == 'N/A' %}
                                             <option value="{{ i.id }}" selected>{{ i.last_name }}</option>

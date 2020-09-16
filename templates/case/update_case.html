@@ -4,7 +4,7 @@
         body {
             background-color: #eeedef;
         }
-    th{
+        th{
             text-align: center;
         }
     </style>
@@ -16,14 +16,15 @@
                 </button>
                 <form action="update_case/{{ id }}" method="POST" NOVALIDATE class="form-horizontal" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="col-md-8 ol-md-offset-3">
-                        <div class="col-sm-5">
+                    <div >
+                        <div class="col-sm-7">
                             <table>
                                 {{ case_info_obj }}
                             </table>
-                            <input type="submit" value="提交" class="btn btn-success">
-                            <input type="button" class="btn btn-success" data-dismiss="modal" value="取消">
+                            <input type="button" class="btn btn-success pull-right" data-dismiss="modal" value="取消">
+                            <input type="submit" value="提交" class="btn btn-success pull-right">
                         </div>
+
                     </div>
                 </form>
             </div>

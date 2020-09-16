@@ -37,6 +37,10 @@
                                         minView: "month",
                                         todayBtn:  1,
                                         autoclose: 1,
+                                    //当日期控件打开时，阻止事件传播（防止再次打开modal框）
+                                    }).on('hide', function(event) {
+                                        event.preventDefault();
+                                        event.stopPropagation();
                                     });
                                 </script>
 

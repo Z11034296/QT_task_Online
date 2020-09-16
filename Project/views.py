@@ -409,6 +409,7 @@ def project_ct_content(request,lid):
                 finished_attend_time_dic.update({"sku"+str(k):'{:.0%}'.format(finished_attend_time / attend_time_dic_persheet[i.sheet_id_id]) })
             else:
                 finished_attend_time_dic.update({"sku" + str(k): '0%' })
+        # print(finished_attend_time_dic.values())
         # ******************************************************************************************
         count+=1
         new_dic.update({'sheet_id':i.sheet_id_id,'sheet_name':i.sheet_id.sheet_name,'attend_time':attend_time_dic[i.sheet_id_id],
@@ -421,14 +422,14 @@ def project_ct_content(request,lid):
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
     return render(request, 'Project/project_ct_content.html', {"pj": pj, "plist": plist,
-                                                               "SKU_Num_list": SKU_Num_list,"new_list":new_list})
+                                                               "SKU_Num_list": SKU_Num_list,"new_list":new_list,"SKU_num":int(plist['stage_sku_qty'])})
 
 
 def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet_id,
     if request.method == "GET":
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
         pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
-        cases = T.TestCase.objects.filter(sheet_id=sid)
+        cases = T.TestCase.objects.filter(sheet_id=sid).order_by('case_id')
         name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
 
         if models.sheet_prepared.objects.filter(sheet_id=sid,ControlTable_List_id=lid).values():
@@ -450,7 +451,6 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
         if models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).values():
             models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).update(sheet_prepared=request.POST.get('prepare'))
         else:
-            print(request.POST.get('prepare'))
             if request.POST.get('prepare'):
                 models.sheet_prepared.objects.create(ControlTable_List_id=lid, sheet_id=sid,
                                                  sheet_prepared=request.POST.get('prepare'))
@@ -611,7 +611,11 @@ def result_review(request,lid,sid,skunum):
     name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
     cases = T.TestCase.objects.filter(sheet_id=sid)
     result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
-
+    if models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).values():
+        sheet_prepare = models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).values().first()[
+            'sheet_prepared']
+    else:
+        sheet_prepare = T.Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
     result_list = []
     for j in cases:
         result_dic = {'case_id': j.id, 'test_case_id': j.case_id, 'case_name': j.case_name,
@@ -626,9 +630,7 @@ def result_review(request,lid,sid,skunum):
                 # else:result_dic['bug_id'] = ''
         result_list.append(result_dic)
     if request.method == 'GET':
-        if models.sheet_prepared.objects.filter(sheet_id=sid,ControlTable_List_id=lid).values():
-            sheet_prepare = models.sheet_prepared.objects.filter(sheet_id=sid,ControlTable_List_id=lid).values().first()['sheet_prepared']
-        else:sheet_prepare = T.Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
+
         return render(request,'Project/result_review.html',{'result_list':result_list,"pj": pj, "plist": plist,"cases":cases,"skunum":skunum,"name":name,'sid':sid,'sheet_prepare':sheet_prepare})
     else:
 
@@ -642,56 +644,66 @@ def result_review(request,lid,sid,skunum):
 
         remark_list = request.POST.getlist('remark')
         result_remark = dict(zip(case_id_list, remark_list))
-        print(result_remark)
         result_issueidlist = dict(zip(case_id_list,issueid_list))
         models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).update(sheet_prepared=request.POST.get('prepare'))
         for i in result:
             if result[i] == 'custom':
-                print(request.POST.get('custom-input' + i))
                 if request.POST.get('custom-input' + i):
                     result[i] = request.POST.get('custom-input' + i)
 
-            if result[i] =="" and result_remark[i] != "":
+            if result[i] =="" :
                 models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                 sku_num=skunum).update(remark=result_remark[i])
-            elif result[i] =="" and result_remark[i] == "":
-                continue
+                                                     sku_num=skunum).update(remark=result_remark[i])
             else:
                 if models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum):
                     # models.TestResult.objects.filter(ControlTableList_id=lid,test_case_id=i,sku_num=skunum).update(test_result=result[i],result_info_id=result_info_id['id'],tester_id=request.user.id,)
                     if result[i] == 'Pass' and "Refer to bug " in result_remark[i]:
                         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                         sku_num=skunum).update(test_result='Pass')
-                        models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                         sku_num=skunum).update(remark='')
+                                                         sku_num=skunum).update(test_result='Pass',remark='')
+                        # models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                        #                                  sku_num=skunum).update(remark='')
                     elif result[i] == 'Pass':
                         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                         sku_num=skunum).update(test_result='Pass')
+                                                         sku_num=skunum).update(test_result='Pass',remark=result_remark[i])
                     elif result[i] == "Fail":
-
                         if result_issueidlist[i]:
 
                             bug = models.Issue.objects.filter(project_id=project['project_id'],
                                                               issue_id=result_issueidlist[i]).values().first()
+
                             if bug:
 
                                 models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                                 sku_num=skunum).update(remark='Refer to bug '+result_issueidlist[i]+":"+bug["description"])
+                                                                 sku_num=skunum).update(test_result=result[i],
+                                                                                        result_info_id=result_info_id['id'],
+                                                                                        tester_id=request.user.id,
+                                                                                        remark='Refer to bug '+result_issueidlist[i]+":"+bug["description"])
+                                # models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                #                                  sku_num=skunum).update(test_result=result[i], result_info_id=result_info_id['id'],tester_id=request.user.id, )
+
+                            elif bug =="":
                                 models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                                 sku_num=skunum).update(test_result=result[i], result_info_id=result_info_id['id'],tester_id=request.user.id, )
+                                                                 sku_num=skunum).update(test_result='Fail',
+                                                                                        remark=result_remark[i])
                             else:
                                 messages.error(request, "查无此bugID ，请确认重新输入")
 
                                 return render(request, 'Project/result_review.html',
                                               {'result_list': result_list, "pj": pj, "plist": plist, "cases": cases,
 
-                                               "skunum": skunum, "name": name, 'sid': sid})
+                                               "skunum": skunum, "name": name, 'sid': sid,'sheet_prepare':sheet_prepare})
+                        else:
+
+                            models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
+                                                             sku_num=skunum).update(test_result=result[i],
+                                                                                    result_info_id=result_info_id['id'],
+                                                                                    tester_id=request.user.id,remark=result_remark[i])
                     elif result[i] == "N/A":
                         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
                                                          sku_num=skunum).update(test_result='N/A', remark=result_remark[i])
                     else:
                         models.TestResult.objects.filter(ControlTableList_id=lid, test_case_id=i,
-                                                         sku_num=skunum).update(test_result=result[i])
+                                                         sku_num=skunum).update(test_result=result[i],remark=result_remark[i])
                 else:
                     models.TestResult.objects.create(ControlTableList_id=lid, sku_num=skunum, test_case_id=int(i),
                                                      test_result=result[i], tester_id=request.user.id, sheet_id=sid,result_info_id=result_info_id['id'])
@@ -1508,13 +1520,16 @@ def export_project_report(self, lid):
         sio.seek(0)
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
 
-        response['Content-Disposition'] = 'attachment; filename='+project['project_name']+' '+project['project_model'].replace(',','_')+' '+project_stage+' Compatibility Test Report'+'_'+str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))+'.xls'
+        response['Content-Disposition'] = 'attachment; filename='+project['project_name']+' '+project['project_model'].replace(',','_')\
+                                          +' '+project_stage+' Compatibility Test Report'+'_'\
+                                          +str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))+'.xls'
         response.write(sio.getvalue())
         return response
+            # redirect('project_ct_info', models.ControlTableList.objects.filter(id=lid).values().first()['project_id'])
 
 
 def test_time_review(request,lid):
-    list=models.ControlTableContent.objects.filter(ControlTable_List_id_id=lid).values_list("tester__job_name",'sheet_id')
+    list = models.ControlTableContent.objects.filter(ControlTable_List_id_id=lid).values_list("tester__job_name",'sheet_id')
     attend_time_dic_persheet = {}
     tester_list=[]
     test_time={}
@@ -1549,7 +1564,7 @@ def project_sum(request):
         sum_at_time=0
         sum_buffer=0
         progress = {}
-        stage_list=models.ControlTableList.objects.filter(stage_begin__gte=str_time,stage_begin__lte=now_date).order_by("-stage_begin")
+        stage_list=models.ControlTableList.objects.filter(stage_end__gte=str_time,stage_begin__lte=now_date).order_by("-stage_begin")
 
 
         # ********************************************
@@ -1609,8 +1624,8 @@ def project_sum(request):
 
     else:
         # ********************************************
-        end_date = request.POST.get("serch_endtime")
-        str_date = request.POST.get("serch_strtime")
+        end_date = request.POST.get("search_endtime")
+        str_date = request.POST.get("search_strtime")
         customer = request.POST.get("customer")
         sum_project = []
         pro_model_list = []
@@ -1619,10 +1634,10 @@ def project_sum(request):
         sum_buffer = 0
         progress = {}
         if customer == '0':
-            stage_list = models.ControlTableList.objects.filter(stage_begin__gte=str_date, stage_begin__lte=end_date,
+            stage_list = models.ControlTableList.objects.filter(stage_end__gte=str_date,stage_begin__lte=end_date,
                                                                 ).order_by("-stage_begin")
         else:
-            stage_list = models.ControlTableList.objects.filter(stage_begin__gte=str_date, stage_begin__lte=end_date,
+            stage_list = models.ControlTableList.objects.filter(stage_end__gte=str_date,stage_begin__lte=end_date,
                                                                 project__project_type=customer).order_by("-stage_begin")
         # ********************************************
         sheets_list = T.Sheet.objects.all()

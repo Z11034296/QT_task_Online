@@ -23,7 +23,9 @@
             <div class="panel-heading">
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
             </div>
-            <h6 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h6>
+            {% if plist.stage_note %}
+                <h6 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h6>
+            {% endif %}
             <div class="panel-body">
                 {#                <form action="" method="POST">#}
                 {% csrf_token %}

@@ -211,3 +211,18 @@ def sheet_detail(request, sid):
         sheet_prepare=Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
         name = Sheet.objects.filter(id=sid).values().first()['sheet_name']
         return render(request, "case/sheet_case.html", {"case_list": case_list_by_sheet,"name":name,'sheet_prepare':sheet_prepare})
+
+
+def search(request):
+    error_msg = ''
+    if request.method == "POST":
+        if not request.POST.get('search_case'):
+            print('11111111')
+            error_msg = '请输入搜索词！！！'
+            return render(request,'case/caseinfo.html', {'error_msg': error_msg})
+        else:
+            case_list = TestCase.objects.filter(case_name__contains=request.POST.get('search_case'))
+            if not case_list:
+                error_msg = '没有搜索到符合条件的内容！！！'
+
+            return render(request, 'case/caseinfo.html',{'case_list': case_list, 'error_msg': error_msg})

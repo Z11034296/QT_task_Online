@@ -21,7 +21,7 @@
     <p>{% if user.is_authenticated %}
         <div class="panel panel-primary ">
             <div class="panel-heading">
-                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
+                <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table </h2>
             </div>
             <div>
 
@@ -46,12 +46,13 @@
                     <thead>
                     <tr>
                         <th style="text-align: center" width="8%">Test Sheet</th>
-                        <th width="25%">Description</th>
-                        <th style="text-align: center" width="7%">Attend_Time</th>
+                        <th width="22%">Description</th>
+                        <th style="text-align: center;font-size:10pt" width="7%">Attend Time</th>
                         {% for j in SKU_Num_list %}
-                            <th colspan="2" style="text-align: center" width="12%">SKU{{ j }}</th>
+                            <th colspan="2" style="text-align: center" width="10%">SKU{{ j }}</th>
                         {% endfor %}
-                        <th style="text-align: center" width="10%">Test Result</th>
+                        <th style="text-align: center" width="8%">Test Result</th>
+                        <th style="text-align: center" width="4%" title="Test Progress by sheet">SP</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -66,88 +67,122 @@
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 1 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku1.last_name }}</a></td>
                                     {% if i.sku1.last_name != 'N/A' %}
                                         {% if i.sku1_progress != '100%' %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku1_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
+                                            {% if i.sku1_progress == '0%' %}
+                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 30px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
+                                            {% else %}
+                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow; display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
+                                            {% endif %}
                                         {% else %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku1_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue;display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
                                         {% endif %}
                                     {% else %}
-                                        <td style="text-align: center">N/A</td>
+                                        <td align="center" ><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"> </i></td>
                                     {% endif %}
+
                                 {% elif j == 2 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 2 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku2.last_name }}</a></td>
                                     {% if i.sku2.last_name != 'N/A' %}
                                         {% if i.sku2_progress != '100%' %}
-                                            <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku2_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
+                                            {% if i.sku2_progress == '0%' %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
+                                            {% else %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"> <i style="width: 25px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
+                                            {% endif %}
                                         {% else %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku2_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
                                         {% endif %}
                                     {% else %}
-                                        <td style="text-align: center">N/A</td>
+                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
                                     {% endif %}
                                 {% elif j == 3 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 3 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku3.last_name }}</a></td>
                                     {% if i.sku3.last_name != 'N/A' %}
                                         {% if i.sku3_progress != '100%' %}
-                                            <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku3_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
+                                            {% if i.sku3_progress == '0%' %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
+                                            {% else %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
+                                            {% endif %}
                                         {% else %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku3_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
                                         {% endif %}
                                     {% else %}
-                                        <td style="text-align: center">N/A</td>
+                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
                                     {% endif %}
                                 {% elif j == 4 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 4 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku4.last_name }}</a></td>
                                     {% if i.sku4.last_name != 'N/A' %}
                                         {% if i.sku4_progress != '100%' %}
-                                            <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku4_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
+                                            {% if i.sku4_progress == '0%' %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku4_progress }}</td>
+                                            {% else %}
+                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku4_progress }}</td>
+                                            {% endif %}
                                         {% else %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku4_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a>{{ i.sku4_progress }}</td>
                                         {% endif %}
-                                    {% else %}<td style="text-align: center">N/A</td>
+                                    {% else %}
+                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
                                     {% endif %}
                                 {% elif j == 5 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 5 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku5.last_name }}</a></td>
                                     {% if i.sku5.last_name != 'N/A' %}
                                         {% if i.sku5_progress != '100%' %}
-                                            <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku5_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
+                                            {% if i.sku5_progress == '0%' %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku5_progress }}</td>
+                                            {% else %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku5_progress }}</td>
+                                            {% endif %}
                                         {% else %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku5_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a>{{ i.sku5_progress }}</td>
                                         {% endif %}
                                     {% else %}
-                                        <td style="text-align: center">N/A</td>
+                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
                                     {% endif %}
                                 {% elif j == 6 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 6 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku6.last_name }}</a></td>
                                     {% if i.sku6.last_name != 'N/A' %}
                                         {% if i.sku6_progress != '100%' %}
-                                            <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku6_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
+                                            {% if i.sku6_progress == '0%' %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku6_progress }}</td>
+                                            {% else %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku6_progress }}</td>
+                                            {% endif %}
                                         {% else %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku6_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a>{{ i.sku6_progress }}</td>
                                         {% endif %}
                                     {% else %}
-                                        <td style="text-align: center">N/A</td>
+                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
                                     {% endif %}
                                 {% elif j == 7 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 7 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku7.last_name }}</a></td>
                                     {% if i.sku7.last_name != 'N/A' %}
                                         {% if i.sku7_progress != '100%' %}
-                                            <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku7_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
+                                            {% if i.sku7_progress == '0%' %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku7_progress }}</td>
+                                            {% else %}
+                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku7_progress }}</td>
+                                            {% endif %}
                                         {% else %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku7_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"></i></a>{{ i.sku7_progress }}</td>
                                         {% endif %}
                                     {% else %}
-                                        <td style="text-align: center">N/A</td>
+                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
                                     {% endif %}
                                 {% elif j == 8 %}
                                     <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 8 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku8.last_name }}</a></td>
                                     {% if i.sku8.last_name != 'N/A' %}
                                         {% if i.sku8_progress != '100%' %}
-                                            <td style="text-align: center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku8_progress }} &nbsp <i class="glyphicon glyphicon-floppy-remove" style="color: red"></i></a></td>
+                                            {% if i.sku8_progress == '0%' %}
+                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku8_progress }}</td>
+                                            {% else %}
+                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku8_progress }}</td>
+                                            {% endif %}
                                         {% else %}
-                                            <td style="text-align: center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}'>{{ i.sku8_progress }} &nbsp <i class="glyphicon glyphicon-ok" style="color: blue"></i></a></td>
+                                            <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a>{{ i.sku8_progress }}</td>
                                         {% endif %}
                                     {% else %}
-                                        <td style="text-align: center">N/A</td>
+                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
@@ -156,6 +191,7 @@
                             {% else %}
                                 <td style="text-align: center">{{ i.test_result }}</td>
                             {% endif %}
+                            <td><input type="text" class="btn btn-info" id="TPsheet{{ i.sheet_id }}" style="height: 15px;width: 60px;border:none;outline: none;text-align: center" readonly onclick="aa({{ i.sheet_id }})" value="点我"></td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -183,6 +219,21 @@
         $(function () {
             $('#change_tester').on('hide.bs.modal',)
         });
+        function aa(tt) {
+            var val=0;
+            var n = {{ SKU_num }};
+            for(var i=1;i<={{ SKU_num }};i++){
+                console.log(val);
+                if (document.getElementById(tt+"_sku"+i+"_progress")) {
+                    var val_l = parseFloat(document.getElementById(tt+"_sku"+i+"_progress").value);
+                    val = (val+val_l);
+                }else {
+                    n=n-1
+                }
+            }
+            val = (Math.round(val / n*100))/100;
+            $("#"+"TPsheet"+tt).val((val).toString()+"%");
+        }
 
     </script>
     <br><br>

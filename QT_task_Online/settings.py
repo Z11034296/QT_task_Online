@@ -149,6 +149,6 @@ MEDIA_URL = '/media/upload/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media/upload')
 
     # .replace('\\', '/')
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 # UserInfo继承Auth表
 # AUTH_USER_MODEL = 'UserProfile.UserInfo'

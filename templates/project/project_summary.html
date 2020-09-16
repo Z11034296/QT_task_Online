@@ -10,11 +10,7 @@
         table {
             table-layout:  fixed;
         }
-        th,td{
-            text-align: center;
 
-
-        }
 
 
     </style>
@@ -32,9 +28,9 @@
                     <div class="col-md-2">
                         <div class="thumbnail">
                             <table class="panel-body">
-                                <tr><th><label for="id_serch_strtime">开始时间:</label></th><td><input type="text" name="serch_strtime" class="form-control" id="id_serch_strtime" value="{{ str_time }}" required readonly></td></tr>
-                                <tr><th><label for="id_serch_endtime">结束时间:</label></th><td><input type="text" name="serch_endtime" class="form-control" id="id_serch_endtime" value="{{ now_date }}" onchange="checkDate()" required readonly></td></tr>
-                                <tr><th><label for="id_customer">Customer:</label></th><td><select type="text" name="customer" class="form-control" id="id_customer">
+                                <tr><th><label for="id_search_strtime">开始时间:</label></th><td><input type="text" name="search_strtime" class="form-control" id="id_search_strtime" value="{{ str_time }}" required readonly></td></tr>
+                                <tr><th><label for="id_search_endtime">结束时间:</label></th><td><input type="text" name="search_endtime" class="form-control" id="id_search_endtime" value="{{ now_date }}" onchange="checkDate()" required readonly></td></tr>
+                                <tr><th><label for="id_customer">Customer:</label></th><td><select type="text" name="customer" class="form-control" id="id_customer" >
                                     <option value="0">All</option>
                                     <option value="1">Annie</option>
                                     <option value="2">Yama</option>
@@ -61,7 +57,7 @@
 
                 </div>
                 <br/>
-                <table class = "table table-striped table-hover table-bordered">
+                <table class = "table table-striped table-hover table-bordered" style="table-layout:fixed;">
 
                     <thead class="">
                     <tr>
@@ -93,8 +89,8 @@
                             <td style="text-align: center">{{ i.project.project_type }}</td>
                             <td style="text-align: center">{{ i.project.project_id }}</td>
                             <td style="text-align: center">{{ i.project }}</td>
-                            <td style="text-align: center">{{ i.project.project_model }}</td>
-                            <td style="text-align: center">{{ i.project.project_platform }} / {{ i.project.project_is_leading_project }}</td>
+                            <td style="text-align: center;word-wrap:break-word;">{{ i.project.project_model }}</td>
+                            <td style="text-align: center;word-wrap:break-word;">{{ i.project.project_platform }} / {{ i.project.project_is_leading_project }}</td>
                             <td style="text-align: center">{{ i.project.test_leader_whq.last_name }}</td>
                             <td style="text-align: center">{{ i.project.test_leader_wzs.last_name }}</td>
                             <td style="text-align: center">{{ i.project.schedule_end|date:'Y-m-d' }}</td>
@@ -120,14 +116,15 @@
         <a href="/login/"><h1>please login!</h1></a>
     {% endif %}
     <script>
-        $('#id_serch_strtime,#id_serch_endtime').datetimepicker({
+        $('#id_search_strtime,#id_search_endtime').datetimepicker({
             format: 'yyyy-mm-dd',
             weekStart: 1,
             autoclose: true,
             startView: 2,
             minView: 2,
             forceParse: true,
-            language: 'en'
+            language: 'en',
+            todayBtn: true
         });
         var ddd = new Date();
         var day = ddd.getDate();
@@ -139,15 +136,14 @@
         }
         var datew = ddd.getFullYear() + "-" + month + "-"+ day;
         var datew = datew.toString();
-        $("#id_open_date").val(datew)
+        $("#id_open_date").val(datew);
 
 
         function checkDate() {
-            var str_date = document.getElementById("id_serch_strtime").value;
-            var end_date = document.getElementById("id_serch_endtime").value;
+            var str_date = document.getElementById("id_search_strtime").value;
+            var end_date = document.getElementById("id_search_endtime").value;
             if (getDate(end_date)-getDate(str_date)<0){
-                alert("结束时间不能早于开始时间")
-                document.getElementById("id_serch_endtime").value = '';
+                alert("结束时间不能早于开始时间");
             }
         }
         function getDate(date) {

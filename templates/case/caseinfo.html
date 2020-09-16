@@ -18,70 +18,86 @@
     {% if user.is_authenticated %}
         <br/>
 
-        <div class="panel panel-primary ">
+        <div class="panel panel-primary">
             <div class="panel-heading ">
                 <h2 class="panel-title">All Testcase</h2>
             </div>
             <div class="panel-body ">
+                {#                <div style="padding-left: 5px">#}
+                <form action="{% url 'search' %}" role="form" method="POST" id="searchbar">
+                    {% csrf_token %}
+                    <div class="col-lg-6">
+                        <div class="input-group col-lg-7">
+
+                            <input type="text" name="search_case" id="search_case" placeholder="Search by case name…" class="form-control">
+                            <span class="input-group-btn"><button type="submit" class="btn btn-default">Go!</button></span>
+                        </div><!-- inputgroup -->
+                    </div><!-- col-lg-6 -->
+                </form>
                 <button class="btn btn-success pull-right" data-toggle="modal"
                         onclick="window.location.href='add_case'">新增
                 </button>
                 <button class="btn btn-success pull-right" data-toggle="modal"
                         onclick="window.location.href='upload_files'">批量
                 </button>
+            </div>
+            <table class = "table table-striped table-bordered">
+                <thead class="">
+                <tr>
 
+                    <th width="10%">Case_Id</th>
+                    <th>Case_Name</th>
+                    <th width="5%">Function</th>
+                    <th width="5%">Sheet</th>
+                    <th width="20%">Procedure</th>
+                    <th width="20%">Pass_Critearia</th>
+                    <th width="6%">Attend Time</th>
+                    <th width="5%">Status</th>
+                    <th>Case_Note</th>
+                    <th width="5%">操作</th>
+                    <th width="5%">附件</th>
+                </tr>
+                </thead>
+                <tbody>
 
-
-                <table class = "table table-striped table-bordered">
-                    <thead class="">
+                {%  for cases in case_list %}
                     <tr>
 
-                        <th width="10%">Case_Id</th>
-                        <th>Case_name</th>
-                        <th width="5%">Function</th>
-                        <th width="5%">Test_Items</th>
-                        <th width="20%">Procedure</th>
-                        <th width="20%">Pass_Critearia</th>
-                        <th width="6%">Attend_Time</th>
-                        <th width="5%">Status</th>
-                        <th>Case_Note</th>
-                        <th width="5%">操作</th>
-                        <th width="5%">附件</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                    <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
+                    <td style="white-space:pre-wrap; word-break: unset; vertical-align: middle"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
+                    <td style="text-align: center;vertical-align: middle">{{ cases.function.function_name }}</td>
+                    <td style="text-align: center;vertical-align: middle">{{ cases.sheet.sheet_name}}</td>
+                    <td class="xtd">{{ cases.procedure|linebreaksbr }}</td>
+                    <td class="xtd">{{ cases.pass_criteria|linebreaksbr }}</td>
+                    <td style="text-align: center;vertical-align: middle">{{ cases.attend_time }}</td>
+                    <td style="text-align: center;vertical-align: middle">
+                        {% if cases.case_status == '1'  %}
+                            open
+                        {% elif cases.case_status == '2'  %}
+                            closed
+                        {% endif %}
+                    </td>
+                    <td class="xtd">{{ cases.case_note }}</td>
+                    <td style="text-align: center;vertical-align: middle">
+                        <div class="model link">
+                            {#                            <a href="delete_case/{{ cases.id }}" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete_case">删除</a>#}
+                            <a href="update_case/{{ cases.id }}" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#update_case">修改</a>
+                        </div>
+                    </td>
+                    <td style="text-align: center;vertical-align: middle">{% if cases.test_plan_pic_path %}
+                        <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
+                    {% endif %}</td>
 
-                    {%  for cases in case_list %}
-                        <tr>
-                        <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
-                        <td style="white-space:pre-wrap; word-break: unset; vertical-align: middle"><a href="case_moreinfo/{{ cases.id }}" data-toggle="modal" data-target="#case_moreinfo">{{ cases.case_name }}</a></td>
-                        <td style="text-align: center;vertical-align: middle">{{ cases.function.function_name }}</td>
-                        <td style="text-align: center;vertical-align: middle">{{ cases.sheet.sheet_name}}</td>
-                        <td class="xtd">{{ cases.procedure|linebreaksbr }}</td>
-                        <td class="xtd">{{ cases.pass_criteria|linebreaksbr }}</td>
-                        <td style="text-align: center;vertical-align: middle">{{ cases.attend_time }}</td>
-                        <td style="text-align: center;vertical-align: middle">
-                            {% if cases.case_status == '1'  %}
-                                open
-                            {% elif cases.case_status == '2'  %}
-                                closed
-                            {% endif %}
-                        </td>
-                        <td class="xtd">{{ cases.case_note }}</td>
-                        <td style="text-align: center;vertical-align: middle">
-                            <div class="model link">
-                                {#                            <a href="delete_case/{{ cases.id }}" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete_case">删除</a>#}
-                                <a href="update_case/{{ cases.id }}" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#update_case">修改</a>
-                            </div>
-                        </td>
-                        <td style="text-align: center;vertical-align: middle">{% if cases.test_plan_pic_path %}
-                            <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
-                        {% endif %}</td>
-                    {% endfor %}
+                {% endfor %}
+                {%  if error_msg %}
+                    <td colspan="11" style="text-align: center;vertical-align: middle">{{ error_msg }}</td>
 
-                    </tbody>
-                </table>
-            </div><!-- /.row -->
+                {% endif %}
+
+
+                </tbody>
+            </table>
+        </div><!-- /.row -->
         </div>
         <div class="col-md-12">
             <nav aria-label="Page navigation">
@@ -123,21 +139,21 @@
                     </ul></div>
 
                 <div class="col-md-2" style="margin-top: 20px">
-{#                    <ul>#}
-{#                        <li aria-label="Page navigation">#}
-                            <label for="id_topage" style="vertical-align: middle">选择跳转页:</label><select id="id_topage" class="form-control"  style="width: 73px;vertical-align: middle;display: inline-block" name="topage" onchange="window.open('?page='+this.options[this.selectedIndex].value,'_self')">
-                            {#                            <p>选择跳转页:<select class="form-control" style="width: 73px" name="topage" onchange="window.open('?page='+this.options[this.selectedIndex].value,'_self')"></p>#}
-                            {% for i in page_sumrange %}
-                                {% if i == case_list.number %}
-                                    <option value={{ i }} selected>{{ i }}</option>
-                                {% else %}
-                                    <option value={{ i }} >{{ i }}</option>
-                                {% endif %}
-                            {% endfor %}
+                    {#                    <ul>#}
+                    {#                        <li aria-label="Page navigation">#}
+                    <label for="id_topage" style="vertical-align: middle">选择跳转页:</label><select id="id_topage" class="form-control"  style="width: 73px;vertical-align: middle;display: inline-block" name="topage" onchange="window.open('?page='+this.options[this.selectedIndex].value,'_self')">
+                    {#                            <p>选择跳转页:<select class="form-control" style="width: 73px" name="topage" onchange="window.open('?page='+this.options[this.selectedIndex].value,'_self')"></p>#}
+                    {% for i in page_sumrange %}
+                        {% if i == case_list.number %}
+                            <option value={{ i }} selected>{{ i }}</option>
+                        {% else %}
+                            <option value={{ i }} >{{ i }}</option>
+                        {% endif %}
+                    {% endfor %}
 
-                        </select>
-{#                        </li>#}
-{#                    </ul>#}
+                </select>
+                    {#                        </li>#}
+                    {#                    </ul>#}
                 </div>
 
             </nav>
