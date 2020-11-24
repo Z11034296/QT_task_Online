@@ -27,11 +27,14 @@ def login(request):
             request.session["user_id"] = user.pk
             # role放入session传到中间件
             permissions = user.userinfo.role.all().values("permission__url").distinct()
+
             permission_list = []
             for item in permissions:
                 permission_list.append(item["permission__url"])
-            request.session["permission_list"] = permission_list
 
+            print(permission_list)
+            request.session["permission_list"] = permission_list
+            request.session["role"] = user.userinfo.role.all().values().first()["name"]
             return redirect("task_list")
         else:
             # 用户名密码错误
@@ -62,7 +65,6 @@ def check_user(func):
 def userinfo(request):
     if request.method == "GET":
         # 取所有單位：user_list傳給下級
-
         user_list_active = UserInfo.objects.filter(is_active=1).order_by('join_in_time')
         return render(request, "user/userinfo.html", {"user_list": user_list_active,"i": "0"})
     else:

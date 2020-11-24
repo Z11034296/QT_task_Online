@@ -10,7 +10,7 @@
         table {
             table-layout:  fixed;
         }
-         th{
+        th{
             text-align: center;
             background: #9d9d9d;
             font-size: initial;
@@ -23,9 +23,11 @@
             <div class="panel-heading">
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
             </div>
+            <button type=button id="id_hide" class="btn btn-info pull-right">显示切换</button>
             {% if plist.stage_note %}
                 <h6 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h6>
             {% endif %}
+
             <div class="panel-body">
                 {#                <form action="" method="POST">#}
                 {% csrf_token %}
@@ -44,108 +46,140 @@
 
                     {# by ct content #}
                     {% for i in new_list %}
-                        <tr>
-                            <td style="text-align: center">{{ i.sheet_name }}</td>
-                            <td style="text-align: left">{{ i.sheet_description }}</td>
-                            <td style="text-align: center">{{ i.attend_time }}</td>
-                            {% for j in SKU_Num_list %}
-                                {% if j == 1 %}
-                                    {% if i.sku1.first_name == user.first_name %}
-                                        {% if i.sheet_id in done_reuslt_list.1 %}
-                                            <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku1.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
-                                        {% else %}
-                                            <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1.last_name }}</a></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td style="text-align: center"><h6>{{ i.sku1.last_name }}</h6></td>
-                                    {% endif %}
-                                {% elif j == 2 %}
-                                    {% if i.sku2.first_name == user.first_name %}
-                                        {% if i.sheet_id in done_reuslt_list.2 %}
-                                            <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku2.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
-                                        {% else %}
-                                            <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku2.last_name }}</a></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td style="text-align: center"><h6>{{ i.sku2.last_name }}</h6></td>
-                                    {% endif %}
-                                {% elif j == 3 %}
-                                    {% if i.sku3.first_name == user.first_name %}
-                                        {% if i.sheet_id in done_reuslt_list.3 %}
-                                            <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku3.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
-                                        {% else %}
-                                            <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku3.last_name }}</a></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td style="text-align: center"><h6>{{ i.sku3.last_name }}</h6></td>
-                                    {% endif %}
-                                {% elif j == 4 %}
-                                    {% if i.sku4.first_name == user.first_name %}
-                                        {% if i.sheet_id in done_reuslt_list.4 %}
-                                            <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
-                                        {% else %}
-                                            <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4.last_name }}</a></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td style="text-align: center"><h6>{{ i.sku4.last_name }}</h6></td>
-                                    {% endif %}
-                                {% elif j == 5 %}
-                                    {% if i.sku5.first_name == user.first_name %}
-                                        {% if i.sheet_id in done_reuslt_list.5 %}
-                                            <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
-                                        {% else %}
-                                            <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5.last_name }}</a></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td style="text-align: center"><h6>{{ i.sku5.last_name }}</h6></td>
-                                    {% endif %}
-                                {% elif j == 6 %}
-                                    {% if i.sku6.first_name == user.first_name %}
-                                        {% if i.sheet_id in done_reuslt_list.6 %}
-                                            <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
-                                        {% else %}
-                                            <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6.last_name }}</a></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td style="text-align: center"><h6>{{ i.sku6.last_name }}</h6></td>
-                                    {% endif %}
-                                {% elif j == 7 %}
-                                    {% if i.sku7.first_name == user.first_name %}
-                                        {% if i.sheet_id in done_reuslt_list.7 %}
-                                            <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
-                                        {% else %}
-                                            <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7.last_name }}</a></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td style="text-align: center"><h6>{{ i.sku7.last_name }}</h6></td>
-                                    {% endif %}
-                                {% elif j == 8 %}
-                                    {% if i.sku8.first_name == user.first_name %}
-                                        {% if i.sheet_id in done_reuslt_list.8 %}
-                                            <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>
-                                        {% else %}
-                                            <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8.last_name }}</a></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td style="text-align: center"><h6>{{ i.sku8.last_name }}</h6></td>
-                                    {% endif %}
+                        {% if i.display == "no-display" %}
+                            <tr class="no-display" style="display: none">{% else %}
+                            <tr>
+                        {% endif %}
+                    <td style="text-align: center">{{ i.sheet_name }}</td>
+                    <td style="text-align: left">{{ i.sheet_description }}</td>
+                    <td style="text-align: center">{{ i.attend_time }}</td>
+                    {% for j in SKU_Num_list %}
+                        {% if j == 1 %}
+                            {% if i.sku1 == user.last_name %}
+                                {#                                {% if i.sheet_id in done_reuslt_list.1 %}#}
+                                {#                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'result_review' plist.id i.sheet_id j  %}'>{{ i.sku1 }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>#}
+                                {#                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1 }} &nbsp <i class="glyphicon glyphicon-saved" style="color: blue"></i></a></td>#}
+                                {#                                {% else %}#}
+                                {#                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1 }}</a></td>#}
+                                {#                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1 }}</a></td>#}
+                                {#                                {% endif %}#}
+                                {% if i.sku1done == "finished" %}
+                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1 }}</a></td>
+                                {% elif i.sku1done == "ongoing"  %}
+                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1 }}</a></td>
+                                {% else %}
+                                    <td style="text-align: center"><a class="btn btn-danger" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku1 }}</a></td>
                                 {% endif %}
-                            {% endfor %}
-                            <td style="text-align: center">{{ i.test_result }}</td>
-                        </tr>
+
+
+                            {% else %}
+                                <td style="text-align: center"><h6>{{ i.sku1 }}</h6></td>
+                            {% endif %}
+                        {% elif j == 2 %}
+                            {% if i.sku2 == user.last_name %}
+                                {% if i.sku2done == "finished" %}
+                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku2 }}</a></td>
+                                {% elif i.sku2done == "ongoing"  %}
+                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku2 }}</a></td>
+                                {% else %}
+                                    <td style="text-align: center"><a class="btn btn-danger" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku2 }}</a></td>
+                                {% endif %}
+                            {% else %}
+                                <td style="text-align: center"><h6>{{ i.sku2 }}</h6></td>
+                            {% endif %}
+                        {% elif j == 3 %}
+                            {% if i.sku3 == user.last_name %}
+                                {% if i.sku3done == "finished" %}
+                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku3 }}</a></td>
+                                {% elif i.sku3done == "ongoing"  %}
+                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku3 }}</a></td>
+                                {% else %}
+                                    <td style="text-align: center"><a class="btn btn-danger" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku3 }}</a></td>
+                                {% endif %}
+                            {% else %}
+                                <td style="text-align: center"><h6>{{ i.sku3 }}</h6></td>
+                            {% endif %}
+                        {% elif j == 4 %}
+                            {% if i.sku4 == user.last_name %}
+                                {% if i.sku4done == "finished" %}
+                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4 }}</a></td>
+                                {% elif i.sku4done == "ongoing"  %}
+                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4 }}</a></td>
+                                {% else %}
+                                    <td style="text-align: center"><a class="btn btn-danger" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku4 }}</a></td>
+                                {% endif %}
+                            {% else %}
+                                <td style="text-align: center"><h6>{{ i.sku4 }}</h6></td>
+                            {% endif %}
+                        {% elif j == 5 %}
+                            {% if i.sku5 == user.last_name %}
+                                {% if i.sku5done == "finished" %}
+                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5 }}</a></td>
+                                {% elif i.sku5done == "ongoing"  %}
+                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5 }}</a></td>
+                                {% else %}
+                                    <td style="text-align: center"><a class="btn btn-danger" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku5 }}</a></td>
+                                {% endif %}
+                            {% else %}
+                                <td style="text-align: center"><h6>{{ i.sku5 }}</h6></td>
+                            {% endif %}
+                        {% elif j == 6 %}
+                            {% if i.sku6 == user.last_name%}
+                                {% if i.sku6done == "finished" %}
+                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6 }}</a></td>
+                                {% elif i.sku6done == "ongoing"  %}
+                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6 }}</a></td>
+                                {% else %}
+                                    <td style="text-align: center"><a class="btn btn-danger" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku6 }}</a></td>
+                                {% endif %}
+                            {% else %}
+                                <td style="text-align: center"><h6>{{ i.sku6 }}</h6></td>
+                            {% endif %}
+                        {% elif j == 7 %}
+                            {% if i.sku7 == user.last_name %}
+                                {% if i.sku7done == "finished" %}
+                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7 }}</a></td>
+                                {% elif i.sku7done == "ongoing"  %}
+                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7 }}</a></td>
+                                {% else %}
+                                    <td style="text-align: center"><a class="btn btn-danger" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku7 }}</a></td>
+                                {% endif %}
+                            {% else %}
+                                <td style="text-align: center"><h6>{{ i.sku7 }}</h6></td>
+                            {% endif %}
+                        {% elif j == 8 %}
+                            {% if i.sku8 == user.last_name %}
+                                {% if i.sku8done == "finished" %}
+                                    <td style="text-align: center"><a class="btn btn-info" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8 }}</a></td>
+                                {% elif i.sku8done == "ongoing"  %}
+                                    <td style="text-align: center"><a class="btn btn-warning" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8 }}</a></td>
+                                {% else %}
+                                    <td style="text-align: center"><a class="btn btn-danger" style="width: 110px" href='{% url 'test_result' plist.id i.sheet_id j  %}'>{{ i.sku8 }}</a></td>
+                                {% endif %}
+                            {% else %}
+                                <td style="text-align: center"><h6>{{ i.sku8 }}</h6></td>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <td style="text-align: center">{{ i.test_result }}</td>
+                    </tr>
                     {% endfor %}
                     </tbody>
                 </table>
                 {#                    <input class="btn btn-success" type="submit" value="提交">#}
                 <div class="col-md-1 pull-right">
-                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                    {#                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">#}
                 </div>
             </div>
         </div>
     {% else %}
         <a href="/login/"><h1>please login!</h1></a>
     {% endif %}
-
+    <script>
+        $("button#id_hide").click(function(){
+            $(".no-display").toggle(500)
+        });
+    </script>
 
     <br><br>
 {% endblock %}

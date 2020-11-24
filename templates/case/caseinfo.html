@@ -41,7 +41,7 @@
                         onclick="window.location.href='upload_files'">批量
                 </button>
             </div>
-            <table class = "table table-striped table-bordered">
+            <table id="table" class = "table table-striped table-bordered">
                 <thead class="">
                 <tr>
 
@@ -201,6 +201,8 @@
                 window.location.reload();
             })
             });
+
+        })
         </script>
     {% else %}
         <a href="/login/"><h1>please login!</h1></a>

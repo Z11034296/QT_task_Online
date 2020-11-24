@@ -1,204 +1,349 @@
 {% extends 'index.html' %}
 {% block page-content %}
-
+    <title>project control table</title>
     <style>
         body {
             background-color: #eeedef;
-            padding-right:0!important;
+        {#padding-right:0!important;#}
         }
-        table {
-            table-layout:  fixed;
-        }
+        {#table {#}
+        {#    table-layout:  fixed;#}
+        {#}#}
         th{
             text-align: center;
             background: #9d9d9d;
             font-size: initial;
         }
+        .fixed-table-container{
+
+            height: 650px !important;
+            padding-bottom: 39px
+        }
+        .fixed-table-header{
+            height: auto;
+        }
+        select {
+            /*Chrome和Firefox里面的边框是不一样的，所以复写了一下*/
+            border: solid 1px #000;
+            /*很关键：将默认的select选择框样式清除*/
+            {#appearance:none;#}
+            -moz-appearance:none;
+            -webkit-appearance:none;
+            /*在选择框的最右侧中间显示小箭头图片*/
+            background: url("http://ourjs.github.io/static/2015/arrow.png"),no-repeat, scroll, right,right,center, transparent;
+            /*为下拉小箭头留出一点位置，避免被文字覆盖*/
+            padding-right: 14px;
+        }
+        /*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+        select::-ms-expand { display: none;
+        }
 
     </style>
+    <script>
+        {#$(function () {#}
+        {#    $('#change_tester').on('hide.bs.modal',)#}
 
+        function aa(tt) {
+            var val=0;
+            var n = {{ SKU_num }};
+            for(var i=1;i<={{ SKU_num }};i++){
+                if (document.getElementById(tt+"_sku"+i+"_progress")) {
+                    var val_l = parseFloat(document.getElementById(tt+"_sku"+i+"_progress").value);
+                    val = (val+val_l);
+                }else {
+                    n=n-1
+                }
+            }
+            var val_p = (Math.round(val / n*100))/100;
+
+
+            $("#"+"TPsheet"+tt).val((val_p).toString()+"%");
+            {#tt.innerHTML = "123123123";#}
+        }
+
+        $(function () {
+            $("#table").bootstrapTable({
+
+                height: 600,
+
+
+            })
+        })
+    </script>
 
     <p>{% if user.is_authenticated %}
-        <div class="panel panel-primary ">
+        <div class="panel panel-primary" style="width: available">
             <div class="panel-heading">
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table </h2>
             </div>
-            <div>
+            <div class="panel-body">
+                <div class="fixed-table-header">
+                    <a class="btn btn-info pull-right" data-toggle="modal" data-target="#test_time_review" href="{% url 'test_time_review' plist.id %} ">Progress summary</a></div>
+                {% if plist.stage_note %}
+                    <h6 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h6>
+                {% endif %}
+            </div>
 
-                <a class="btn btn-info pull-right" data-toggle="modal" data-target="#test_time_review" href="{% url 'test_time_review' plist.id %} ">task分配检查</a></div>
-            {% if plist.stage_note %}
-                <h6 class="pull-right" style="color: red ">***{{ plist.stage_note }}***</h6>
-            {% endif %}
-            {#            ********loading**************#}
+
+
+            {#********loading**************#}
             <div class="container">
-
                 <div id="myModal" class="modal fade" data-keyboard="false"
                      data-backdrop="static" data-role="dialog"
                      aria-labelledby="myModalLabel" aria-hidden="true">
                     <div id="loading" class="loading">加载中。。。</div>
                 </div>
             </div>
-            {#            ****************************#}
-            <div class="panel-body">
-                {#                <form action="" method="POST">#}
-                {% csrf_token %}
-                <table class = "table table-striped table-hover table-bordered">
-                    <thead>
-                    <tr>
-                        <th style="text-align: center" width="8%">Test Sheet</th>
-                        <th width="22%">Description</th>
-                        <th style="text-align: center;font-size:10pt" width="7%">Attend Time</th>
-                        {% for j in SKU_Num_list %}
-                            <th colspan="2" style="text-align: center" width="10%">SKU{{ j }}</th>
-                        {% endfor %}
-                        <th style="text-align: center" width="8%">Test Result</th>
-                        <th style="text-align: center" width="4%" title="Test Progress by sheet">SP</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {# by ct content #}
-                    {% for i in new_list %}
-                        <tr>
-                            <td style="text-align: center;vertical-align: middle">{{ i.sheet_name }}</td>
-                            <td style="text-align: left;vertical-align: middle">{{ i.sheet_description }}</td>
-                            <td style="text-align: center;vertical-align: middle">{{ i.attend_time }}</td>
-                            {% for j in SKU_Num_list %}
-                                {% if j == 1 %}
-                                    <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 1 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku1.last_name }}</a></td>
-                                    {% if i.sku1.last_name != 'N/A' %}
-                                        {% if i.sku1_progress != '100%' %}
-                                            {% if i.sku1_progress == '0%' %}
-                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 30px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
-                                            {% else %}
-                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow; display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue;display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td align="center" ><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"> </i></td>
-                                    {% endif %}
+            {#****************************#}
+            {% csrf_token %}
+            <table id="table" class ="table table-striped table-bordered table-hover">
+                <thead class="fixed-table-header">
+                <tr>
 
-                                {% elif j == 2 %}
-                                    <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 2 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku2.last_name }}</a></td>
-                                    {% if i.sku2.last_name != 'N/A' %}
-                                        {% if i.sku2_progress != '100%' %}
-                                            {% if i.sku2_progress == '0%' %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
-                                            {% else %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"> <i style="width: 25px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
-                                    {% endif %}
-                                {% elif j == 3 %}
-                                    <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 3 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku3.last_name }}</a></td>
-                                    {% if i.sku3.last_name != 'N/A' %}
-                                        {% if i.sku3_progress != '100%' %}
-                                            {% if i.sku3_progress == '0%' %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
-                                            {% else %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
-                                    {% endif %}
-                                {% elif j == 4 %}
-                                    <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 4 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku4.last_name }}</a></td>
-                                    {% if i.sku4.last_name != 'N/A' %}
-                                        {% if i.sku4_progress != '100%' %}
-                                            {% if i.sku4_progress == '0%' %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku4_progress }}</td>
-                                            {% else %}
-                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku4_progress }}</td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a>{{ i.sku4_progress }}</td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
-                                    {% endif %}
-                                {% elif j == 5 %}
-                                    <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 5 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku5.last_name }}</a></td>
-                                    {% if i.sku5.last_name != 'N/A' %}
-                                        {% if i.sku5_progress != '100%' %}
-                                            {% if i.sku5_progress == '0%' %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku5_progress }}</td>
-                                            {% else %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku5_progress }}</td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a>{{ i.sku5_progress }}</td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
-                                    {% endif %}
-                                {% elif j == 6 %}
-                                    <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 6 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku6.last_name }}</a></td>
-                                    {% if i.sku6.last_name != 'N/A' %}
-                                        {% if i.sku6_progress != '100%' %}
-                                            {% if i.sku6_progress == '0%' %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku6_progress }}</td>
-                                            {% else %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku6_progress }}</td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a>{{ i.sku6_progress }}</td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
-                                    {% endif %}
-                                {% elif j == 7 %}
-                                    <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 7 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku7.last_name }}</a></td>
-                                    {% if i.sku7.last_name != 'N/A' %}
-                                        {% if i.sku7_progress != '100%' %}
-                                            {% if i.sku7_progress == '0%' %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku7_progress }}</td>
-                                            {% else %}
-                                                <td align="center" ><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku7_progress }}</td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"></i></a>{{ i.sku7_progress }}</td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
-                                    {% endif %}
-                                {% elif j == 8 %}
-                                    <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 8 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku8.last_name }}</a></td>
-                                    {% if i.sku8.last_name != 'N/A' %}
-                                        {% if i.sku8_progress != '100%' %}
-                                            {% if i.sku8_progress == '0%' %}
-                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a>{{ i.sku8_progress }}</td>
-                                            {% else %}
-                                                <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a>{{ i.sku8_progress }}</td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td align="center"><a href='{% url 'result_check' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a>{{ i.sku8_progress }}</td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                            {% if i.test_result == "Fail" %}
-                                <td style="text-align: center">{{ i.test_result }} <Br/> Refer to bug ID: <a href="{% url 'issue_list' pj.id %}">{{ i.bugid }}</a></td>
-                            {% else %}
-                                <td style="text-align: center">{{ i.test_result }}</td>
-                            {% endif %}
-                            <td><input type="text" class="btn btn-info" id="TPsheet{{ i.sheet_id }}" style="height: 15px;width: 60px;border:none;outline: none;text-align: center" readonly onclick="aa({{ i.sheet_id }})" value="点我"></td>
-                        </tr>
+                    <th style="text-align: center" width="80px">Test Sheet</th>
+                    <th width="220px">Description</th>
+                    <th style="text-align: center;font-size:10pt" width="70px">Attend Time</th>
+                    {% for j in SKU_Num_list %}
+                        <th colspan="2" style="text-align: center" width="200px">SKU{{ j }}</th>
                     {% endfor %}
-                    </tbody>
-                </table>
-                {#                    <input class="btn btn-success" type="submit" value="提交">#}
-                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-            </div>
+                    <th style="text-align: center" width="80px">Test Result</th>
+                    <th style="text-align: center" width="40px" title="Test Progress by sheet">SP</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {# by ct content #}
+                {% for i in new_list %}
+                    <tr>
+                        <td style="text-align: center;vertical-align: middle">{{ i.sheet_name }}</td>
+                        <td style="text-align: left;vertical-align: middle">{{ i.sheet_description }}</td>
+                        <td style="text-align: center;vertical-align: middle">{{ i.attend_time }}</td>
+                        {% for j in SKU_Num_list %}
+                            {% if j == 1 %}
+                                {#                                <td style="text-align: center" width="150px"><a href="{% url 'change_tester' plist.id i.sheet_id 1 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku1.last_name }}</a></td>#}
+                                <td style="text-align: center">
+                                    <form name="{{ i.sheet_id }}_sku{{ j }}_tester_form" id="{{ i.sheet_id }}_sku{{ j }}_tester_form" method="POST" action="{% url 'change_tester' plist.id i.sheet_id 1 %}" target="rfFrame" >
+                                        {% csrf_token %}
+                                        <select class="form-control not-arrow" id="id_change_tester_{{ i.sheet_id }}_sku{{ j }}" name="changed_tester" onchange="this.form.submit()" >
+                                            {% for k in test_user %}
+                                                <option value="{{ k.id }}" {% if k.last_name == i.sku1.last_name %} selected="selected" {% endif %}>{{ k.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+                                {% if i.sku1.last_name != 'N/A' %}
+                                    {% if i.sku1_progress != '100%' %}
+                                        {% if i.sku1_progress == '0%' %}
+                                            <td align="center" style="width: 50px"><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 30px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
+                                        {% else %}
+                                            <td align="center" style="width: 50px"><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow; display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center" style="width: 50px"><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku1_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue;display: block"></i></a><input id="{{ i.sheet_id }}_sku1_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku1_progress }}" readonly></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center" style="width: 50px"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"> </i></td>
+                                {% endif %}
+
+                            {% elif j == 2 %}
+                                {#                                <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 2 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku2.last_name }}</a></td>#}
+                                <td style="text-align: center">
+                                    <form name="{{ i.sheet_id }}_sku{{ j }}_tester_form" id="{{ i.sheet_id }}_sku{{ j }}_tester_form" method="POST" action="{% url 'change_tester' plist.id i.sheet_id 2 %}" target="rfFrame">
+                                        {% csrf_token %}
+                                        <select class="form-control" id="id_change_tester_{{ i.sheet_id }}_sku{{ j }}" name="changed_tester" onchange="this.form.submit()">
+                                            {% for k in test_user %}
+                                                <option value="{{ k.id }}" {% if k.last_name == i.sku2.last_name %} selected="selected" {% endif %}>{{ k.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+
+                                {% if i.sku2.last_name != 'N/A' %}
+                                    {% if i.sku2_progress != '100%' %}
+                                        {% if i.sku2_progress == '0%' %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
+                                        {% else %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku2_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku2_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku2_progress }}" readonly></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
+                                {% endif %}
+                            {% elif j == 3 %}
+                                {#                                <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 3 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku3.last_name }}</a></td>#}
+                                <td style="text-align: center">
+                                    <form name="{{ i.sheet_id }}_sku{{ j }}_tester_form" id="{{ i.sheet_id }}_sku{{ j }}_tester_form" method="POST" action="{% url 'change_tester' plist.id i.sheet_id 3 %}" target="rfFrame">
+                                        {% csrf_token %}
+                                        <select class="form-control" id="id_change_tester_{{ i.sheet_id }}_sku{{ j }}" name="changed_tester" onchange="this.form.submit()">
+                                            {% for k in test_user %}
+                                                <option value="{{ k.id }}" {% if k.last_name == i.sku3.last_name %} selected="selected" {% endif %}>{{ k.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+                                {% if i.sku3.last_name != 'N/A' %}
+                                    {% if i.sku3_progress != '100%' %}
+                                        {% if i.sku3_progress == '0%' %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
+                                        {% else %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku3_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku3_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku3_progress }}" readonly></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
+                                {% endif %}
+                            {% elif j == 4 %}
+                                {#                                <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 4 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku4.last_name }}</a></td>#}
+                                <td style="text-align: center">
+                                    <form name="{{ i.sheet_id }}_sku{{ j }}_tester_form" id="{{ i.sheet_id }}_sku{{ j }}_tester_form" method="POST" action="{% url 'change_tester' plist.id i.sheet_id 4 %}" target="rfFrame">
+                                        {% csrf_token %}
+                                        <select class="form-control" id="id_change_tester_{{ i.sheet_id }}_sku{{ j }}" name="changed_tester" onchange="this.form.submit()">
+                                            {% for k in test_user %}
+                                                <option value="{{ k.id }}" {% if k.last_name == i.sku4.last_name %} selected="selected" {% endif %}>{{ k.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+
+                                {% if i.sku4.last_name != 'N/A' %}
+                                    {% if i.sku4_progress != '100%' %}
+                                        {% if i.sku4_progress == '0%' %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku4_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku4_progress }}" readonly></td>
+                                        {% else %}
+                                            <td align="center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku4_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku4_progress }}" readonly></td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku4_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku4_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku4_progress }}" readonly></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
+                                {% endif %}
+                            {% elif j == 5 %}
+                                {#                                <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 5 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku5.last_name }}</a></td>#}
+                                <td style="text-align: center">
+                                    <form name="{{ i.sheet_id }}_sku{{ j }}_tester_form" id="{{ i.sheet_id }}_sku{{ j }}_tester_form" method="POST" action="{% url 'change_tester' plist.id i.sheet_id 5 %}" target="rfFrame">
+                                        {% csrf_token %}
+                                        <select class="form-control" id="id_change_tester_{{ i.sheet_id }}_sku{{ j }}" name="changed_tester" onchange="this.form.submit()">
+                                            {% for k in test_user %}
+                                                <option value="{{ k.id }}" {% if k.last_name == i.sku5.last_name %} selected="selected" {% endif %}>{{ k.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+
+
+                                {% if i.sku5.last_name != 'N/A' %}
+                                    {% if i.sku5_progress != '100%' %}
+                                        {% if i.sku5_progress == '0%' %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku5_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku5_progress }}" readonly></td>
+                                        {% else %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku5_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku5_progress }}" readonly></td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku5_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku5_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku5_progress }}" readonly></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
+                                {% endif %}
+                            {% elif j == 6 %}
+                                {#                                <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 6 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku6.last_name }}</a></td>#}
+                                <td style="text-align: center">
+                                    <form name="{{ i.sheet_id }}_sku{{ j }}_tester_form" id="{{ i.sheet_id }}_sku{{ j }}_tester_form" method="POST" action="{% url 'change_tester' plist.id i.sheet_id 6 %}" target="rfFrame">
+                                        {% csrf_token %}
+                                        <select class="form-control" id="id_change_tester_{{ i.sheet_id }}_sku{{ j }}" name="changed_tester" onchange="this.form.submit()">
+                                            {% for k in test_user %}
+                                                <option value="{{ k.id }}" {% if k.last_name == i.sku6.last_name %} selected="selected" {% endif %}>{{ k.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+
+
+                                {% if i.sku6.last_name != 'N/A' %}
+                                    {% if i.sku6_progress != '100%' %}
+                                        {% if i.sku6_progress == '0%' %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku6_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku6_progress }}" readonly></td>
+                                        {% else %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku6_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku6_progress }}" readonly></td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku6_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku6_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku6_progress }}" readonly></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
+                                {% endif %}
+                            {% elif j == 7 %}
+                                {#                                <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 7 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku7.last_name }}</a></td>#}
+
+                                <td style="text-align: center">
+                                    <form name="{{ i.sheet_id }}_sku{{ j }}_tester_form" id="{{ i.sheet_id }}_sku{{ j }}_tester_form" method="POST" action="{% url 'change_tester' plist.id i.sheet_id 7 %}" target="rfFrame">
+                                        {% csrf_token %}
+                                        <select class="form-control" id="id_change_tester_{{ i.sheet_id }}_sku{{ j }}" name="changed_tester" onchange="this.form.submit()">
+                                            {% for k in test_user %}
+                                                <option value="{{ k.id }}" {% if k.last_name == i.sku7.last_name %} selected="selected" {% endif %}>{{ k.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+
+                                {% if i.sku7.last_name != 'N/A' %}
+                                    {% if i.sku7_progress != '100%' %}
+                                        {% if i.sku7_progress == '0%' %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku7_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku7_progress }}" readonly></td>
+                                        {% else %}
+                                            <td align="center" ><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku7_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku7_progress }}" readonly></td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku7_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"></i></a><input id="{{ i.sheet_id }}_sku7_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku7_progress }}" readonly></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
+                                {% endif %}
+                            {% elif j == 8 %}
+                                {#                                <td style="text-align: center"><a href="{% url 'change_tester' plist.id i.sheet_id 8 %}" data-toggle="modal" data-target="#change_tester">{{ i.sku8.last_name }}</a></td>#}
+                                <td style="text-align: center">
+                                    <form name="{{ i.sheet_id }}_sku{{ j }}_tester_form" id="{{ i.sheet_id }}_sku{{ j }}_tester_form" method="POST" action="{% url 'change_tester' plist.id i.sheet_id 8 %}" target="rfFrame">
+                                        {% csrf_token %}
+                                        <select class="form-control" id="id_change_tester_{{ i.sheet_id }}_sku{{ j }}" name="changed_tester" onchange="this.form.submit()">
+                                            {% for k in test_user %}
+                                                <option value="{{ k.id }}" {% if k.last_name == i.sku8.last_name %} selected="selected" {% endif %}>{{ k.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+
+                                {% if i.sku8.last_name != 'N/A' %}
+                                    {% if i.sku8_progress != '100%' %}
+                                        {% if i.sku8_progress == '0%' %}
+                                            <td align="center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: red;display: block;"></i></a><input id="{{ i.sheet_id }}_sku8_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku8_progress }}" readonly></td>
+                                        {% else %}
+                                            <td align="center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"> <i style="width: 12px;height: 12px;border-radius: 50%;background-color: yellow ;display: block"></i></a><input id="{{ i.sheet_id }}_sku8_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku8_progress }}" readonly></td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center"><a href='{% url 'test_result' plist.id i.sheet_id j  %}' title="{{ i.sku8_progress }}"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: blue ;display: block"> </i></a><input id="{{ i.sheet_id }}_sku8_progress" style="height: 15px;width: 40px;border:none;outline: none;text-align: center" value="{{ i.sku8_progress }}" readonly></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center"><i style="width: 12px;height: 12px;border-radius: 50%;background-color: #8c8c8c ;display: block"></i></td>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if i.test_result == "Fail" %}
+                            <td style="text-align: center">{{ i.test_result }} <Br/> Refer to bug ID: <a href="{% url 'issue_list' pj.id %}">{{ i.bugid }}</a></td>
+                        {% else %}
+                            <td style="text-align: center">{{ i.test_result }}</td>
+                        {% endif %}
+                        <td><input type="text" class="btn btn-info" id="TPsheet{{ i.sheet_id }}" style="height: 20px;width: 60px;border:none;outline: none;text-align: center" readonly onclick="aa({{ i.sheet_id }})" value="点击"></td>
+                    </tr>
+                {% endfor %}
+                <iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>
+                </tbody>
+            </table>
+            {#                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">#}
+        </div>
         </div>
         <div class="modal fade" id="change_tester" tabindex="-1" role="dialog" aria-labelledby="statusLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -215,27 +360,7 @@
     {% else %}
         <a href="/login/"><h1>please login!</h1></a>
     {% endif %}
-    <script>
-        $(function () {
-            $('#change_tester').on('hide.bs.modal',)
-        });
-        function aa(tt) {
-            var val=0;
-            var n = {{ SKU_num }};
-            for(var i=1;i<={{ SKU_num }};i++){
-                console.log(val);
-                if (document.getElementById(tt+"_sku"+i+"_progress")) {
-                    var val_l = parseFloat(document.getElementById(tt+"_sku"+i+"_progress").value);
-                    val = (val+val_l);
-                }else {
-                    n=n-1
-                }
-            }
-            val = (Math.round(val / n*100))/100;
-            $("#"+"TPsheet"+tt).val((val).toString()+"%");
-        }
 
-    </script>
     <br><br>
 {% endblock %}
 

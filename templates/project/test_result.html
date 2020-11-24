@@ -18,6 +18,24 @@
         {#word-break:break-all;#}
         {#word-wrap:break-word;#}
         }
+        .loading {
+            width: 160px;
+            height: 56px;
+            position: absolute;
+            top: 50%;
+            left: 45%;
+            line-height: 56px;
+            color: #fff;
+            padding-left: 60px;
+            font-size: 15px;
+            background: #000 url(../../static/img/loading.gif) no-repeat 10px 50%;
+            opacity: 0.7;
+            z-index: 9999;
+            -moz-border-radius: 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
+        }
 
 
     </style>
@@ -36,62 +54,89 @@
             <div class="panel-heading">
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table -> {{ name }}</h2>
             </div>
-            <form action="" method="post">
-                {% csrf_token %}
-                <div class="panel-body">
-                    <table border="T2" class="table">
+            {#            <form action="" method="post">#}
+
+            <div class="panel-body">
+                <table border="T2" class="table">
+                    <form method="POST" action="" target="rfFrame">
+                        {% csrf_token %}
                         {% if sheet_prepare %}
                             <tr style="solid-color: #fde19a "><td colspan="2" style="background: lightyellow;text-align: center;vertical-align: middle;font-size: 20px">Preparation</td>
                                 <td colspan="7" style="background: lightyellow;vertical-align: center " ><textarea
-                                        spellcheck="false" name="prepare" id="prepare" cols="150" rows="6" style="white-space: pre-wrap">{{ sheet_prepare }}</textarea></td></tr>
+                                        spellcheck="false" name="prepare" id="prepare" cols="150" rows="6" style="white-space: pre-wrap" onblur="this.form.submit()">{{ sheet_prepare }}</textarea></td></tr>
                             {#                        <td colspan="4" style="background: #fde19a;vertical-align: center" ></td>#}
-                        {% endif %}
-                        {#                    <tr><td style="background: white;font-weight: bold" colspan="8">Test Scope</td></tr>#}
-                    </table>
-                    <table border="" class = "table table-striped">
-                        <thead >
-                        <tr>
+                        {% endif %}</form>
+                    {#                    <tr><td style="background: white;font-weight: bold" colspan="8">Test Scope</td></tr>#}
+                </table>
+                <table border="" class = "table table-striped">
+                    <thead >
+                    <tr>
 
-                            <th width="8%">Case_ID</th>
-                            <th width="10%">Case_Name</th>
-                            <th width="20%">Procedure</th>
-                            <th width="20%">Pass_Criteria</th>
-                            <th width="6%">Attachment</th>
-                            <th width="6%">SKU{{ skunum }}</th>
-                            <th width="10%">Remark</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                        <th width="8%">Case_ID</th>
+                        <th width="10%">Case_Name</th>
+                        <th width="20%">Procedure</th>
+                        <th width="20%">Pass_Criteria</th>
+                        <th width="6%">Attachment</th>
+                        <th width="6%">SKU{{ skunum }}</th>
+                        <th width="10%">Remark</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-                        {%  for cases in case_list %}
-                            <tr>
+                    {%  for cases in case_list %}
+                        <tr><form name="result_form" id="{{ cases.id }}_result" method="POST" action="" target="rfFrame">
+                            <input type="hidden" value="{{ cases.id }}" name="case_id">
+                            <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
+                            <td style="white-space:pre-wrap; word-break:break-all;text-align: left;vertical-align: middle">{{ cases.case_name }}</td>
+                            <td>{{ cases.procedure|linebreaksbr  }}</td>
+                            <td>{{ cases.pass_criteria|linebreaksbr  }}</td>
+                            <td>{% if cases.test_plan_pic_path %}
+                                <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
+                            {% endif %}</td>
+                            <td style="text-align: center;vertical-align: middle">
+                                {#                                <form name="result_form" id="{{ cases.id }}_result" method="POST" action="">#}
+                                {% csrf_token %}
+                                {#                                    <select class="form form-control" name="test_result" onchange="add_bug(this,{{ cases.id }});custom(this,{{ cases.id }})">#}
+                                <select id="{{ cases.id }}_result_select" class="form form-control" name="test_result" onchange="this.form.submit(),add_bug(this,{{ cases.id }})">
+                                    <option value="Pass" {% ifequal 'Pass' cases.result %}selected{%endifequal%}>Pass</option>
+                                    <option value="Fail" {% ifequal 'Fail' cases.result %}selected{%endifequal%}>Fail</option>
+                                    <option value="N/A" {% ifequal 'N/A' cases.result %}selected{%endifequal%}>N/A</option>
+                                    {#                                        <option value="custom" {% ifequal 'custom' cases.result %}selected{%endifequal%}>Custom</option>#}
+                                    <option value="" {% ifequal '' cases.result %}selected{%endifequal%} style="display: none"></option>
+                                    {#                                        <option value="Fail">Fail</option>#}
+                                    {#                                        <option value="N/A">N/A</option>#}
+                                    {#                                        <option value="custom">自定义</option>#}
+                                    {#                                        <option style='display: none' value=''></option>#}
+                                </select>
+                        </form>
+                            {% ifequal 'Fail' cases.result %}<button href="{% url 'assign_bug' pj.id plist.id cases.id sid skunum %}" class="form-control" name="fail_bug_id{{ cases.id }}" type="button" id="fail_bug_id{{ cases.id }}" style="background-color: orange" data-toggle="modal" data-target="#sel_fail">关联issue</button>{%endifequal%}
+                            <button href="{% url 'assign_bug' pj.id plist.id cases.id sid skunum %}" class="form-control" name="fail_bug_id{{ cases.id }}" type="button" id="fail_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail">关联issue</button>
+                            {#                          <textarea spellcheck="false" class="form-control" name="custom-input{{ cases.id }}" id="custom-input{{ cases.id }}" style="display: none;white-space: pre-wrap" ></textarea></td>#}
+                            {#                            <input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" onkeyup="this.value=this.value.replace(/[^\r\n0-9\,]/g,'')">#}
+                            <form method="POST" action="" target="rfFrame">
+                                {% csrf_token %}
                                 <input type="hidden" value="{{ cases.id }}" name="case_id">
-                                <td style="text-align: center;vertical-align: middle">{{ cases.case_id }}</td>
-                                <td style="white-space:pre-wrap; word-break:break-all;text-align: left;vertical-align: middle">{{ cases.case_name }}</td>
-                                <td>{{ cases.procedure|linebreaksbr  }}</td>
-                                <td>{{ cases.pass_criteria|linebreaksbr  }}</td>
-                                <td>{% if cases.test_plan_pic_path %}
-                                    <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
-                                {% endif %}</td>
-                                <td style="text-align: center;vertical-align: middle">
-                                    <select class="form form-control" name="test_result" onchange="add_bug(this,{{ cases.id }});custom(this,{{ cases.id }})">
-                                        <option value="Pass">Pass</option>
-                                        <option value="Fail">Fail</option>
-                                        <option value="N/A">N/A</option>
-                                        <option value="custom">自定义</option>
-                                        <option selected="selected"  style='display: none' value=''></option>
-                                    </select>
-                                    <button href="{% url 'add_issue' pj.id %}" class="form-control" name="fail_bug_id{{ cases.id }}" type="button" id="fail_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail">新增issue</button>
-                                    <textarea spellcheck="false" class="form-control" name="custom-input{{ cases.id }}" id="custom-input{{ cases.id }}" style="display: none;white-space: pre-wrap" ></textarea></td>
-                                <td style="vertical-align: middle"><textarea class="form form-control" name="remark" style="height: 100px" placeholder="{{ cases.case_note }}"></textarea></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                    <input class="btn btn-success pull-right" type="submit" value="提交" onclick="HtmlLoad()">
-                </div>
-            </form>
+                                <td style="vertical-align: middle">
+                                    {% if cases.issue %}
+                                        {% for m,n in cases.bug_description.items %}
+                                            <a href="{% url 'refer_issue' pj.id m %}">Refer to bug {{ m }} : {{ n }} ;</a><br>
+                                        {% endfor %}
+
+
+                                    {% endif %}
+                                    <textarea class="form form-control" name="remark" style="height: 100px" placeholder="{{ cases.case_note }}" onblur="this.form.submit()">{{ cases.remark }}</textarea>
+                                </td>
+                            </form>
+                        </tr>
+                        <iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <a class="btn btn-success pull-right" type="button" href="{% url 'task_table' plist.id %}">返回</a>
+{#                <input class="btn btn-success pull-right" type="button" onclick="javascript:history.back(-1);" value="返回">#}
+                {#                <input class="btn btn-success pull-right" type="submit" value="提交" onclick="HtmlLoad()">#}
+            </div>
+            {#            </form>#}
         </div>
 
         <!-- 模态框（Modal） -->
@@ -123,9 +168,21 @@
                     $("#" + sel_id).css({"display": 'none'});
                 }
             }
+            $(function () {
+                $("#table").bootstrapTable({
+                    {#url:"data.jason",#}
+                    height:600,
+                })
+            })
 
         </script>
-
+         {% if messages %}
+            <script>
+                {% for msg in messages %}
+                    alert('{{ msg.message }}');
+                {% endfor %}
+            </script>
+        {% endif %}
 
     {% else %}
         <a href="/login/"><h1>please login!</h1></a>

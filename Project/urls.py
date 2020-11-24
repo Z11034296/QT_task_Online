@@ -40,8 +40,10 @@ urlpatterns = [
     path('add_issue/<pid>', views.add_issue, name='add_issue'),
     path('issue_update/<pid>-<bid>', views.issue_update, name='issue_update'),
     path('change_tester/<lid>-<sid>-<skunum>', views.change_tester, name='change_tester'),
-    path('asign_bug/<pid>-<lid>-<sid>-<cid>-<skunum>', views.asign_bug, name='asign_bug'),
+    path('assign_bug/<pid>-<lid>-<sid>-<cid>-<skunum>', views.assign_bug, name='assign_bug'),
     path('export_project_report/<lid>', views.export_project_report, name='export_project_report'),
     path('test_time_review/<lid>', views.test_time_review, name='test_time_review'),
     path('project_sum', views.project_sum, name='project_sum'),
+    path('update_attendtime/<nid>', views.update_attendtime, name='update_attendtime'),
+    path('update_attendtime_all', views.update_attendtime_all, name='update_attendtime_all'),
 ]

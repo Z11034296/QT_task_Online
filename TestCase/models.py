@@ -41,6 +41,7 @@ class Sheet(models.Model):
     sheet_name = models.CharField(max_length=128,null=False,unique=True)
     sheet_description = models.CharField(max_length=128,null=True,unique=False)
     sheet_prepare = models.TextField(blank=True, null=True,)
+    attend_time = models.CharField(max_length=128, unique=False, verbose_name="attend_time", null=True, default="0")
 
     def __str__(self):
         return self.sheet_name

@@ -192,8 +192,9 @@ def table_of_contents(request):
     # 每个sheet中的case个数填入sheets_list
     attend_time_dic = {}
     for sheets in sheets_list:
+        # print(sheets.attend_time)
         sheets.count = cout[sheets.sheet_name]
-
+    #
         # 计算每个Sheet的attend time
         cases_by_sheet = TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
         attend_time_sum = 0
@@ -201,6 +202,8 @@ def table_of_contents(request):
             attend_time_sum += float(i['attend_time'])
         attend_time_dic.update({sheets: attend_time_sum})
         sheets.attend_time = attend_time_dic[sheets]
+        if sheets.attend_time != float(Sheet.objects.filter(id=sheets.id).values().first()['attend_time']):
+            Sheet.objects.filter(id=sheets.id).update(attend_time=sheets.attend_time)
 
     return render(request, "case/table_of_contents.html", {"sheets_list": sheets_list,"j":j,"attend_time_dic":attend_time_dic})
 
@@ -217,7 +220,6 @@ def search(request):
     error_msg = ''
     if request.method == "POST":
         if not request.POST.get('search_case'):
-            print('11111111')
             error_msg = '请输入搜索词！！！'
             return render(request,'case/caseinfo.html', {'error_msg': error_msg})
         else:

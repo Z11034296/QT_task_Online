@@ -274,8 +274,10 @@ class TestResult(models.Model):
     test_result = models.CharField(max_length=128,blank=True, null=True, default="")
     sku_num = models.CharField(max_length=16, blank=True, null=True, default="")
     issue_id = models.ForeignKey('Issue', on_delete=models.CASCADE, blank=True, null=True)
-    remark = models.CharField(max_length=255, blank=True, null=True,default="",verbose_name="result_remark")
+    # remark = models.CharField(max_length=255, blank=True, null=True,default="",verbose_name="result_remark") //20201019
+    remark = models.TextField(max_length=2048, blank=True, null=True,default="",verbose_name="result_remark")
     result_info = models.ForeignKey('ProjectInfo', on_delete=models.CASCADE, blank=True, null=True,default="")
+    issue = models.CharField(max_length=128,blank=True, null=True, default="")
 
     def __str__(self):
         return str(self.test_case)
@@ -305,6 +307,8 @@ class ControlTableList(models.Model):
     system_qty = models.CharField(verbose_name="测试系统数量", max_length=255, blank=True, null=True,default="")
     OS_Ver = models.CharField(max_length=255, unique=False, verbose_name="OS_Version",null=True,default="")
     buffer_activity = models.CharField(max_length=255, unique=False, verbose_name="测试buffer",null=True,default="")
+    attend_time = models.CharField(max_length=128, unique=False, verbose_name="attend_time",null=True,default="1")
+    finished_time = models.CharField(max_length=128, unique=False, verbose_name="attend_time",null=True,default="0")
 
     def __str__(self):
         return self.project_stage

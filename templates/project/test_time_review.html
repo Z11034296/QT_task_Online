@@ -7,7 +7,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
-                    测试时间
+
                 </h4>
             </div>
             <div class="modal-body">
@@ -18,14 +18,16 @@
 
                                 <tr>
                                     <th style="text-align: center">Tester</th>
-                                    <th style="text-align: center">Test_Time</th>
+                                    <th style="text-align: center">Total Test Time</th>
+                                    <th style="text-align: center">Test Progress</th>
 
                                 </tr>
                                 <tbody>
-                                {% for i,j in test_time.items %}
+                                {% for i in review_data %}
                                 <tr>
-                                    <td style="text-align: center">{{ i }}</td>
-                                    <td style="text-align: center">{{ j }}</td>
+                                    <td style="text-align: center">{{ i.tester }}</td>
+                                    <td style="text-align: center">{{ i.test_time }}</td>
+                                    <td style="text-align: center">{{ i.progress }}%</td>
 
                                 </tr>
                             {% endfor %}
