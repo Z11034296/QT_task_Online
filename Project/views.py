@@ -1616,7 +1616,7 @@ def export_project_report(request, lid):
         w_c.write(2, 0, datetime.date.today(), style_body_date)
         w_c.write(2, 1, request.user.last_name, style_body_3)
         w_c.write(2, 2, 'v1.0', style_body_3)
-        w_c.write(2, 3, 'Base on  Testplan ' + project_info['testplan_version'], style_body_3)
+        w_c.write(2, 3, 'Base on  Test Plan ' + project_info['testplan_version'], style_body_3)
         w_c.write(2, 4, '', style_body_3)
         w_c.col(0).width = 3000
 
