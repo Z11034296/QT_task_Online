@@ -22,7 +22,8 @@ class TestCase(models.Model):
     procedure=models.TextField(blank=True, null=True,)  # 步骤
     pass_criteria=models.TextField(blank=True, null=True,)  # pass标准
     test_plan_pic_path=models.FileField(upload_to='upload',blank=True, null=True,)  # 附件路径
-    attend_time=models.CharField(max_length=32,null=False,unique=False)  #
+    attend_time=models.CharField(max_length=128,null=False,unique=False,default='0')  #
+    unattend_time=models.CharField(max_length=128,null=False,unique=False,default='0')  #
     case_note=models.CharField(max_length=512,null=False,unique=False,default='') # Note
     case_status=models.CharField(max_length=32,null=False,unique=False,default='1')# status
 
@@ -42,6 +43,13 @@ class Sheet(models.Model):
     sheet_description = models.CharField(max_length=128,null=True,unique=False)
     sheet_prepare = models.TextField(blank=True, null=True,)
     attend_time = models.CharField(max_length=128, unique=False, verbose_name="attend_time", null=True, default="0")
+    sorting = models.CharField(max_length=128,null=True,unique=False)
+    evt = models.CharField(max_length=128,null=True,unique=False)
+    dvt = models.CharField(max_length=128,null=True,unique=False)
+    Consumer = models.CharField(max_length=128,null=True,unique=False)
+    Commercial = models.CharField(max_length=128,null=True,unique=False)
+
+
 
     def __str__(self):
         return self.sheet_name

@@ -150,5 +150,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media/upload')
 
     # .replace('\\', '/')
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
+
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE=60*60*24*7 # 登录7天时间自动注销
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True # 会话cookie可以在用户浏览器中保持有效期。True：关闭浏览器，则Cookie失效。
+
+
 # UserInfo继承Auth表
 # AUTH_USER_MODEL = 'UserProfile.UserInfo'

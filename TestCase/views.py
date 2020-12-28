@@ -82,6 +82,170 @@ def add_case(request):
 
 
 def upload_files(request):
+    sheet_info = {
+        "MST01":	1 ,
+        "Drv01":	2 ,
+        "Aud01":	3 ,
+        "Aud01a":	4 ,
+        "Aud01b":	5 ,
+        "Aud01c":	6 ,
+        "Aud01d":	7 ,
+        "Aud01e":	8 ,
+        "Aud01f":	9 ,
+        "Aud02":	10 ,
+        "Vdo01":	11 ,
+        "Vdo01a":	12 ,
+        "Vdo01b":	13 ,
+        "Vdo01c":	14 ,
+        "Vdo01d":	15 ,
+        "Vdo01e":	16 ,
+        "Vdo01f":	17 ,
+        "Vdo01g":	18 ,
+        "Vdo01h":	19 ,
+        "Vdo01j":	20 ,
+        "Vdo01k":	21 ,
+        "Vdo02":	22 ,
+        "Vdo03":	23 ,
+        "Vdo04":	24 ,
+        "Vdo05":	25 ,
+        "Vdo06":	26 ,
+        "Vdo07":	27 ,
+        "Vdo08":	28 ,
+        "Vdo09":	29 ,
+        "Vdo10":	30 ,
+        "Vdo11":	31 ,
+        "Vdo12":	32 ,
+        "SW01":	    33 ,
+        "SW02":	    34 ,
+        "SW03":	    35 ,
+        "SW05":	    36 ,
+        "SW07":	    37 ,
+        "SW09":	    38 ,
+        "HW01":	    39 ,
+        "HW01a":	40 ,
+        "HW01b":	41 ,
+        "HW01c":	42 ,
+        "HW01d":	43 ,
+        "HW01e":	44 ,
+        "HW01f":	45 ,
+        "HW01g":	46 ,
+        "HW01h":	47 ,
+        "HW01i":	48 ,
+        "HW02a":	49 ,
+        "HW02b":	50 ,
+        "HW02c":	51 ,
+        "HW02d":	52 ,
+        "HW02e":	53 ,
+        "HW02f":	54 ,
+        "HW02g":	55 ,
+        "HW04":	    56 ,
+        "HW05":	    57 ,
+        "HW06":	    58 ,
+        "HW07":	    59 ,
+        "NET01":	60 ,
+        "NET02":	61 ,
+        "NET03":	62 ,
+        "NET06":	63 ,
+        "NET07":	64 ,
+        "MEM01":	65 ,
+        "USB01":	66 ,
+        "USB02":	67 ,
+        "USB03":	68 ,
+        "TV01":	    69 ,
+        "FNC01a":	70 ,
+        "FNC01b":	71 ,
+        "FNC01c":	72 ,
+        "FNC02":	73 ,
+        "B1.1":	    74 ,
+        "FNC01":	75 ,
+        "MEM02":	76 ,
+        "FNC03":	77 ,
+        "FNC04":	78 ,
+        "FNC05":	79 ,
+        "FNC06":	80 ,
+        "FNC07":	81 ,
+        "FNC08":	82 ,
+        "FNC09":	83 ,
+        "FNC10":	84 ,
+        "FNC11":	85 ,
+        "FNC12":	86 ,
+        "FNC13":	87 ,
+        "FNC14":	88 ,
+        "FNC15":	89 ,
+        "FNC17":	90 ,
+        "FNC18":	91 ,
+        "FNC19":	92 ,
+        "FNC20":	93 ,
+        "FNC21":	94 ,
+        "FNC27":	95 ,
+        "FNC31":	96 ,
+        "FNC33":	97 ,
+        "FNC35":	98 ,
+        "FNC61":	99 ,
+        "FNC37":	100 ,
+        "FNC38":	101 ,
+        "FNC39":	102 ,
+        "FNC40":	103 ,
+        "FNC41":	104 ,
+        "FNC42":	105 ,
+        "FNC44":	106 ,
+        "FNC46":	107 ,
+        "FNC47":	108 ,
+        "FNC48":	109 ,
+        "FNC49":	110 ,
+        "FNC50":	111 ,
+        "FNC51":	112 ,
+        "FNC52":	113 ,
+        "FNC53":	114 ,
+        "FNC54":	115 ,
+        "FNC55":	116 ,
+        "FNC56":	117 ,
+        "FNC57":	118 ,
+        "FNC58":	119 ,
+        "FNC60":	120 ,
+        "B1.2":	    122 ,
+        "B1.3":	    123 ,
+        "B1.4":	    124 ,
+        "B1.5":	    125 ,
+        "B5":	    129 ,
+        "B6":	    130 ,
+        "B7":	    131 ,
+        "B9":	    133 ,
+        "B10":	    134 ,
+        "B11":  	135 ,
+        "B12":	    136 ,
+        "B13":  	137 ,
+        "B15":  	138 ,
+        "B18":	    140 ,
+        "B19":  	141 ,
+        "B19.2":	142 ,
+        "B20":	    143 ,
+        "P1":	    144 ,
+        "UXP01":	145 ,
+        "UXP02":	146 ,
+        "UXP03":	147 ,
+        "W1":	    148 ,
+        "W2":	    149 ,
+        "W3":	    150 ,
+        "W4":	    151 ,
+        "W6":	    152 ,
+        "W7":   	153 ,
+        "W8":	    154 ,
+        "W9":	    155 ,
+        "L1":	    156 ,
+        "EC":	    157 ,
+        "Vdo13":	158 ,
+        "FNC29":	159 ,
+        "MEM03":	160 ,
+        "MST02":	161 ,
+        "HW02": 	162 ,
+        "B2":	    163 ,
+        "B3":	    164 ,
+        "B4":	    165 ,
+
+
+
+    }
     if request.method == 'POST':
         f = request.FILES.get('upload_files')
         excel_type = f.name.split('.')[1]
@@ -90,22 +254,25 @@ def upload_files(request):
             wb = xlrd.open_workbook(filename=None, file_contents=f.read())
             table = wb.sheets()[0]
             rows = table.nrows  # 总行数
+            print(sheet_info)
             for i in range(1, rows):
                 try:
                     rowVlaues = table.row_values(i)
+
                     TestCase.objects.create(case_id=rowVlaues[0],
                                             case_name=rowVlaues[1],
-                                            procedure=rowVlaues[4],
-                                            pass_criteria=rowVlaues[5],
-                                            attend_time=int(rowVlaues[6]),
-                                            function_id=int(rowVlaues[2]),
-                                            sheet_id=int(rowVlaues[3]),
+                                            procedure=rowVlaues[2],
+                                            pass_criteria=rowVlaues[3],
+                                            attend_time=int(rowVlaues[5]),
+                                            unattend_time=int(rowVlaues[6]),
+                                            function_id=int(rowVlaues[9]),
+                                            sheet_id=sheet_info[rowVlaues[8]],
                                             case_status=int(rowVlaues[7]),
-                                            case_note=rowVlaues[8],
+                                            case_note=rowVlaues[4],
                                             )
                 except:
                     return HttpResponse("excel文件或者数据插入错误")
-            return redirect("caseinfo")
+            return redirect("table_of_contents")
         else:
             return HttpResponse('上传文件类型错误！')
     else:
@@ -132,7 +299,7 @@ def delete_case(request, id):
 
 @csrf_exempt
 def update_case(request, id):
-    # 修改用戶信息
+    sheet_id = TestCase.objects.filter(id=id).values('sheet_id').first()["sheet_id"]
     if request.method == "GET":
         # 取ID
         if id:
@@ -156,14 +323,14 @@ def update_case(request, id):
                     with open(os.path.join("media/upload", filename_new), 'wb+') as f:
                         for chunk in request.FILES.get("test_plan_pic_path").chunks():
                             f.write(chunk)
-                    return redirect("caseinfo")
+                    return redirect('sheet_detail',sheet_id)
             else:
                 update_obj = forms.Case_updateForm(request.POST)
                 if update_obj.is_valid():
                     dic=update_obj.cleaned_data
                     dic.pop('test_plan_pic_path')
                     TestCase.objects.filter(id=id).update(**dic)
-                    return redirect("caseinfo")
+                    return redirect('sheet_detail', sheet_id)
         else:
             return HttpResponse("id error")
 
@@ -182,7 +349,7 @@ def case_moreinfo(request, id):
 
 def table_of_contents(request):
     j=range(1,3)
-    sheets_list = Sheet.objects.all()
+    sheets_list = Sheet.objects.all().order_by("sorting")
     case_list = TestCase.objects.all()
     # 计算case_list中每个sheet有多少个case
     sheet_list=[]
@@ -194,7 +361,6 @@ def table_of_contents(request):
     for sheets in sheets_list:
         # print(sheets.attend_time)
         sheets.count = cout[sheets.sheet_name]
-    #
         # 计算每个Sheet的attend time
         cases_by_sheet = TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
         attend_time_sum = 0
@@ -210,7 +376,7 @@ def table_of_contents(request):
 
 def sheet_detail(request, sid):
     if request.method == "GET":
-        case_list_by_sheet = TestCase.objects.filter(sheet_id=sid).order_by('case_id')
+        case_list_by_sheet = TestCase.objects.filter(sheet_id=sid,case_status=1).order_by('case_id')
         sheet_prepare=Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
         name = Sheet.objects.filter(id=sid).values().first()['sheet_name']
         return render(request, "case/sheet_case.html", {"case_list": case_list_by_sheet,"name":name,'sheet_prepare':sheet_prepare})

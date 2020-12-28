@@ -83,13 +83,30 @@ def add_project_info(request, nid):
             project_mb=request.POST.get('MB_ver'),
             project_os=request.POST.get('OS'),
             dr_chipset=request.POST.get('chipset'),
-            dr_vga=request.POST.get('VGA'),
+            dr_chipset_model=request.POST.get('chipset_model'),  #
+            dr_vga_AMD_onboard=request.POST.get('AMD_onboard'),
+            dr_vga_AMD_onboard_model=request.POST.get('AMD_onboard_model'),  #
+            dr_vga_Intel_onboard=request.POST.get('Intel_onboard'),
+            dr_vga_Intel_onboard_model=request.POST.get('Intel_onboard_model'),  #
+            dr_vga_AMD_addon=request.POST.get('AMD_addon'),
+            dr_vga_AMD_addon_model=request.POST.get('AMD_addon_model'),  #
+            dr_vga_NV_addon=request.POST.get('NV_addon'),
+            dr_vga_NV_addon_model=request.POST.get('NV_addon_model'),  #
             dr_iamt=request.POST.get('IAMT'),
+            dr_iamt_model=request.POST.get('IAMT_model'),  #
             dr_storage=request.POST.get('Storage'),
             dr_lan=request.POST.get('LAN'),
+            dr_lan_model=request.POST.get('LAN_model'),  #
             dr_audio=request.POST.get('audio'),
-            dr_wireless=request.POST.get('Wireless'),
-            dr_bt=request.POST.get('Bluetooth'),
+            dr_audio_model=request.POST.get('audio_model'),  #
+            dr_intel_wireless=request.POST.get('intel_Wireless'),
+            dr_qca_wireless=request.POST.get('QCA_Wireless'),
+            dr_intel_wireless_model=request.POST.get('intel_Wireless_model'),  #
+            dr_qca_wireless_model=request.POST.get('QCA_wireless_model'),  #
+            dr_intel_bt=request.POST.get('intel_bt'),
+            dr_qca_bt=request.POST.get('QCA_bt'),
+            dr_intel_bt_model=request.POST.get('intel_bt_model'),  #
+            dr_qca_bt_model=request.POST.get('QCA_bt_model'),  #
             dr_panel=request.POST.get('Panel'),
             dr_finger_printer=request.POST.get('Finger_printer'),
             dr_g_sensor=request.POST.get('G_sensor'),
@@ -100,6 +117,9 @@ def add_project_info(request, nid):
             dr_sgx=request.POST.get('SGX'),
             dr_others=request.POST.get('Others'),
             dr_cr=request.POST.get('Cardreader'),
+            dr_cr_model=request.POST.get('Cardreader_model'), #
+            testplan_version=request.POST.get('testplan_version'),
+            testsummary_version=request.POST.get('testsummary_version'),
 
         )
         return redirect('projects')
@@ -118,13 +138,30 @@ def edit_project_info(request, nid):
             project_mb=request.POST.get('MB_ver'),
             project_os=request.POST.get('OS'),
             dr_chipset=request.POST.get('chipset'),
-            dr_vga=request.POST.get('VGA'),
+            dr_chipset_model=request.POST.get('chipset_model'), #
+            dr_vga_AMD_onboard=request.POST.get('AMD_onboard'),
+            dr_vga_AMD_onboard_model=request.POST.get('AMD_onboard_model'), #
+            dr_vga_Intel_onboard=request.POST.get('Intel_onboard'),
+            dr_vga_Intel_onboard_model=request.POST.get('Intel_onboard_model'), #
+            dr_vga_AMD_addon=request.POST.get('AMD_addon'),
+            dr_vga_AMD_addon_model=request.POST.get('AMD_addon_model'), #
+            dr_vga_NV_addon=request.POST.get('NV_addon'),
+            dr_vga_NV_addon_model=request.POST.get('NV_addon_model'), #
             dr_iamt=request.POST.get('IAMT'),
+            dr_iamt_model=request.POST.get('IAMT_model'), #
             dr_storage=request.POST.get('Storage'),
             dr_lan=request.POST.get('LAN'),
+            dr_lan_model=request.POST.get('LAN_model'), #
             dr_audio=request.POST.get('audio'),
-            dr_wireless=request.POST.get('Wireless'),
-            dr_bt=request.POST.get('Bluetooth'),
+            dr_audio_model=request.POST.get('audio_model'), #
+            dr_intel_wireless=request.POST.get('intel_Wireless'),
+            dr_QCA_wireless=request.POST.get('QCA_Wireless'),
+            dr_intel_wireless_model=request.POST.get('intel_Wireless_model'), #
+            dr_QCA_wireless_model=request.POST.get('QCA_wireless_model'), #
+            dr_intel_bt=request.POST.get('intel_bt'),
+            dr_QCA_bt=request.POST.get('QCA_bt'),
+            dr_intel_bt_model=request.POST.get('intel_bt_model'), #
+            dr_QCA_bt_model=request.POST.get('QCA_bt_model'), #
             dr_panel=request.POST.get('Panel'),
             dr_finger_printer=request.POST.get('Finger_printer'),
             dr_g_sensor=request.POST.get('G_sensor'),
@@ -135,6 +172,9 @@ def edit_project_info(request, nid):
             dr_sgx=request.POST.get('SGX'),
             dr_others=request.POST.get('Others'),
             dr_cr=request.POST.get('Cardreader'),
+            dr_cr_model=request.POST.get('Cardreader_model'),
+            testplan_version=request.POST.get('testplan_version'),
+            testsummary_version=request.POST.get('testsummary_version'),
 
         )
         return redirect('projects')
@@ -488,7 +528,6 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
         else:sheet_prepare = T.Sheet.objects.filter(id=sid).values().first()['sheet_prepare']
         return render(request, "Project/test_result.html", {"case_list": cases,"name":name,"pj":pj,"plist":plist,"skunum":skunum,'sheet_prepare':sheet_prepare,'sid':sid})
     else:
-        print(request.POST)
         project = models.ControlTableList.objects.filter(id=lid).values('project_id').first()
         result_info_id = models.ProjectInfo.objects.filter(project_id=project['project_id']).values("id").last()
         if request.POST.get("test_result"):
@@ -526,7 +565,6 @@ def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet
                                                  sheet_id=sid,
                                                  result_info_id=result_info_id['id'],remark=request.POST.get("remark"))
         elif request.POST.get("prepare"):
-            print("111111111111111")
             if models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid):
                 models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).update(
                         sheet_prepared=request.POST.get('prepare'))
@@ -1171,12 +1209,62 @@ def assign_bug(request,pid,lid,cid,sid,skunum):
             return redirect("test_result",lid,sid,skunum)
 
 
-def export_project_report(self, lid):
-    sheets_list = T.Sheet.objects.all()
+def export_project_report(request, lid):
+    sheets_list = T.Sheet.objects.all().order_by('sorting')
     sku_n = models.ControlTableList.objects.filter(id=lid).values().first()['stage_sku_qty']
     if sheets_list:
         ws=xlwt.Workbook(encoding='utf8')
 
+        style_cover = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0x014A;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour 1;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+        style_logo= xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0x019D;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            pattern:
+                pattern solid,
+                fore-colour 1;
+            """)
+        style_logo2 = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold on,
+                height 0x0100;
+            align:
+                wrap off,
+                vert center,
+                horiz left;
+            pattern:
+                pattern solid,
+                fore-colour 1;
+            """)
         style_heading = xlwt.easyxf(
             """
             font:
@@ -1460,6 +1548,26 @@ def export_project_report(self, lid):
                 bottom THIN;
 
             """,num_format_str='0.00%')
+        style_body_date = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            pattern:
+                pattern solid,
+                fore-colour 1;
+            """,num_format_str='YYYY/MM/DD')
 
 
 
@@ -1469,37 +1577,267 @@ def export_project_report(self, lid):
         project_stage=models.ControlTableList.objects.filter(id=lid).values().first()['project_stage']
         project_id=models.ControlTableList.objects.filter(id=lid).values().first()['project_id']
         project=models.Project.objects.filter(id=project_id).values().first()
+        project_info = models.ProjectInfo.objects.filter(project_id=project_id).values().last()
+
+
+
+        # cover sheet
+        w_c = ws.add_sheet('Cover', cell_overwrite_ok=True)
+        w_c.write_merge(0, 8, 0, 14, project['project_name']+"\n"+project_stage+' System Compatibility Test Report'+'\n'+'for'+'\n'+ 'Acer'+' '+project['project_model'].replace(',','_')+'\n'+'Ver. v1.0', style_cover)
+        w_c.write_merge(9, 15, 0, 14, 'Based on Acer Desktop Test Summary' + project_info['testsummary_version'], style_cover)
+        w_c.write_merge(16, 16, 0, 2, 'Provided by:', style_cover)
+        w_c.write_merge(16, 16, 3, 14, '1STZ10 / '+request.user.last_name+' / '+ str(datetime.date.today()) , style_body_3)
+        w_c.write_merge(17, 17, 0, 2, '', style_cover)
+        w_c.write_merge(17, 17, 3, 14, '', style_cover)
+        w_c.write_merge(18, 18, 0, 2, 'Reviewed by:', style_cover)
+        w_c.write_merge(18, 18, 3, 14, '', style_cover)
+        w_c.write_merge(19, 19, 0, 2, '', style_cover)
+        w_c.write_merge(19, 19, 3, 14, '', style_cover)
+        w_c.write_merge(21, 21, 0, 14, '', style_logo)
+        w_c.write_merge(20, 20, 0, 2, 'Approved by:', style_cover)
+        w_c.write_merge(20, 20, 3, 14, '', style_cover)
+        w_c.write_merge(22,22, 1,2,  'Wistron',style_logo )
+        w_c.write_merge(22,22, 0,0,  '',style_logo2 )
+        w_c.write_merge(22,22, 3,14,  '',style_logo2 )
+        w_c.write_merge(23, 23,2, 5, 'Wistron Corporation',style_logo2 )
+        w_c.write_merge(23, 23,0, 1, '',style_logo2 )
+        w_c.write_merge(23, 23,6, 14, '',style_logo2 )
+        w_c.write_merge(24, 25, 0, 14, '', style_logo)
+
+        # RN Sheet
+        w_c = ws.add_sheet('RN', cell_overwrite_ok=True)
+        w_c.write_merge(0, 0, 0, 4, 'Windows Test Report Change History', style_body_1)
+        w_c.write(1, 0,'Date', style_heading_2)
+        w_c.write(1, 1,'Author', style_heading_2)
+        w_c.write(1, 2,'Version', style_heading_2)
+        w_c.write(1, 3,'History', style_heading_2)
+        w_c.write(1, 4,'Notes', style_heading_2)
+        w_c.col(3).width = 30000
+        w_c.write(2, 0, datetime.date.today(), style_body_date)
+        w_c.write(2, 1, request.user.last_name, style_body_3)
+        w_c.write(2, 2, 'v1.0', style_body_3)
+        w_c.write(2, 3, 'Base on  Testplan ' + project_info['testplan_version'], style_body_3)
+        w_c.write(2, 4, '', style_body_3)
+        w_c.col(0).width = 3000
+
+        # SKU List
+        w_c = ws.add_sheet('SKU List', cell_overwrite_ok=True)
+
+        # SW List
+        nn=2
+        w_c = ws.add_sheet('SW List', cell_overwrite_ok=True)
+        w_c.write(nn, 0, 'Device Drive', style_heading_2)
+        w_c.write(nn, 1, 'Model Name', style_heading_2)
+        w_c.write(nn, 2, 'Driver version', style_heading_2)
+        nn+=1
+        w_c.write(nn, 0, 'Chipset', style_body_3)
+        w_c.write(nn, 1, project_info['dr_chipset_model'], style_body_3)
+        w_c.write(nn, 2, project_info['dr_chipset'], style_body_3)
+        nn += 1
+        w_c.write(nn, 0, 'VGA Card (add on)', style_body_3)
+        if project_info['dr_vga_AMD_addon'] != '' and project_info['dr_vga_NV_addon'] !='':
+            w_c.write(nn, 1, project_info['dr_vga_AMD_addon_model']+'\n' +project_info['dr_vga_NV_addon_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_vga_AMD_addon']+'\n' +project_info['dr_vga_NV_addon'], style_body_3)
+            nn+=1
+        elif project_info['dr_vga_AMD_addon'] == '' and project_info['dr_vga_NV_addon'] !='':
+            w_c.write(nn, 1, project_info['dr_vga_NV_addon_model'],style_body_3)
+            w_c.write(nn, 2, project_info['dr_vga_NV_addon'], style_body_3)
+            nn += 1
+        elif project_info['dr_vga_AMD_addon'] != '' and project_info['dr_vga_NV_addon'] == '':
+            w_c.write(nn, 1, project_info['dr_vga_AMD_addon_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_vga_AMD_addon'], style_body_3)
+            nn += 1
+        else: pass
+
+        w_c.write(nn, 0, 'VGA Card (onboard)', style_body_3)
+        if project_info['dr_vga_AMD_onboard'] != '' and project_info['dr_vga_Intel_onboard'] !='':
+            w_c.write(nn, 1, project_info['dr_vga_AMD_onboard_model']+'\n' +project_info['dr_vga_Intel_onboard_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_vga_AMD_onboard']+'\n' +project_info['dr_vga_Intel_onboard'], style_body_3)
+            nn+=1
+        elif project_info['dr_vga_AMD_onboard'] == '' and project_info['dr_vga_Intel_onboard'] !='':
+            w_c.write(nn, 1, project_info['dr_vga_Intel_onboard_model'],style_body_3)
+            w_c.write(nn, 2, project_info['dr_vga_Intel_onboard'], style_body_3)
+            nn += 1
+        elif project_info['dr_vga_AMD_onboard'] != '' and project_info['dr_vga_Intel_onboard'] == '':
+            w_c.write(nn, 1, project_info['dr_vga_AMD_onboard_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_vga_AMD_onboard'], style_body_3)
+            nn += 1
+        else: pass
+
+        w_c.write(nn, 0, 'Audio', style_body_3)
+        w_c.write(nn, 1, project_info['dr_audio_model'], style_body_3)
+        w_c.write(nn, 2, project_info['dr_audio'], style_body_3)
+        nn += 1
+
+        w_c.write(nn, 0, 'Lan', style_body_3)
+        w_c.write(nn, 1, project_info['dr_lan_model'], style_body_3)
+        w_c.write(nn, 2, project_info['dr_lan'], style_body_3)
+        nn += 1
+
+        if project_info['dr_iamt'] != '':
+            w_c.write(nn, 0, 'IAMT', style_body_3)
+            w_c.write(nn, 1, project_info['dr_iamt_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_iamt'], style_body_3)
+            nn += 1
+        if project_info['dr_storage'] != '':
+            w_c.write(nn, 0, 'IRST', style_body_3)
+            w_c.write(nn, 1, '', style_body_3)
+            w_c.write(nn, 2, project_info['dr_storage'], style_body_3)
+            nn += 1
+
+        w_c.write(nn, 0, 'Wlan', style_body_3)
+        if project_info['dr_intel_wireless'] != '' and project_info['dr_QCA_wireless'] != '':
+            w_c.write(nn, 1, project_info['dr_intel_wireless_model'] + '\n' + project_info['dr_QCA_wireless_model'],
+                      style_body_3)
+            w_c.write(nn, 2,  project_info['dr_intel_wireless']+'\n'+ project_info['dr_QCA_wireless'], style_body_3)
+            nn += 1
+        elif project_info['dr_intel_wireless'] == '' and project_info['dr_QCA_wireless'] != '':
+            w_c.write(nn, 1, project_info['dr_QCA_wireless_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_QCA_wireless'], style_body_3)
+            nn += 1
+        elif project_info['dr_intel_wireless'] != '' and project_info['dr_QCA_wireless'] == '':
+            w_c.write(nn, 1, project_info['dr_intel_wireless_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_intel_wireless'], style_body_3)
+            nn += 1
+        else:
+            pass
+
+        w_c.write(nn, 0, 'Bluetooth', style_body_3)
+        if project_info['dr_intel_bt'] != '' and project_info['dr_QCA_bt'] != '':
+            w_c.write(nn, 1, project_info['dr_intel_bt_model'] + '\n' + project_info['dr_QCA_bt_model'],
+                      style_body_3)
+            w_c.write(nn, 2, project_info['dr_intel_bt'] + '\n' + project_info['dr_QCA_bt'], style_body_3)
+            nn += 1
+        elif project_info['dr_intel_bt'] == '' and project_info['dr_QCA_bt'] != '':
+            w_c.write(nn, 1, project_info['dr_QCA_bt_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_QCA_bt'], style_body_3)
+            nn += 1
+        elif project_info['dr_intel_bt'] != '' and project_info['dr_QCA_bt'] == '':
+            w_c.write(nn, 1, project_info['dr_intel_bt_model'], style_body_3)
+            w_c.write(nn, 2, project_info['dr_intel_bt'], style_body_3)
+            nn += 1
+        else:
+            pass
+
+        if project_info['dr_panel'] != '':
+            w_c.write(nn, 0, 'Panel', style_body_3)
+            w_c.write(nn, 1, '', style_body_3)
+            w_c.write(nn, 2, project_info['dr_panel'], style_body_3)
+            nn += 1
+
+        if project_info['dr_finger_printer'] != '':
+            w_c.write(nn, 0, 'Finger_Printer', style_body_3)
+            w_c.write(nn, 1, '', style_body_3)
+            w_c.write(nn, 2, project_info['dr_finger_printer'], style_body_3)
+            nn += 1
+
+        if project_info['dr_g_sensor'] != '':
+            w_c.write(nn, 0, 'G_Sensor', style_body_3)
+            w_c.write(nn, 1, '', style_body_3)
+            w_c.write(nn, 2, project_info['dr_g_sensor'], style_body_3)
+            nn += 1
+
+        if project_info['dr_camera'] != '':
+            w_c.write(nn, 0, 'Camera', style_body_3)
+            w_c.write(nn, 1, '', style_body_3)
+            w_c.write(nn, 2, project_info['dr_camera'], style_body_3)
+            nn += 1
+
+        if project_info['dr_sgx'] != '':
+            w_c.write(nn, 0, 'SGX', style_body_3)
+            w_c.write(nn, 1, '', style_body_3)
+            w_c.write(nn, 2, project_info['dr_sgx'], style_body_3)
+            nn += 1
+
+        if project_info['project_os'] != '':
+            w_c.write(nn, 0, 'OS', style_body_3)
+            w_c.write(nn, 1, 'Microsoft Windows', style_body_3)
+            w_c.write(nn, 2, project_info['project_os'], style_body_3)
+            nn += 1
+
+        if project_info['dr_others'] != '':
+            w_c.write(nn, 0, 'EC Driver', style_body_3)
+            w_c.write(nn, 1, '', style_body_3)
+            w_c.write(nn, 2, project_info['dr_others'], style_body_3)
+            nn += 1
+
+        if project_info['project_bios'] != '':
+            w_c.write(nn, 0, 'BIOS', style_body_3)
+            w_c.write(nn, 1, 'AMI', style_body_3)
+            w_c.write(nn, 2, project_info['project_bios'], style_body_3)
+            nn += 1
+
+        w_c.write(nn+4, 0, 'Test Item', style_heading_2)
+        w_c.write(nn+4, 1, 'Tool Name', style_heading_2)
+        w_c.write(nn+4, 2, 'Version', style_heading_2)
+        w_c.write(nn+7, 0, 'ACPI Stress Test', style_body_3)
+        w_c.write(nn+7, 1, 'Acer_DT_PSR_2017-06-30_USB_detect_DQM', style_body_3)
+        w_c.write(nn+7, 2, '2017/6/30', style_body_3)
+        w_c.write_merge(nn+5,nn+6,0,0, 'MDA For Win10', style_body_3)
+        w_c.write(nn+5,1, 'DCHUAssessmentKit_v1.0.18.0', style_body_3)
+        w_c.write(nn+5,2, '1.0.18.0', style_body_3)
+        w_c.write(nn+6,1, 'ML2 Driver Validation Tool v7.5', style_body_3)
+        w_c.write(nn+6,2, 'v7.5', style_body_3)
+        w_c.col(0).width = 8000
+        w_c.col(1).width = 12000
+        w_c.col(2).width = 8000
+
+        # table of contents sheet
         w_c = ws.add_sheet('Table_of_Contents',cell_overwrite_ok=True)
-        w_c.insert_bitmap('../logo.bmp',1,8,scale_x=0.15,scale_y=0.49)
+        w_c.insert_bitmap('../logo.bmp',1,15,scale_x=0.15,scale_y=0.49)
 
         # w.write(2, 2, project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report')
         # w.write(3, 1, 'Project:'+' '+project['project_name']+' '+project['project_model'])
         w_c.write_merge(4, 5, 0, 0, 'Item No.',style_heading_2)
-        w_c.write_merge(4, 5, 1, 1, 'Description',style_heading_2)
-        w_c.write_merge(4, 5, 2, 2, 'Total Sub-item',style_heading_2)
-        w_c.write_merge(4, 5, 3, 3, 'Note',style_heading_2)
-        w_c.write_merge(4, 5, 4, 4, 'Result',style_heading_2)
+        w_c.write_merge(4, 5, 1, 1, 'EVT',style_heading_2)
+        w_c.write_merge(4, 5, 2, 2, 'DVT',style_heading_2)
+        w_c.write_merge(4, 5, 3, 3, 'Consumer',style_heading_2)
+        w_c.write_merge(4, 5, 4, 4, 'Commercial',style_heading_2)
+        w_c.write_merge(4, 5, 5, 5, 'Description',style_heading_2)
+        w_c.write_merge(4, 5, 6, 6, 'Total Sub-item',style_heading_2)
+        w_c.write_merge(4, 5, 7, 7, 'Note',style_heading_2)
+        w_c.write_merge(4, 5, 8, 8, 'Result',style_heading_2)
         k = 0
         while k < int(sku_n):
             # w.write(2, 4 + k, '')
-            w_c.write_merge(4, 4, 5, 5+k, 'Test SKU',style_heading_2)
-            w_c.write(5, 5 + k, 'SKU'+str(k+1),style_heading_2)
-            w_c.col(5+k).width = 1500
+            w_c.write_merge(4, 4, 16, 16+k, 'Test SKU',style_heading_2)
+            w_c.write(5, 16 + k, 'SKU'+str(k+1),style_heading_2)
+            w_c.col(16+k).width = 1500
             k += 1
-        w_c.write_merge(4, 5, 5 + int(sku_n),5 + int(sku_n), 'Remark',style_heading_2)
+        w_c.write_merge(4, 5, 16 + int(sku_n),16 + int(sku_n), 'Remark',style_heading_2)
 
         w_c.col(0).width = 2700
-        w_c.col(1).width = 15000
-        w_c.col(2).width = 2500
-        w_c.col(3).width = 2500
-        w_c.col(4).width = 2500
-        w_c.col(5 + int(sku_n)).width = 13000
-        w_c.write_merge(0, 1, 0, 4,project['project_name']+' '+project['project_model'].replace(',','_')+' '+project_stage+' Compatibility Test Report',style_heading)
+        w_c.col(1).width = 1500
+        w_c.col(2).width = 1500
+        w_c.col(3).width = 1500
+        w_c.col(4).width = 1500
+        w_c.col(5).width = 12000
+        w_c.col(6).width = 2500
+        w_c.col(7).width = 2500
+        w_c.col(8).width = 2500
+        w_c.col(9).width = 2800
+        w_c.col(10).width = 2800
+        w_c.col(11).width = 2800
+        w_c.col(12).width = 2800
+        w_c.col(16 + int(sku_n)).width = 13000
+        w_c.write_merge(0, 1, 0, 15,project['project_name']+' '+project['project_model'].replace(',','_')+' '+project_stage+' Compatibility Test Report',style_heading)
         w_c.row(0).height_mismatch = True
         w_c.row(0).height = 700
-        w_c.write_merge(2, 3, 0, 4,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
+        w_c.write_merge(2, 3, 0, 8,'Project:'+' '+project['project_name']+' '+project['project_model'],style_heading)
+        w_c.write_merge(2, 2, 9, 15,'Schedule & Progress',style_heading_2)
+        w_c.write_merge(3, 3, 9, 10,'Plan',style_heading_2)
+        w_c.write_merge(3, 3, 11, 12,'Actual',style_heading_2)
+        w_c.write_merge(3, 3, 13, 14,'Time Progress',style_heading_2)
+        w_c.write(3, 15,'Item Progress',style_heading_2)
+        w_c.write_merge(4,5, 9,9,'Start',style_heading_2)
+        w_c.write_merge(4,5,10, 10,'End',style_heading_2)
+        w_c.write_merge(4,5,11, 11,'Start',style_heading_2)
+        w_c.write_merge(4,5,12, 12,'End',style_heading_2)
+        w_c.write_merge(4,5,15, 15,xlwt.Formula(
+                'SUM(P6:P800)/COUNTA(P6:P800)'),style_heading_2)
+        w_c.write_merge(4, 5, 13, 14, xlwt.Formula('SUM(O7:O800)/SUM(N7:N800)'), style_heading_2)
         # w.write_merge(2, 3, 0, 0,'',style_title1)
-        w_c.write_merge(0, 3, 5, 5 + int(sku_n),'',style_heading)
+        w_c.write_merge(0, 3, 16, 16 + int(sku_n),'',style_heading)
         # w_c.write_merge(2, 3, 5, 5 + int(sku_n),'',style_heading)
         excel_row_C = 6
 
@@ -1622,7 +1960,7 @@ def export_project_report(self, lid):
         # 后写Table of Contents
         # *********************Table of Contents内容********************************
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
-        sheets_list = T.Sheet.objects.all()
+        # sheets_list = T.Sheet.objects.all().order_by('sorting')
         case_list = T.TestCase.objects.all()
         SKU_Num_list = []
         num = 1
@@ -1703,13 +2041,21 @@ def export_project_report(self, lid):
                     finished_attend_time_dic.update({"sku" + str(k): '0%'})
             # ******************************************************************************************
             count += 1
-            new_dic.update({'sheet_id': i.sheet_id_id, 'sheet_name': i.sheet_id.sheet_name,
-                            'attend_time': attend_time_dic[i.sheet_id_id],
-                            'sheet_description': i.sheet_id.sheet_description, "bugid": bugid_dic[i.sheet_id_id]})
+            # 取出第一次填写结果的时间和最后一次填写的结果，
+            if time_result.values('result_datetime').first():
+                start_time = str((time_result.values('result_datetime').first()['result_datetime'])).split(' ')[0]
+            else:start_time = ''
+
+            if time_result.values('result_datetime').last():
+                end_time = str(time_result.values('result_datetime').last()['result_datetime']).split(' ')[0]
+            else:end_time = ''
+
+            new_dic.update({'sheet_id': i.sheet_id_id, 'sheet_name': i.sheet_id.sheet_name,'sheet_evt':i.sheet_id.evt,'sheet_dvt':i.sheet_id.dvt,
+                            'sheet_consumer':i.sheet_id.Consumer,'sheet_Commercial':i.sheet_id.Commercial,'attend_times':i.sheet_id.attend_time,'sorting':i.sheet_id.sorting,
+                            'start_time':start_time,'end_time':end_time,'attend_time': attend_time_dic[i.sheet_id_id],'sheet_description': i.sheet_id.sheet_description,
+                            "bugid": bugid_dic[i.sheet_id_id]})
             new_dic.update({'sku' + str(count % int(plist['stage_sku_qty'])): i.tester,
-                            'sku' + str(count % int(plist['stage_sku_qty'])) + '_progress':
-                                finished_attend_time_dic[
-                                    'sku' + str(count % int(plist['stage_sku_qty']))]})
+                            'sku' + str(count % int(plist['stage_sku_qty'])) + '_progress':finished_attend_time_dic['sku' + str(count % int(plist['stage_sku_qty']))]})
 
             if count % int(plist['stage_sku_qty']) == 0:
                 new_dic.update({'sku' + str(int(plist['stage_sku_qty'])): i.tester,
@@ -1721,31 +2067,58 @@ def export_project_report(self, lid):
                 new_list.append(dict(new_dic))
 
         # *********************************************************
-        for i in new_list:
+        for i in sorted(new_list,key=lambda items:items['sorting']): # 由于是从content里面抓出来的数据，sheet排序是错乱的。需要重新按照sorting 排序
             w_c.write(excel_row_C, 0,
                       xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'), style_body_1)
             # "i['sheet_name'], style_body_1)
-            w_c.write(excel_row_C, 1, xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'), style_body_2)
-            w_c.write(excel_row_C, 2, cout[i['sheet_name']], style_body_1)
-            w_c.write(excel_row_C, 3, '', style_body_2)
+            w_c.write(excel_row_C, 1, i['sheet_evt'], style_body_3)
+            w_c.write(excel_row_C, 2, i['sheet_dvt'], style_body_3)
+            w_c.write(excel_row_C, 3, i['sheet_consumer'], style_body_3)
+            w_c.write(excel_row_C, 4, i['sheet_Commercial'], style_body_3)
+            w_c.write(excel_row_C, 5, xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'), style_body_2)
+            w_c.write(excel_row_C, 6, cout[i['sheet_name']], style_body_1)
+            # 先填结果，方便后面判断是否要灰掉覆盖
             if i['test_result'] == "Pass":
-                w_c.write(excel_row_C, 4, i['test_result'], style_result_pass)
+                w_c.write(excel_row_C, 8, i['test_result'], style_result_pass)
             elif i['test_result'] == "Fail":
-                w_c.write(excel_row_C, 4, i['test_result'], style_result_fail)
+                w_c.write(excel_row_C, 8, i['test_result'], style_result_fail)
             else:
-                w_c.write(excel_row_C, 4, i['test_result'], style_result_N)
+                w_c.write(excel_row_C, 8, i['test_result'], style_result_N)
+            # Plan时间
+            w_c.write(excel_row_C, 9, i['start_time'],style_body_3)
+            w_c.write(excel_row_C, 10, i['end_time'],style_body_3)
+            w_c.write(excel_row_C, 11, i['start_time'],style_body_3)
+            w_c.write(excel_row_C, 12, i['end_time'],style_body_3)
+
+            # 判断如果sheet没有item 则灰掉后面几栏（大标题）
+            if cout[i['sheet_name']] ==0:
+                w_c.write(excel_row_C, 7, '', style_result_NA)
+                w_c.write(excel_row_C, 8, '', style_result_NA)
+                w_c.write(excel_row_C, 9, '', style_result_NA)
+                w_c.write(excel_row_C, 10, '', style_result_NA)
+                w_c.write(excel_row_C, 11, '', style_result_NA)
+                w_c.write(excel_row_C, 12, '', style_result_NA)
+                w_c.write(excel_row_C, 13, '', style_result_NA)
+                w_c.write(excel_row_C, 14, '', style_result_NA)
+                w_c.write(excel_row_C, 15, '', style_result_NA)
+            else:
+                w_c.write(excel_row_C, 7, '', style_body_2)
+                w_c.write(excel_row_C, 13, i['attend_times'], style_body_2)
+                w_c.write(excel_row_C, 14, i['attend_times'], style_body_2)
+                w_c.write(excel_row_C, 15, xlwt.Formula("'"+i['sheet_name']+"'"+"!D3"), style_body_2)
+
             k = 0
             while k < int(sku_n):
                 # w.write(2, 4 + k, '')
                 if i['sku' + str(k + 1) + '_progress'] == '100%':
-                    w_c.write(excel_row_C, 5 + k, i['sku' + str(k + 1) + '_progress'], style_result_pass)
+                    w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_pass)
                 else:
-                    w_c.write(excel_row_C, 5 + k, i['sku' + str(k + 1) + '_progress'], style_result_fail)
+                    w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_fail)
                 k += 1
             if i['bugid'] != []:
-                w_c.write(excel_row_C, 5 + int(sku_n), 'Refer to bugID: ' + str(i['bugid']), style_body_3)
+                w_c.write(excel_row_C, 16 + int(sku_n), 'Refer to bugID: ' + str(i['bugid']), style_body_3)
             else:
-                w_c.write(excel_row_C, 5 + int(sku_n), '', style_body_3)
+                w_c.write(excel_row_C, 16 + int(sku_n), '', style_body_3)
             excel_row_C += 1
         # 写出到IO
         sio = BytesIO()
@@ -1869,7 +2242,7 @@ def project_sum(request):
             pro_model_list.append(i.project.project_model)
             sum_buffer += float(i.buffer_activity.split('%')[0])
 
-            if i.attend_time != 0:
+            if i.attend_time != "0":
                 progress.update({i.id: '{:.2%}'.format(float(i.finished_time) / float(i.attend_time))})
 
                 sum_at_time += float(i.attend_hours)

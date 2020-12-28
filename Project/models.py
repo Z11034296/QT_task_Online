@@ -20,8 +20,9 @@ class Project(models.Model):
     test_leader_whq = models.ForeignKey(UserProfile.models.UserInfo, on_delete=models.CASCADE, related_name='whq')
     schedule_start = models.DateField(verbose_name="开始日期")
     schedule_end = models.DateField(verbose_name="结束日期")
-    # project_platform = models.CharField(verbose_name="平台", max_length=255, blank=True, null=True)
-    project_platform = models.ForeignKey("Platform", on_delete=models.CASCADE)
+    project_platform = models.CharField(verbose_name="平台", max_length=255, blank=True, null=True)
+    # project_platform = models.ForeignKey("Platform", on_delete=models.CASCADE) # 20201208 取消选择方式改为手动keyin
+
     # project_type = models.CharField(verbose_name="CS/CM", max_length=255, blank=True, null=True)
     project_type = models.ForeignKey("ProjectType", on_delete=models.CASCADE)
     # project_style = models.CharField(verbose_name="AIO/DT/ThinClient", max_length=255, blank=True, null=True)
@@ -63,14 +64,35 @@ class ProjectInfo(models.Model):
     project_os = models.CharField(verbose_name="OS", max_length=255, blank=True, null=True)
     update_time = models.DateTimeField(auto_now_add=True, blank=True)
     dr_chipset = models.CharField(verbose_name="Chipset", max_length=255, blank=True, null=True, default=None)
-    dr_vga = models.TextField(verbose_name="VGA", max_length=2000, blank=True, null=True, default=None)
+    dr_chipset_model = models.CharField(verbose_name="Chipset_model", max_length=255, blank=True, null=True, default=None) #
+    dr_vga_AMD_onboard = models.TextField(verbose_name="AMD_onboard", max_length=2000, blank=True, null=True, default=None)
+    dr_vga_AMD_onboard_model = models.TextField(verbose_name="AMD_onboard_model", max_length=2000, blank=True, null=True, default=None) #
+    dr_vga_Intel_onboard = models.TextField(verbose_name="vga_Intel_onboard", max_length=2000, blank=True, null=True, default=None)
+    dr_vga_Intel_onboard_model = models.TextField(verbose_name="vga_Intel_onboard_model", max_length=2000, blank=True, null=True, default=None) #
+    dr_vga_AMD_addon = models.TextField(verbose_name="AMD_addon", max_length=2000, blank=True, null=True, default=None)
+    dr_vga_AMD_addon_model = models.TextField(verbose_name="AMD_addon_model", max_length=2000, blank=True, null=True, default=None) #
+    dr_vga_NV_addon = models.TextField(verbose_name="NV_addon", max_length=2000, blank=True, null=True, default=None)
+    dr_vga_NV_addon_model = models.TextField(verbose_name="NV_addon_model", max_length=2000, blank=True, null=True, default=None) #
     dr_iamt = models.CharField(verbose_name="iAMT", max_length=255, blank=True, null=True, default=None)
+    dr_iamt_model = models.CharField(verbose_name="iAMT_model", max_length=255, blank=True, null=True, default=None) #
     dr_storage = models.CharField(verbose_name="Storage", max_length=255, blank=True, null=True, default=None)
     dr_lan = models.CharField(verbose_name="LAN", max_length=255, blank=True, null=True, default=None)
+    dr_lan_model = models.CharField(verbose_name="LAN_model", max_length=255, blank=True, null=True, default=None) #
     dr_audio = models.TextField(verbose_name="Audio", max_length=2000, blank=True, null=True, default=None)
+    dr_audio_model = models.TextField(verbose_name="Audio_model", max_length=2000, blank=True, null=True, default=None) #
     dr_cr = models.CharField(verbose_name="CardReader", max_length=255, blank=True, null=True, default=None)
-    dr_wireless = models.CharField(verbose_name="WirelessLAN", max_length=255, blank=True, null=True, default=None)
-    dr_bt = models.CharField(verbose_name="BT", max_length=255, blank=True, null=True, default=None)
+    dr_cr_model = models.CharField(verbose_name="CardReader_model", max_length=255, blank=True, null=True, default=None) #
+    dr_intel_wireless = models.CharField(verbose_name="intel_wireless", max_length=255, blank=True, null=True, default=None)
+    dr_intel_wireless_model = models.CharField(verbose_name="intel_wireless_model", max_length=255, blank=True, null=True, default=None) #
+    dr_intel_bt = models.CharField(verbose_name="intel_bt", max_length=255, blank=True, null=True, default=None)
+    dr_intel_bt_model = models.CharField(verbose_name="intel_bt_model", max_length=255, blank=True, null=True, default=None) #
+    dr_QCA_wireless = models.CharField(verbose_name="QCA_wireless", max_length=255, blank=True, null=True,
+                                         default=None)
+    dr_QCA_wireless_model = models.CharField(verbose_name="QCA_wireless_model", max_length=255, blank=True,
+                                               null=True, default=None) #
+    dr_QCA_bt = models.CharField(verbose_name="QCA_bt", max_length=255, blank=True, null=True, default=None)
+    dr_QCA_bt_model = models.CharField(verbose_name="QCA_bt_model", max_length=255, blank=True, null=True,
+                                         default=None) #
     dr_panel = models.CharField(verbose_name="Panel", max_length=255, blank=True, null=True, default=None)
     dr_finger_printer = models.CharField(verbose_name="FingerPrinter", max_length=255, blank=True, null=True, default=None)
     dr_g_sensor = models.CharField(verbose_name="G-sensor", max_length=255, blank=True, null=True, default=None)
@@ -80,6 +102,8 @@ class ProjectInfo(models.Model):
     dr_serial_io = models.CharField(verbose_name="Serial IO", max_length=255, blank=True, null=True, default=None)
     dr_sgx = models.CharField(verbose_name="SGX", max_length=255, blank=True, null=True, default=None)
     dr_others = models.CharField(verbose_name="others", max_length=255, blank=True, null=True, default=None)
+    testplan_version = models.CharField(verbose_name="testplan_version", max_length=255, blank=True, null=True, default=None)
+    testsummary_version = models.CharField(verbose_name="testsummary_version", max_length=255, blank=True, null=True, default=None)
 
     def __str__(self):
         return self.project
@@ -308,6 +332,7 @@ class ControlTableList(models.Model):
     OS_Ver = models.CharField(max_length=255, unique=False, verbose_name="OS_Version",null=True,default="")
     buffer_activity = models.CharField(max_length=255, unique=False, verbose_name="测试buffer",null=True,default="")
     attend_time = models.CharField(max_length=128, unique=False, verbose_name="attend_time",null=True,default="1")
+    unattend_time = models.CharField(max_length=128, unique=False, verbose_name="attend_time",null=True,default="0")
     finished_time = models.CharField(max_length=128, unique=False, verbose_name="attend_time",null=True,default="0")
 
     def __str__(self):

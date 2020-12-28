@@ -54,7 +54,7 @@
                     <th width="6%">Attend Time</th>
                     <th width="5%">Status</th>
                     <th>Case_Note</th>
-                    <th width="5%">操作</th>
+{#                    <th width="5%">操作</th>#}
                     <th width="5%">附件</th>
                 </tr>
                 </thead>
@@ -78,12 +78,12 @@
                         {% endif %}
                     </td>
                     <td class="xtd">{{ cases.case_note }}</td>
-                    <td style="text-align: center;vertical-align: middle">
-                        <div class="model link">
+{#                    <td style="text-align: center;vertical-align: middle">#}
+{#                        <div class="model link">#}
                             {#                            <a href="delete_case/{{ cases.id }}" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete_case">删除</a>#}
-                            <a href="update_case/{{ cases.id }}" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#update_case">修改</a>
-                        </div>
-                    </td>
+{#                            <a href="update_case/{{ cases.id }}" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#update_case">修改</a>#}
+{#                        </div>#}
+{#                    </td>#}
                     <td style="text-align: center;vertical-align: middle">{% if cases.test_plan_pic_path %}
                         <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
                     {% endif %}</td>

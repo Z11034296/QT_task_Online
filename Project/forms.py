@@ -29,9 +29,8 @@ class ProjectForm(Form):
     schedule_end = fields.DateTimeField(
         widget=widgets.TextInput(attrs={'class': 'form-control', 'readonly': 'true','placeholder': ' Project MDRR 时间'})
     )
-    project_platform_id = fields.IntegerField(
-        widget=widgets.Select(choices=Project.models.Platform.objects.values_list('id', 'name'),
-                              attrs={'class': 'form-control'})
+    project_platform = fields.CharField(
+        widget=widgets.TextInput(attrs={'class': 'form-control', 'placeholder': '例如:Intel B360 / AMD Dali'})
     )
     project_type_id = fields.IntegerField(
         widget=widgets.Select(choices=Project.models.ProjectType.objects.values_list('id', 'name'),
@@ -94,9 +93,8 @@ class update_ProjectForm(Form):
     schedule_end = fields.DateTimeField(
         widget=widgets.TextInput(attrs={'class': 'form-control', 'readonly': 'true'})
     )
-    project_platform_id = fields.IntegerField(
-        widget=widgets.Select(choices=Project.models.Platform.objects.values_list('id', 'name'),
-                              attrs={'class': 'form-control'})
+    project_platform = fields.CharField(
+        widget=widgets.TextInput(attrs={'class': 'form-control', 'placeholder': '例如:Intel B360 / AMD Dali'})
     )
     project_type_id = fields.IntegerField(
         widget=widgets.Select(choices=Project.models.ProjectType.objects.values_list('id', 'name'),
@@ -151,9 +149,20 @@ class ProjectInfoForm(Form):
     dr_chipset = fields.CharField(
         widget=widgets.TextInput(attrs={'class': 'form-control'}),
     )
-    dr_vga = fields.CharField(
+
+    dr_vga_AMD_onboard = fields.CharField(
         widget=widgets.TextInput(attrs={'class': 'form-control'}),
     )
+    dr_vga_Intel_onboard = fields.CharField(
+        widget=widgets.TextInput(attrs={'class': 'form-control'}),
+    )
+    dr_vga_NV_addon = fields.CharField(
+        widget=widgets.TextInput(attrs={'class': 'form-control'}),
+    )
+    dr_vga_AMD_addon = fields.CharField(
+        widget=widgets.TextInput(attrs={'class': 'form-control'}),
+    )
+
     dr_iamt = fields.CharField(
         widget=widgets.TextInput(attrs={'class': 'form-control'}),
     )

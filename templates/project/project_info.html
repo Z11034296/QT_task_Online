@@ -4,62 +4,121 @@
     <div class="panel panel-primary">
         <div class="panel-heading "><h3 class="panel-title">Project info</h3></div>
         <div class="panel-body ">
-{#            <div class="modal-body">#}
-                <div class="row" style="margin-bottom: 15px">
-                    {#                <div class="col-md-4">#}
-                    {#                    <div class="input-group">#}
-                    {#                        <input type="text" class="form-control" placeholder="Search for...">#}
-                    {#                        <span class="input-group-btn">#}
-                    {#                                    <button class="btn btn-default" type="button">搜索</button>#}
-                    {#                                </span>#}
-                    {#                    </div><!-- /input-group -->#}
-                    {#                </div><!-- /.col-md-4 -->#}
-                    <div class="col-md-1 pull-right">
-                       <a class="btn btn-xs btn-success" type="button" title="更新信息"  href="{% url 'edit_project_info' ret.id %}" >更新
-                                    <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a>
+            {#            <div class="modal-body">#}
+            <div class="row" style="margin-bottom: 15px">
+                {#                <div class="col-md-4">#}
+                {#                    <div class="input-group">#}
+                {#                        <input type="text" class="form-control" placeholder="Search for...">#}
+                {#                        <span class="input-group-btn">#}
+                {#                                    <button class="btn btn-default" type="button">搜索</button>#}
+                {#                                </span>#}
+                {#                    </div><!-- /input-group -->#}
+                {#                </div><!-- /.col-md-4 -->#}
+                <div class="col-md-1 pull-right">
+                    <a class="btn btn-xs btn-success" type="button" title="更新信息"  href="{% url 'edit_project_info' ret.id %}" >更新
+                        <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a>
 
-                    </div>
-                </div><!-- /.row -->
-                <table class = "table table-striped table-bordered">
-                    <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ ret.project_id }}" readonly ></td></tr>
-                    <tr>
-                        <th><label for="id_project_name">Project:</label></th>
-                        <td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ ret.project_name }}" readonly></td>
-                        <th><label for="id_update_time">Update_Time:</label></th>
-                        <td><input type="text-local" name="update_time" class="form-control" id="id_update_time" value="{{ ret.update_time}}" readonly></td>
-                    </tr>
-                    <tr><th><label for="id_Motherboard">MB Version:</label></th><td><input type="text" name="MB_ver" class="form-control" id="id_MB_ver" value="{{ ret.project_mb }}" readonly></td>
-                        <th><label for="id_BIOS_ver">BIOS Version:</label></th><td><input type="text" name="BIOS_ver" class="form-control" id="id_BIOS_ver" value="{{ ret.project_bios }}" readonly></td></tr>
-                    <tr><th><label for="id_OS">OS:</label></th><td><input type="text" name="OS" class="form-control" id="id_OS" value="{{ ret.project_os }}" readonly></td></tr>
-                    <tr><th><label for="id_chipset">Chipset Driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset" value="{{ ret.dr_chipset }}" readonly></td>
-                        <th><label for="id_audio">Audio Driver:</label></th><td><input type="text" name="audio" class="form-control" id="id_audio" value="{{ ret.dr_audio }}" readonly></td></tr>
-                    <tr><th><label for="id_VGA">VGA Driver:</label></th><td><input type="text" name="VGA" class="form-control" id="id_VGA" value="{{ ret.dr_vga }}" readonly></td>
-                        <th><label for="id_LAN">LAN Driver:</label></th><td><input type="text" name="LAN" class="form-control" id="id_LAN" value="{{ ret.dr_lan }}" readonly></td></tr>
-                    <tr><th><label for="id_IAMT">IAMT Driver:</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT" value="{{ ret.dr_iamt }}" readonly></td>
-                        <th><label for="id_storage">Storage Driver:</label></th><td><input type="text" name="Storage" class="form-control" id="id_Storage" value="{{ ret.dr_storage }}" readonly></td></tr>
-                    <tr><th><label for="id_Cardreader">Cardreader Driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader" value="{{ ret.dr_cr }}" readonly></td>
-                        <th><label for="id_Wireless">Wireless Driver:</label></th><td><input type="text" name="Wireless" class="form-control" id="id_Wireless" value="{{ ret.dr_wireless }}" readonly></td></tr>
-                    <tr><th><label for="id_Bluetooth">Bluetooth Driver:</label></th><td><input type="text" name="Bluetooth" class="form-control" id="id_Bluetooth" value="{{ ret.dr_bt }}" readonly></td>
-                        <th><label for="id_Panel">Panel Driver:</label></th><td><input type="text" name="Panel" class="form-control" id="id_Panel" value="{{ ret.dr_panel }}" readonly></td></tr>
-                    <tr><th><label for="id_Finger_printer">Finger_Printer Driver:</label></th><td><input type="text" name="Finger_printer" class="form-control" id="id_Finger_printer" value="{{ ret.dr_finger_printer }}" readonly></td>
-                        <th><label for="id_G_sensor">G_Sensor Driver:</label></th><td><input type="text" name="G_sensor" class="form-control" id="id_G_sensor" value="{{ ret.dr_g_sensor }}" readonly></td></tr>
-                    <tr><th><label for="id_Camera">Camera Driver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera" value="{{ ret.dr_camera }}" readonly></td>
-                        <th><label for="id_USB">USB Driver:</label></th><td><input type="text" name="USB" class="form-control" id="id_USB" value="{{ ret.dr_usb }}" readonly></td></tr>
-                    <tr><th><label for="id_Com_parallel">Com_Parallel Driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel" value="{{ ret.dr_com_parallel }}" readonly></td>
-                        <th><label for="id_Serial_io">Serial_IO Driver:</label></th><td><input type="text" name="Serial_io" class="form-control" id="id_Serial_io" value="{{ ret.dr_serial_io }}" readonly></td></tr>
-                    <tr><th><label for="id_SGX">SGX Driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX" value="{{ ret.dr_sgx }}" readonly></td></tr>
-                    <tr><th><label for="id_Others">Others Driver:</label></th><td><textarea type="text" name="Others" class="form-control" id="id_Others" readonly>{{ ret.dr_others|linebreaksbr }}</textarea></td></tr>
+                </div>
+            </div><!-- /.row -->
+            <table class = "table table-striped table-bordered">
+                <tr hidden><th><label for="id_project_id"></label></th><td><input type="text" name="project_id" class="form-control" id="id_project_id" value="{{ ret.project_id }}" readonly ></td></tr>
+                <tr>
+                    <th><label for="id_project_name">Project:</label></th>
+                    <td><input type="text" name="project_name" class="form-control" id="id_project_name" value="{{ ret.project_name }}" readonly></td>
+                    <th><label for="id_update_time">Update_Time:</label></th>
+                    <td><input type="text-local" name="update_time" class="form-control" id="id_update_time" value="{{ ret.update_time}}" readonly></td>
+                </tr>
+                <tr><th><label for="id_testplan_version">Test Plan Version:</label></th><td><input type="text" name="testplan_version" class="form-control" id="id_testplan_version" value="{{ ret.testplan_version }}" readonly></td>
+                                <th><label for="id_testsummary_version">Test Summary version:</label></th><td><input type="text" name="testsummary_version" class="form-control" id="id_testsummary_version" value="{{ ret.testsummary_version }}" readonly></td></tr>
+
+                <tr><th><label for="id_Motherboard">MB Version:</label></th><td><input type="text" name="MB_ver" class="form-control" id="id_MB_ver" value="{{ ret.project_mb }}" readonly></td>
+                    <th><label for="id_BIOS_ver">BIOS Version:</label></th><td><input type="text" name="BIOS_ver" class="form-control" id="id_BIOS_ver" value="{{ ret.project_bios }}" readonly></td></tr>
+                <tr><th><label for="id_OS">OS:</label></th><td><input type="text" name="OS" class="form-control" id="id_OS" value="{{ ret.project_os }}" readonly></td></tr>
+
+                <tr><th><label for="id_chipset_model">Chipset Model:</label></th><td><input type="text" name="chipset_model" class="form-control" id="id_chipset_model" readonly value="{{ ret.dr_chipset_model }}"></td>
+                    <th><label for="id_chipset">Chipset Driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset" readonly value="{{ ret.dr_chipset }}"></td></tr>
+                <tr><th><label for="id_audio_model">Audio Model:</label></th><td><input type="text" name="Audio" class="form-control" id="id_audio_model" readonly value="{{ ret.dr_audio_model }}"></td>
+                    <th><label for="id_audio">Audio Driver:</label></th><td><input type="text" name="audio" class="form-control" id="id_audio" readonly value="{{ ret.dr_audio }}"></td></tr>
+                <tr><th><label for="id_VGA_AMD_onboard_model">AMD onboard Model:</label></th><td><input type="text" name="AMD_onboard_model" class="form-control" id="id_VGA_AMD_onboard_model" readonly value="{{ ret.dr_vga_AMD_onboard_model }}"></td>
+                    <th><label for="id_VGA_AMD_onboard">AMD onboard Driver:</label></th><td><input type="text" name="AMD_onboard" class="form-control" id="id_VGA_AMD_onboard" readonly value="{{ ret.dr_vga_AMD_onboard }}"></td></tr>
+                <tr><th><label for="id_VGA_AMD_addon_model">AMD addon Model:</label></th><td><input type="text" name="AMD_addon_model" class="form-control" id="id_VGA_AMD_addon_model" readonly value="{{ ret.dr_vga_AMD_addon_model }}"></td>
+                    <th><label for="id_VGA_AMD_addon">AMD addon Driver:</label></th><td><input type="text" name="AMD_addon" class="form-control" id="id_VGA_AMD_addon" readonly value="{{ ret.dr_vga_AMD_addon }}"></td></tr>
+
+                <tr><th><label for="id_VGA_Intel_onboard_model">Intel onboard Model:</label></th><td><input type="text" name="Intel_onboard_model" class="form-control" id="id_VGA_Intel_onboard_model" readonly value="{{ ret.dr_vga_Intel_onboard_model }}"></td>
+                    <th><label for="id_VGA_Intel_onboard">Intel onboard Driver:</label></th><td><input type="text" name="Intel_onboard" class="form-control" id="id_VGA_Intel_onboard" readonly value="{{ ret.dr_vga_Intel_onboard }}"></td></tr>
+
+                <tr><th><label for="id_VGA_NV_addon_model">NV addon Model:</label></th><td><input type="text" name="NV_addon_model" class="form-control" id="id_VGA_NV_addon_model" readonly value="{{ ret.dr_vga_NV_addon_model }}"></td>
+                    <th><label for="id_VGA_NV_addon">NV addon Driver:</label></th><td><input type="text" name="NV_addon" class="form-control" id="id_VGA_NV_addon" readonly value="{{ ret.dr_vga_NV_addon }}"></td></tr>
+
+                <tr><th><label for="id_LAN_model">LAN Model:</label></th><td><input type="text" name="LAN_model" class="form-control" id="id_LAN_model" readonly value="{{ ret.dr_lan_model }}"></td>
+                    <th><label for="id_LAN">LAN Driver:</label></th><td><input type="text" name="LAN" class="form-control" id="id_LAN" readonly value="{{ ret.dr_lan }}"></td></tr>
+
+                <tr><th><label for="id_IAMT_model">IAMT Model: (ME)</label></th><td><input type="text" name="IAMT_model" class="form-control" id="id_IAMT_model"  readonly value="{{ ret.dr_iamt_model }}"></td>
+                    <th><label for="id_IAMT">IAMT Driver: (ME)</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT"  readonly value="{{ ret.dr_iamt }}"></td></tr>
+
+                <tr>
+                    <th><label for="id_storage">Storage Driver: (IRST)</label></th><td><input type="text" name="Storage" class="form-control" id="id_storage"  readonly value="{{ ret.dr_storage }}"></td></tr>
+
+
+                <tr><th><label for="id_Cardreader_model">Cardreader Model:</label></th><td><input type="text" name="Cardreader_model" class="form-control" id="id_Cardreader_model"  readonly value="{{ ret.dr_cr_model }}"></td>
+                    <th><label for="id_Cardreader">Cardreader Driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader"  readonly value="{{ ret.dr_cr }}"></td></tr>
+
+                <tr><th><label for="id_Intel_Wireless_model">Intel Wireless Model:</label></th><td><input type="text" name="Intel_Wireless_model" class="form-control" id="id_Intel_Wireless_model"  readonly value="{{ ret.dr_intel_wireless_model }}"></td>
+                    <th><label for="id_Intel_Wireless">Intel Wireless Driver:</label></th><td><input type="text" name="Intel_Wireless" class="form-control" id="id_Intel_Wireless" readonly value="{{ ret.dr_intel_wireless }}"></td></tr>
+                <tr><th><label for="id_QCA_Wireless_model">QCA Wireless Model:</label></th><td><input type="text" name="QCA_Wireless_model" class="form-control" id="id_QCA_Wireless_model" readonly value="{{ ret.dr_QCA_wireless_model }}"></td>
+                    <th><label for="id_QCA_Wireless">QCA Wireless Driver:</label></th><td><input type="text" name="QCA_Wireless" class="form-control" id="id_QCA_Wireless" readonly value="{{ ret.dr_QCA_wireless }}"></td></tr>
+
+                <tr><th><label for="id_Intel_Bluetooth_model">Intel Bluetooth Model:</label></th><td><input type="text" name="Intel_Bluetooth_model" class="form-control" id="id_Intel_Bluetooth_model" readonly value="{{ ret.dr_intel_bt_model }}"></td>
+                    <th><label for="id_Intel_Bluetooth">Intel Bluetooth Driver:</label></th><td><input type="text" name="Intel_Bluetooth" class="form-control" id="id_Intel_Bluetooth" readonly value="{{ ret.dr_intel_bt }}"></td></tr>
+
+                <tr><th><label for="id_QCA_Bluetooth_model">QCA Bluetooth Model:</label></th><td><input type="text" name="QCA_Bluetooth_model" class="form-control" id="id_QCA_Bluetooth_model" readonly value="{{ ret.dr_QCA_bt_model }}"></td>
+                    <th><label for="id_QCA_Bluetooth">QCA Bluetooth Driver:</label></th><td><input type="text" name="QCA_Bluetooth" class="form-control" id="id_QCA_Bluetooth" readonly value="{{ ret.dr_QCA_bt_model }}"></td></tr>
+
+                <tr><th><label for="id_Panel">Panel Driver:</label></th><td><input type="text" name="Panel" class="form-control" id="id_Panel" readonly value="{{ ret.dr_panel }}"></td></tr>
+
+                <tr><th><label for="id_Finger_printer">Finger_Printer Driver:</label></th><td><input type="text" name="Finger_printer" class="form-control" id="id_Finger_printer" readonly value="{{ ret.dr_finger_printer }}"></td>
+                    <th><label for="id_G_sensor">G_Sensor Driver:</label></th><td><input type="text-local" name="G_sensor" class="form-control" id="id_G_sensor" readonly value="{{ ret.dr_g_sensor }}"></td></tr>
+                <tr><th><label for="id_Camera">Camera Driver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera" readonly value="{{ ret.dr_camera }}"></td>
+                    <th><label for="id_USB">USB Driver:</label></th><td><input type="text-local" name="USB" class="form-control" id="id_USB" readonly value="{{ ret.dr_usb }}"></td></tr>
+                <tr><th><label for="id_Com_parallel">Com_Parallel Driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel" readonly value="{{ ret.dr_com_parallel }}"></td>
+                    <th><label for="id_Serial_io">Serial_IO Driver:</label></th><td><input type="text-local" name="Serial_io" class="form-control" id="id_Serial_io" readonly value="{{ ret.dr_serial_io }}"></td></tr>
+                <tr><th><label for="id_SGX">SGX Driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX" readonly value="{{ ret.dr_sgx}}"></td></tr>
+                <tr><th><label for="id_Others">EC Driver:</label></th><td><input type="text-local" name="Others" class="form-control" id="id_Others" readonly value="{{ ret.dr_others }}"></td></tr>
+
+                {#                    <tr><th><label for="id_chipset">Chipset Driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset" value="{{ ret.dr_chipset }}" readonly></td>#}
+                {#                        <th><label for="id_audio">Audio Driver:</label></th><td><input type="text" name="audio" class="form-control" id="id_audio" value="{{ ret.dr_audio }}" readonly></td></tr>#}
+                {##}
+                {#                    <tr><th><label for="id_VGA_AMD_onboard">AMD Onboard Driver:</label></th><td><input type="text" name="AMD_onboard" class="form-control" id="id_VGA_AMD_onboard" value="{{ ret.dr_vga_AMD_onboard }}" readonly></td>#}
+                {#                        <th><label for="id_AMD_addon">AMD addon Driver:</label></th><td><input type="text" name="AMD_addon" class="form-control" id="id_vga_AMD_addon" value="{{ ret.dr_vga_AMD_addon }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_VGA_Intel_onboard">Intel Onboard Driver:</label></th><td><input type="text" name="AMD_addon" class="form-control" id="id_VGA_AMD_addon" value="{{ ret.dr_vga_AMD_addon }}" readonly></td>#}
+                {#                        <th><label for="id_NV_addon">NV addon Driver:</label></th><td><input type="text" name="NV_addon" class="form-control" id="id_vga_NV_addon" value="{{ ret.dr_vga_NV_addon }}" readonly></td></tr>#}
+                {##}
+                {#                    <tr><th><label for="id_LAN">LAN Driver:</label></th><td><input type="text" name="LAN" class="form-control" id="id_LAN" value="{{ ret.dr_lan }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_IAMT">IAMT Driver:</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT" value="{{ ret.dr_iamt }}" readonly></td>#}
+                {#                        <th><label for="id_storage">Storage Driver:</label></th><td><input type="text" name="Storage" class="form-control" id="id_Storage" value="{{ ret.dr_storage }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_Cardreader">Cardreader Driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader" value="{{ ret.dr_cr }}" readonly></td>#}
+                {#                        <th><label for="id_Wireless">Wireless Driver:</label></th><td><input type="text" name="Wireless" class="form-control" id="id_Wireless" value="{{ ret.dr_wireless }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_Bluetooth">Bluetooth Driver:</label></th><td><input type="text" name="Bluetooth" class="form-control" id="id_Bluetooth" value="{{ ret.dr_bt }}" readonly></td>#}
+                {#                        <th><label for="id_Panel">Panel Driver:</label></th><td><input type="text" name="Panel" class="form-control" id="id_Panel" value="{{ ret.dr_panel }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_Finger_printer">Finger_Printer Driver:</label></th><td><input type="text" name="Finger_printer" class="form-control" id="id_Finger_printer" value="{{ ret.dr_finger_printer }}" readonly></td>#}
+                {#                        <th><label for="id_G_sensor">G_Sensor Driver:</label></th><td><input type="text" name="G_sensor" class="form-control" id="id_G_sensor" value="{{ ret.dr_g_sensor }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_Camera">Camera Driver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera" value="{{ ret.dr_camera }}" readonly></td>#}
+                {#                        <th><label for="id_USB">USB Driver:</label></th><td><input type="text" name="USB" class="form-control" id="id_USB" value="{{ ret.dr_usb }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_Com_parallel">Com_Parallel Driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel" value="{{ ret.dr_com_parallel }}" readonly></td>#}
+                {#                        <th><label for="id_Serial_io">Serial_IO Driver:</label></th><td><input type="text" name="Serial_io" class="form-control" id="id_Serial_io" value="{{ ret.dr_serial_io }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_SGX">SGX Driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX" value="{{ ret.dr_sgx }}" readonly></td></tr>#}
+                {#                    <tr><th><label for="id_Others">Others Driver:</label></th><td><textarea type="text" name="Others" class="form-control" id="id_Others" readonly>{{ ret.dr_others|linebreaksbr }}</textarea></td></tr>#}
 
 
 
-                </table>
-
-            </div>
-            <div class="modal-footer">
-                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="window.location.href='../../projects'" value="返回">
-            </div>
+            </table>
 
         </div>
+        <div class="modal-footer">
+            <input class="btn btn-success pull-right" type="button" name="Submit" onclick="window.location.href='../../projects'" value="返回">
+        </div>
+
+    </div>
 
 
     </div>

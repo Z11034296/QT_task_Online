@@ -57,6 +57,7 @@
                         <th width="4%">Status</th>
                         <th>Case_note</th>
                         <th>Attached</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -80,9 +81,10 @@
                             {% endif %}
                         </td>
                         <td class="xtd" >{{ cases.case_note }}</td>
-                        <td>{% if cases.test_plan_pic_path %}
-                            <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank" style="text-align: center;vertical-align: middle"><H2>Check</H2></a>
+                        <td style="text-align: center;vertical-align: middle">{% if cases.test_plan_pic_path %}
+                            <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank" style="text-align: center;vertical-align: middle"><font size="4" color="blue">Check</font></a>
                         {% endif %}</td>
+                        <td style="text-align: center;vertical-align: middle"><a href="../update_case/{{ cases.id }}" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#update_case">修改</a></td>
                     {% endfor %}
 
                     </tbody>
@@ -98,6 +100,12 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
+        <div class="modal fade" id="update_case" tabindex="-1" role="dialog" aria-labelledby="update_caseLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:700px">
+                <div class="modal-content">
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
         <script>
             {#模态框#}
             $(function() {
@@ -106,7 +114,7 @@
             })
 
             {# 关闭窗口时刷新页面以便重新加载js#}
-            $(function () { $('#case_moreinfo').on('hide.bs.modal', function () {
+            $(function () { $('#case_moreinfo,#update_case').on('hide.bs.modal', function () {
                 window.location.reload();
             })
             });

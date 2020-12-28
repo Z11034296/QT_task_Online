@@ -21,19 +21,55 @@
                                 <th><label for="id_update_time">Update_time:</label></th>
                                 <td><input type="text-local" name="update_time" class="form-control" id="id_update_time"></td>
                             </tr>
+
+                            <tr><th><label for="id_testplan_version">Test Plan Version:</label></th><td><input type="text" name="testplan_version" class="form-control" id="id_testplan_version"></td>
+                                <th><label for="id_testsummary_version">Test Summary version:</label></th><td><input type="text" name="testsummary_version" class="form-control" id="id_testsummary_version"></td></tr>
+
                             <tr><th><label for="id_Motherboard">MB version:</label></th><td><input type="text" name="MB_ver" class="form-control" id="id_MB_ver"></td>
                                 <th><label for="id_BIOS_ver">BIOS version:</label></th><td><input type="text" name="BIOS_ver" class="form-control" id="id_BIOS_ver"></td></tr>
                             <tr><th><label for="id_OS">OS:</label></th><td><input type="text" name="OS" class="form-control" id="id_OS"></td></tr>
-                            <tr><th><label for="id_chipset">Chipset Driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset"></td>
-                                <th><label for="id_audio">Audio Driver:</label></th><td><input type="text-local" name="audio" class="form-control" id="id_audio"></td></tr>
-                            <tr><th><label for="id_VGA">VGA Driver:</label></th><td><input type="text" name="VGA" class="form-control" id="id_VGA"></td>
-                                <th><label for="id_LAN">LAN Driver:</label></th><td><input type="text-local" name="LAN" class="form-control" id="id_LAN"></td></tr>
-                            <tr><th><label for="id_IAMT">IAMT Driver:</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT"></td>
-                                <th><label for="id_storage">Storage Driver:</label></th><td><input type="text-local" name="Storage" class="form-control" id="id_Storage"></td></tr>
-                            <tr><th><label for="id_Cardreader">Cardreader Driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader"></td>
-                                <th><label for="id_Wireless">Wireless Driver:</label></th><td><input type="text-local" name="Wireless" class="form-control" id="id_Wireless"></td></tr>
-                            <tr><th><label for="id_Bluetooth">Bluetooth Driver:</label></th><td><input type="text" name="Bluetooth" class="form-control" id="id_Bluetooth"></td>
-                                <th><label for="id_Panel">Panel Driver:</label></th><td><input type="text-local" name="Panel" class="form-control" id="id_Panel"></td></tr>
+
+                            <tr><th><label for="id_chipset_model">Chipset Model:</label></th><td><input type="text" name="chipset_model" class="form-control" id="id_chipset_model"></td>
+                                <th><label for="id_chipset">Chipset Driver:</label></th><td><input type="text" name="chipset" class="form-control" id="id_chipset"></td></tr>
+                            <tr><th><label for="id_audio_model">Audio Model:</label></th><td><input type="text" name="audio_model" class="form-control" id="id_audio_model"></td>
+                                <th><label for="id_audio">Audio Driver:</label></th><td><input type="text" name="audio" class="form-control" id="id_audio"></td></tr>
+                            <tr><th><label for="id_VGA_AMD_onboard_model">AMD onboard Model:</label></th><td><input type="text" name="AMD_onboard_model" class="form-control" id="id_VGA_AMD_onboard_model"></td>
+                                <th><label for="id_VGA_AMD_onboard">AMD onboard Driver:</label></th><td><input type="text" name="AMD_onboard" class="form-control" id="id_VGA_AMD_onboard"></td></tr>
+                            <tr><th><label for="id_VGA_AMD_addon_model">AMD addon Model:</label></th><td><input type="text" name="AMD_addon_model" class="form-control" id="id_VGA_AMD_addon_model"></td>
+                                <th><label for="id_VGA_AMD_addon">AMD addon Driver:</label></th><td><input type="text" name="AMD_addon" class="form-control" id="id_VGA_AMD_addon"></td></tr>
+
+                            <tr><th><label for="id_VGA_Intel_onboard_model">Intel onboard Model:</label></th><td><input type="text" name="Intel_onboard_model" class="form-control" id="id_VGA_Intel_onboard_model"></td>
+                                <th><label for="id_VGA_Intel_onboard">Intel onboard Driver:</label></th><td><input type="text" name="Intel_onboard" class="form-control" id="id_VGA_Intel_onboard"></td></tr>
+
+                            <tr><th><label for="id_VGA_NV_addon_model">NV addon Model:</label></th><td><input type="text" name="NV_addon_model" class="form-control" id="id_VGA_NV_addon_model"></td>
+                                <th><label for="id_VGA_NV_addon">NV addon Driver:</label></th><td><input type="text" name="NV_addon" class="form-control" id="id_VGA_NV_addon"></td></tr>
+
+                            <tr><th><label for="id_LAN_model">LAN Model:</label></th><td><input type="text" name="LAN_model" class="form-control" id="id_LAN_model"></td>
+                                <th><label for="id_LAN">LAN Driver:</label></th><td><input type="text" name="LAN" class="form-control" id="id_LAN"></td></tr>
+
+                            <tr><th><label for="id_IAMT_model">IAMT Model: (ME)</label></th><td><input type="text" name="IAMT_model" class="form-control" id="id_IAMT_model"></td>
+                                <th><label for="id_IAMT">IAMT Driver: (ME)</label></th><td><input type="text" name="IAMT" class="form-control" id="id_IAMT"></td></tr>
+
+                            <tr>
+                                <th><label for="id_storage">Storage Driver: (IRST)</label></th><td><input type="text" name="Storage" class="form-control" id="id_storage"></td></tr>
+
+
+                            <tr><th><label for="id_Cardreader_model">Cardreader Model:</label></th><td><input type="text" name="Cardreader_model" class="form-control" id="id_Cardreader_model"></td>
+                                <th><label for="id_Cardreader">Cardreader Driver:</label></th><td><input type="text" name="Cardreader" class="form-control" id="id_Cardreader"></td></tr>
+
+                            <tr><th><label for="id_Intel_Wireless_model">Intel Wireless Model:</label></th><td><input type="text" name="intel_Wireless_model" class="form-control" id="id_Intel_Wireless_model"></td>
+                                <th><label for="id_Intel_Wireless">Intel Wireless Driver:</label></th><td><input type="text" name="intel_Wireless" class="form-control" id="id_Intel_Wireless"></td></tr>
+                            <tr><th><label for="id_QCA_Wireless_model">QCA Wireless Model:</label></th><td><input type="text" name="QCA_wireless_model" class="form-control" id="id_QCA_Wireless_model"></td>
+                                <th><label for="id_QCA_Wireless">QCA Wireless Driver:</label></th><td><input type="text" name="QCA_Wireless" class="form-control" id="id_QCA_Wireless"></td></tr>
+
+                            <tr><th><label for="id_Intel_Bluetooth_model">Intel Bluetooth Model:</label></th><td><input type="text" name="intel_bt_model" class="form-control" id="id_Intel_Bluetooth_model"></td>
+                                <th><label for="id_Intel_Bluetooth">Intel Bluetooth Driver:</label></th><td><input type="text" name="intel_bt" class="form-control" id="id_Intel_Bluetooth"></td></tr>
+
+                            <tr><th><label for="id_QCA_Bluetooth_model">QCA Bluetooth Model:</label></th><td><input type="text" name="QCA_bt_model" class="form-control" id="id_QCA_Bluetooth_model"></td>
+                                <th><label for="id_QCA_Bluetooth">QCA Bluetooth Driver:</label></th><td><input type="text" name="QCA_bt" class="form-control" id="id_QCA_Bluetooth"></td></tr>
+
+                            <tr><th><label for="id_Panel">Panel Driver:</label></th><td><input type="text" name="Panel" class="form-control" id="id_Panel"></td></tr>
+
                             <tr><th><label for="id_Finger_printer">Finger_Printer Driver:</label></th><td><input type="text" name="Finger_printer" class="form-control" id="id_Finger_printer"></td>
                                 <th><label for="id_G_sensor">G_Sensor Driver:</label></th><td><input type="text-local" name="G_sensor" class="form-control" id="id_G_sensor"></td></tr>
                             <tr><th><label for="id_Camera">Camera Driver:</label></th><td><input type="text" name="Camera" class="form-control" id="id_Camera"></td>
@@ -41,7 +77,7 @@
                             <tr><th><label for="id_Com_parallel">Com_Parallel Driver:</label></th><td><input type="text" name="Com_parallel" class="form-control" id="id_Com_parallel"></td>
                                 <th><label for="id_Serial_io">Serial_IO Driver:</label></th><td><input type="text-local" name="Serial_io" class="form-control" id="id_Serial_io"></td></tr>
                             <tr><th><label for="id_SGX">SGX Driver:</label></th><td><input type="text" name="SGX" class="form-control" id="id_SGX"></td></tr>
-                            <tr><th><label for="id_Others">Others Driver:</label></th><td><input type="text-local" name="Others" class="form-control" id="id_Others"></td></tr>
+                            <tr><th><label for="id_Others">EC Driver:</label></th><td><input type="text-local" name="Others" class="form-control" id="id_Others"></td></tr>
 
 
 

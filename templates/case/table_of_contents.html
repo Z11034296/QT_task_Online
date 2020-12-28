@@ -8,7 +8,7 @@
         table {
             table-layout:  fixed;
         }
-         th{
+        th{
             text-align: center;
             background: #9d9d9d;
             font-size: initial;
@@ -17,51 +17,62 @@
     </style>
 
 
-<p>{% if user.is_authenticated %}
-    <div class="panel panel-primary ">
-        {#        <form action="#" class="navbar-right navbar-form">#}
-        {#            <div class="form-group has-feedback">#}
-        {#                <!--has-feedback样式/反馈控制/ form-control-feedback 增加这两个样式后，span代表的放大镜就可以放在搜索栏里面-->#}
-        {#                <label for="search" class="sr-only">搜索关键字</label>#}
-        {#                <input type="search" placeholder="按照case_name搜索" id="search" class="form-control" title="输入关键字后按enter">#}
-        {#                <span class="glyphicon glyphicon-search  form-control-feedback"></span>#}
-        {#            </div>#}
-        {#        </form>#}
-        <div class="panel-heading">
-            <h2 class="panel-title">Table of contents</h2>
-        </div>
-        <div class="panel-body">
-            <table class = "table table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th >Item No.</th>
-                    <th >Description</th>
-                    <th >Total Sub-item</th>
-                    <th >Test Attend Time / SKU</th>
-                    {% for i in j %}
-                    <th>SKU{{ i }}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                {%  for sheets in sheets_list %}
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary ">
+            {#        <form action="#" class="navbar-right navbar-form">#}
+            {#            <div class="form-group has-feedback">#}
+            {#                <!--has-feedback样式/反馈控制/ form-control-feedback 增加这两个样式后，span代表的放大镜就可以放在搜索栏里面-->#}
+            {#                <label for="search" class="sr-only">搜索关键字</label>#}
+            {#                <input type="search" placeholder="按照case_name搜索" id="search" class="form-control" title="输入关键字后按enter">#}
+            {#                <span class="glyphicon glyphicon-search  form-control-feedback"></span>#}
+            {#            </div>#}
+            {#        </form>#}
+            <div class="panel-heading">
+                <h2 class="panel-title">Table of contents</h2>
+            </div>
+            <div class="panel-body">
+                <table class = "table table-striped table-bordered">
+                    <thead>
                     <tr>
-                        <td style="text-align: center;vertical-align: middle"><a href="sheet_detail/{{ sheets.id }}">{{ sheets.sheet_name }}</a></td>
-                        <td style="vertical-align: middle">{{ sheets.sheet_description }}</td>
-                        <td style="text-align: center;vertical-align: middle">{{ sheets.count }}</td>
-                        <td style="text-align: center;vertical-align: middle">{{ sheets.attend_time }}</td>
+                        <th >Item No.</th>
+                        <th >Description</th>
+                        <th >Total Sub-item</th>
+                        <th >Test Attend Time / SKU</th>
                         {% for i in j %}
-                            <td align="center"><input class="form-control" style="width: 100px" type="text" name="{{ sheets }}-SKU{{ i }}"></td>
+                            <th>SKU{{ i }}</th>
                         {% endfor %}
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {%  for sheets in sheets_list %}
+                        <tr>
+
+                            {% if sheets.count != 0 %}
+                                <td style="text-align: center;vertical-align: middle"><a href="sheet_detail/{{ sheets.id }}">{{ sheets.sheet_name }}</a></td>
+                                <td style="vertical-align: middle">{{ sheets.sheet_description }}</td>
+                                <td style="text-align: center;vertical-align: middle">{{ sheets.count }}</td>
+                                <td style="text-align: center;vertical-align: middle">{{ sheets.attend_time }}</td>
+                                {% for i in j %}
+                                    <td align="center"><input class="form-control" style="width: 100px" type="text" name="{{ sheets }}-SKU{{ i }}"></td>
+                                {% endfor %}
+                            {% else %}
+                                <td style="text-align: center;vertical-align: middle;background-color: #d5d5d5;"><font size="4" color="blue">{{ sheets.sheet_name }}</font></td>
+                                <td style="vertical-align: middle;background-color: #d5d5d5"><font size="4" color="blue">{{ sheets.sheet_description }}</font></td>
+                                <td style="vertical-align: middle;background-color: #d5d5d5">
+                                <td style="vertical-align: middle;background-color: #d5d5d5">
+                                {% for i in j %}
+                                    <td style="vertical-align: middle;background-color: #d5d5d5">
+                                {% endfor %}
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-{% else %}
-    <a href="/login/"><h1>please login!</h1></a>
-{% endif %}
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
 {% endblock %}
 
 <!-- forloop.counter -->

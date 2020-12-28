@@ -61,80 +61,83 @@
                 <h2 class="panel-title">{{ pj.project_name }} {{ plist.project_stage }}'s Control Table</h2>
             </div>
             <div class="panel-body">
-{#                            ********loading**************#}
-{#                <div class="container">#}
-{#                    <div id="myModal" class="modal fade" data-keyboard="false"#}
-{#                         data-backdrop="static" data-role="dialog"#}
-{#                         aria-labelledby="myModalLabel" aria-hidden="true">#}
-{#                        <div id="loading" class="loading">加载中。。。</div>#}
-{#                    </div>#}
-{#                </div>#}
+                {#                            ********loading**************#}
+                {#                <div class="container">#}
+                {#                    <div id="myModal" class="modal fade" data-keyboard="false"#}
+                {#                         data-backdrop="static" data-role="dialog"#}
+                {#                         aria-labelledby="myModalLabel" aria-hidden="true">#}
+                {#                        <div id="loading" class="loading">加载中。。。</div>#}
+                {#                    </div>#}
+                {#                </div>#}
                 {#            ****************************#}
                 {#                <form action="" method="POST">#}
-                {% csrf_token %}
-                <table id="table" class = "table table-striped table-bordered" >
-                    <thead>
-                    <tr>
+                <form action="{% url "project_ct" plist.id%}" method="POST">
+                    {% csrf_token %}
 
-                        <th style="text-align: center" width="80px">Test Sheet</th>
-                        <th width="200px">Description</th>
-                        <th width="80px">Total Sub-item</th>
-                        <th width="80px">Attend_Time</th>
-                        {% for i in SKU_Num_list %}
-                            <th width="80px">SKU{{ i }}</th>
-                        {% endfor %}
-                        <th width="80px">By Sheet Assign</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {%  for sheets in sheets_list %}
+                    <table id="table" class = "table table-striped table-bordered" >
 
+                        <thead>
                         <tr>
 
-                        <td style="text-align: center">{{ sheets.sheet_name }}</td>
-                        <td>{{ sheets.sheet_description }}</td>
-                        <td style="text-align: center">{{ sheets.count }}</td>
-                        <td style="text-align: center">{{ sheets.attend_time }}</td>
+                            <th style="text-align: center" width="80px">Test Sheet</th>
+                            <th width="200px">Description</th>
+                            <th width="80px">Total Sub-item</th>
+                            <th width="80px">Attend_Time</th>
+                            {% for i in SKU_Num_list %}
+                                <th width="80px">SKU{{ i }}</th>
+                            {% endfor %}
+                            <th width="80px">By Sheet Assign</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%  for sheets in sheets_list %}
 
-                        {% for i in SKU_Num_list %}
-                            <td id="{{ sheets.id }}"><select class="form-control" style="text-align: center" name="{{ sheets.id }}-SKU{{ i }}" id="sheets{{ sheets.id }}">
-                                {% for i in test_user %}
-                                    {% if i.last_name == 'N/A' %}
-                                        <option value="{{ i.id }}" selected>{{ i.last_name }}</option>
-                                    {% else  %}
-                                        <option value="{{ i.id }}">{{ i.last_name }}</option>
-                                    {% endif %}
-                                {% endfor %}
+                            <tr>
 
-                            </select></td>
+                            <td style="text-align: center">{{ sheets.sheet_name }}</td>
+                            <td>{{ sheets.sheet_description }}</td>
+                            <td style="text-align: center">{{ sheets.count }}</td>
+                            <td style="text-align: center">{{ sheets.attend_time }}</td>
+
+                            {% for i in SKU_Num_list %}
+                                <td id="{{ sheets.id }}"><select class="form-control" style="text-align: center" name="{{ sheets.id }}-SKU{{ i }}" id="sheets{{ sheets.id }}">
+                                    {% for i in test_user %}
+                                        {% if i.last_name == 'N/A' %}
+                                            <option value="{{ i.id }}" selected>{{ i.last_name }}</option>
+                                        {% else  %}
+                                            <option value="{{ i.id }}">{{ i.last_name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                </select></td>
+
+                            {% endfor %}
+                            <td>
+                                <select style="background-color: #9acfea" class="form-control sel_mem" name="{{ sheets.id }}" id="sheet{{ sheets.id }}" onchange="aa({{ sheets.id }})">
+                                    {% for u in test_user %}
+                                        {% if u.last_name == 'N/A' %}
+                                            <option value="{{ u.id }}" selected>{{ u.last_name }}</option>
+                                        {% else  %}
+                                            <option value="{{ u.id }}">{{ u.last_name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </td>
 
                         {% endfor %}
-                        <td>
-                            <select style="background-color: #9acfea" class="form-control sel_mem" name="{{ sheets.id }}" id="sheet{{ sheets.id }}" onchange="aa({{ sheets.id }})">
-                                {% for u in test_user %}
-                                    {% if u.last_name == 'N/A' %}
-                                        <option value="{{ u.id }}" selected>{{ u.last_name }}</option>
-                                    {% else  %}
-                                        <option value="{{ u.id }}">{{ u.last_name }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
-                        </td>
-
-                    {% endfor %}
-                    <script type="text/javascript">
-                        function aa(tt) {
-                            var sel = "sheet"+tt;
-                            var sels = "sheets"+tt;
-                            $("#"+sels+" ").val(document.getElementById(sel).value);
-                        }
-
-                    </script>
-                    </tr>
-                    </tbody>
-                </table>
-                <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
-                <input class="btn btn-success pull-right" type="submit" value="提交" title="提交过程大约需要3分钟，请耐心等待！" onclick="HtmlLoadCT()">
+                        <script type="text/javascript">
+                            function aa(tt) {
+                                var sel = "sheet"+tt;
+                                var sels = "sheets"+tt;
+                                $("#"+sels+" ").val(document.getElementById(sel).value);
+                            }
+                        </script>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <input class="btn btn-success pull-right" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回">
+                    <input class="btn btn-success pull-right" type="submit" value="提交" title="提交过程大约需要3分钟，请耐心等待！" onclick="HtmlLoadCT()">
+                </form>
         <p class="pull-right">提交过程大约需要3分钟，请耐心等待！</p>
 
 

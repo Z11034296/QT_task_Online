@@ -34,9 +34,9 @@
                         <tr><th><label for="id_project_stage">* Project_Stage:</label></th><td><input type="text" name="project_stage" class="form-control" id="id_project_stage" required></td></tr>
                         <tr><th><label for="id_stage_sku_qty">* SKU_qty:</label></th><td><input type="text" name="stage_sku_qty" class="form-control" id="id_stage_sku_qty" placeholder="请输入整数，暂时最多支持8个SKU." onkeyup="this.value=this.value.replace(/\D/g,'')" required></td></tr>
                         <tr><th><label for="id_system_qty">System_qty:</label></th><td><input type="text" name="system_qty" class="form-control" id="id_system_qty" placeholder="请输入整数" onkeyup="this.value=this.value.replace(/\D/g,'')"></td></tr>
-                        <tr><th><label for="id_os_Version">OS:</label></th><td><input type="text" name="OS_Ver" class="form-control" id="id_os_Version"></td></tr>
-                        <tr><th><label for="id_stage_begin">Stage_Begin:</label></th><td><input type="text" name="stage_begin" class="form-control" id="id_stage_begin" readonly required></td></tr>
-                        <tr><th><label for="id_stage_end">Stage_End:</label></th><td><input type="text" name="stage_end" class="form-control" id="id_stage_end" onchange="checkDate()" readonly required></td></tr>
+                        <tr><th><label for="id_os_Version">* OS:</label></th><td><input type="text" name="OS_Ver" class="form-control" id="id_os_Version" required></td></tr>
+                        <tr><th><label for="id_stage_begin">* Stage_Begin:</label></th><td><input type="text" name="stage_begin" class="form-control" id="id_stage_begin" readonly required></td></tr>
+                        <tr><th><label for="id_stage_end">* Stage_End:</label></th><td><input type="text" name="stage_end" class="form-control" id="id_stage_end" onchange="checkDate()" readonly required></td></tr>
                         <tr><th><label for="id_buffer">Buffer_activity:</label></th><td><input type="text" name="buffer" class="form-control" id="id_buffer" placeholder="请输入百分数"></td></tr>
                         <tr><th><label for="id_stage_note">Stage_Note:</label></th><td><input type="text" name="stage_note" class="form-control" id="id_stage_note" placeholder="多个model不同sku，在这里说明，如:SKU1,SKU2,SKU3为TC-330,SKU4为XC-330"></td></tr>
                         </tbody>
