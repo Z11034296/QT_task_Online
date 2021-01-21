@@ -46,4 +46,6 @@ urlpatterns = [
     path('project_sum', views.project_sum, name='project_sum'),
     path('update_attendtime/<nid>', views.update_attendtime, name='update_attendtime'),
     path('update_attendtime_all', views.update_attendtime_all, name='update_attendtime_all'),
+    # path('upload_issue/<pid>', views.issue_upload, name='issue_upload'),
+    path('issue_upload/<pid>', views.issue_upload, name='issue_upload'),
 ]

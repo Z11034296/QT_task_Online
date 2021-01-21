@@ -254,7 +254,6 @@ def upload_files(request):
             wb = xlrd.open_workbook(filename=None, file_contents=f.read())
             table = wb.sheets()[0]
             rows = table.nrows  # 总行数
-            print(sheet_info)
             for i in range(1, rows):
                 try:
                     rowVlaues = table.row_values(i)

@@ -11,8 +11,8 @@ import re
 import xlrd,xlwt,xlsxwriter
 import datetime
 from io import BytesIO
-from django.contrib.auth.decorators import permission_required
 
+from django.contrib.auth.decorators import permission_required
 
 def index(request):
     return render(request, 'Project/index.html')
@@ -1396,7 +1396,7 @@ def export_project_report(request, lid):
                 right THIN,
                 top THIN,
                 bottom THIN;
-            """)
+            """,num_format_str='MM/DD')
         style_body_4 = xlwt.easyxf(
             """
             font:
@@ -1480,6 +1480,24 @@ def export_project_report(request, lid):
                 wrap on,
                 vert center,
                 horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """)
+
+        style_result_fail_remark = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index red,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
             borders:
                 left THIN,
                 right THIN,
@@ -1578,7 +1596,7 @@ def export_project_report(request, lid):
         project_id=models.ControlTableList.objects.filter(id=lid).values().first()['project_id']
         project=models.Project.objects.filter(id=project_id).values().first()
         project_info = models.ProjectInfo.objects.filter(project_id=project_id).values().last()
-
+        plist = models.ControlTableList.objects.filter(id=lid).values().first()
 
 
         # cover sheet
@@ -1616,7 +1634,7 @@ def export_project_report(request, lid):
         w_c.write(2, 0, datetime.date.today(), style_body_date)
         w_c.write(2, 1, request.user.last_name, style_body_3)
         w_c.write(2, 2, 'v1.0', style_body_3)
-        w_c.write(2, 3, 'Base on  Test Plan ' + project_info['testplan_version'], style_body_3)
+        w_c.write(2, 3, 'Formal Release(Base on Windows Test Plan ' + project_info['testplan_version']+')', style_body_3)
         w_c.write(2, 4, '', style_body_3)
         w_c.col(0).width = 3000
 
@@ -1880,14 +1898,19 @@ def export_project_report(request, lid):
             # ***********************************
 
 
-            li=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values_list('test_case_id').distinct()
+            # li=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values_list('test_case_id').distinct()
+            li = T.TestCase.objects.filter(sheet_id=i.id).values().order_by('case_id')
             for x in li:
                 # for j in result_list:
-                case_id=T.TestCase.objects.filter(id=x[0]).values().first()['case_id']
-                case_name=T.TestCase.objects.filter(id=x[0]).values().first()['case_name']
-                procedure=T.TestCase.objects.filter(id=x[0]).values().first()['procedure']
-                pass_criteria=T.TestCase.objects.filter(id=x[0]).values().first()['pass_criteria']
-                # Notes_Comment=T.TestCase.objects.filter(id=x[0]).values().first()['remark']
+                # case_id=T.TestCase.objects.filter(id=x[0]).values().first()['case_id']
+                # case_name=T.TestCase.objects.filter(id=x[0]).values().first()['case_name']
+                # procedure=T.TestCase.objects.filter(id=x[0]).values().first()['procedure']
+                # pass_criteria=T.TestCase.objects.filter(id=x[0]).values().first()['pass_criteria']
+                # 导出所有case ， 无论有无结果
+                case_id=x['case_id']
+                case_name=x['case_name']
+                procedure=x['procedure']
+                pass_criteria=x['pass_criteria']
                 # 写入数据
 
                 w.write(excel_row, 0, case_id,style_body_4)
@@ -1898,25 +1921,33 @@ def export_project_report(request, lid):
                 l = 1
                 while l <= int(sku_n):
                     try:
-                        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=x[0]).values().first()['test_result']
+                        result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=x['id']).values().first()['test_result']
+                        if result == '':
+                            result = '-'
+                        # result=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,sku_num=str(l),test_case_id=x[0]).values().first()['test_result']
                     except :
 
-                        if models.ControlTableContent.objects.filter(ControlTable_List_id=lid,sheet_id=i.id,sku_num=str(l)).values().first()['tester_id'] == 2:
-                            result='N/A'
+                        if models.ControlTableContent.objects.filter(ControlTable_List_id=lid,sheet_id=i.id,sku_num=str(l)).values().first()['tester_id'] == 50:
+                            result=''
                         else:
                             result="-"
                     if result == "Pass":
                         w.write(excel_row, 3+l, result, style_result_pass)
                     elif result == "Fail":
                         w.write(excel_row, 3+l, result, style_result_fail)
+                    elif result == "-":
+                        w.write(excel_row, 3+l, result, style_result_pass)
+                    elif result == " ":
+                        w.write(excel_row, 3+l, result, style_result_pass)
                     else:
                         w.write(excel_row, 3+l, result, style_result_NA)
                     # w.write(excel_row, 3+l, result,style_body_1)
                     l += 1
                 #****************************************************
                 # Note/Comment 无法追写到同一个单元格内，需要重新计算
-                Notes_Comment=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,test_case_id=x[0]).values('remark')
+                Notes_Comment=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id,test_case_id=x['id']).values('remark','issue')
                 notes = ''
+                buglist=[]
                 for y in Notes_Comment:
                     if y['remark']!='':
                         if notes=='':
@@ -1925,6 +1956,29 @@ def export_project_report(request, lid):
                             continue
                         else:
                             notes=notes+';'+'\n'+ y['remark']
+
+                    if y['issue'] != '':
+                        bug_list = y['issue'].split(',')
+                        for b1 in bug_list:
+                            if b1 == ",":
+                                continue
+                            else:
+                                buglist.append(int(b1))
+                        i.buglist = buglist
+                        bug_description = {}
+                        for d1 in buglist:
+                            bug = models.Issue.objects.filter(project_id=plist["project_id"],
+                                                              issue_id=d1).all().values().first()
+                            bug_description[d1] = bug["description"]
+                            if 'Refer to bug ID ' not in notes:
+                                notes=notes+';'+'\n'+ 'Refer to bug ID '+ str(d1) +': ' + bug_description[d1]
+                            else:
+                                notes = notes + ';' + '\n' + 'bug ID '+ str(d1) +': '  + bug_description[d1]
+
+
+
+
+
                 w.write(excel_row, 4+int(sku_n), notes,style_body_3)
 
                 # w.write(excel_row, 5, Notes_Comment)
@@ -1976,19 +2030,24 @@ def export_project_report(request, lid):
 
         # sheet的测试结果，若都Pass则Pass ，有一个fail则结果显示fail，若全部N/A 才写N/A，若有没有填结果的case则显示为空
         res_list = models.TestResult.objects.filter(ControlTableList_id=lid).values('sheet_id', 'test_result',
-                                                                                    'remark')
+                                                                                    'remark','issue')
         sheet_result_list = {}
         bugid_dic = {}
         for i in sheets_list:
             re_list = []
             bugid_list = []
+            new_bug_list = []
             final_result = ''
             for j in res_list:
                 if i.id == int(j['sheet_id']):
-                    if 'Refer to bug ' in j['remark']:
-                        bugid_list.append(int(re.findall(r"\d+", j['remark'])[0]))  # 取 bug ID
-                        bugid_list = list(set(bugid_list))  # 列表去重
-                        bugid_list.sort(reverse=False)  # 排序
+                    if j['issue'] != '':
+
+                        bugid_list.append(j['issue'])  # 取 bug ID
+                    for k in bugid_list:
+                        for v in k.split(','):
+                            new_bug_list.append(int(v))
+                    new_bug_list = list(set(new_bug_list))  # 列表去重
+                    new_bug_list.sort(reverse=False)  # 排序
                     re_list.append(j['test_result'])
                     if 'Fail' in re_list:
                         final_result = 'Fail'
@@ -1998,7 +2057,7 @@ def export_project_report(request, lid):
                         final_result = 'N/A'
                     else:
                         final_result = 'Pass'
-            bugid_dic[i.id] = bugid_list
+            bugid_dic[i.id] = new_bug_list
             sheet_result_list[i.sheet_name] = final_result
         # 每个sheet中的case个数填入sheets_list
         attend_time_dic = {}
@@ -2068,6 +2127,7 @@ def export_project_report(request, lid):
 
         # *********************************************************
         for i in sorted(new_list,key=lambda items:items['sorting']): # 由于是从content里面抓出来的数据，sheet排序是错乱的。需要重新按照sorting 排序
+
             w_c.write(excel_row_C, 0,
                       xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'), style_body_1)
             # "i['sheet_name'], style_body_1)
@@ -2110,13 +2170,17 @@ def export_project_report(request, lid):
             k = 0
             while k < int(sku_n):
                 # w.write(2, 4 + k, '')
-                if i['sku' + str(k + 1) + '_progress'] == '100%':
-                    w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_pass)
+                # if i['sku' + str(k + 1) + '_progress'] == '100%':
+                #     w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_pass)
+                # else:
+                #     w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_fail)
+                if i['sku' + str(k + 1)].last_name == 'N/A':
+                    w_c.write(excel_row_C, 16 + k, '', style_result_NA)
                 else:
-                    w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_fail)
+                    w_c.write(excel_row_C, 16 + k, 'V', style_result_pass)
                 k += 1
             if i['bugid'] != []:
-                w_c.write(excel_row_C, 16 + int(sku_n), 'Refer to bugID: ' + str(i['bugid']), style_body_3)
+                w_c.write(excel_row_C, 16 + int(sku_n), 'Refer to bug ID: ' + str(i['bugid']), style_result_fail_remark)
             else:
                 w_c.write(excel_row_C, 16 + int(sku_n), '', style_body_3)
             excel_row_C += 1
@@ -2264,3 +2328,72 @@ def project_sum(request):
                       {'sum_list': sum_list, 'stage_list': stage_list, "now_date": end_date, "str_time": str_date})
 
 
+
+
+def issue_upload(request,pid):
+    if request.method == 'GET':
+        return render(request, 'project/upload_issue.html')
+    if request.method == 'POST':
+        f = request.FILES.get('issue_upload')
+        if f:
+            excel_type = f.name.split('.')[1]
+            if excel_type in ['xlsx', 'xls']:
+                # 解析excel表格
+                wb = xlrd.open_workbook(filename=None, file_contents=f.read())
+                table = wb.sheets()[5]
+                rows = table.nrows  # 总行数
+
+                for i in range(1, rows):
+                    bugzillas_id = ''
+                    try:
+                        rowVlaues = table.row_values(i)
+                        if rowVlaues[13] == 'Open':
+
+                            if rowVlaues[15] != '':
+                                open_date = xlrd.xldate_as_datetime(rowVlaues[15], 0).strftime('%Y-%m-%d')
+
+                            else:
+                                open_date= '0001-01-01'
+                            if rowVlaues[1]:
+                                bugzillas_id = int(rowVlaues[1])
+                            if models.Issue.objects.filter(project_id=pid):
+                                issues_id=models.Issue.objects.filter(project_id=pid).values().last()['issue_id']+1
+                            else:  issues_id =1
+
+                            models.Issue.objects.create(
+                                                        issue_id = issues_id,
+                                                        bugzilla_id=bugzillas_id,
+                                                        TRID=rowVlaues[2],
+                                                        category=rowVlaues[3],
+                                                        attribute=rowVlaues[4],
+                                                        attribute_name=rowVlaues[5],
+                                                        severity=int(rowVlaues[6]),
+                                                        description=rowVlaues[8],
+                                                        procedure=rowVlaues[9],
+                                                        comment=rowVlaues[10],
+                                                        root_cause=rowVlaues[11],
+                                                        solution=rowVlaues[12],
+                                                        status=rowVlaues[13],
+                                                        solving_type=rowVlaues[14],
+                                                        open_date=open_date,
+                                                        owner=rowVlaues[18],
+                                                        motherboard_version=rowVlaues[19],
+                                                        bios_version=rowVlaues[20],
+                                                        os_version=rowVlaues[21],
+                                                        submitter_id=request.user.id,
+                                                        project_id=pid,
+                                                        remark=rowVlaues[23],
+                                                        ControlTableList_id=models.ControlTableList.objects.filter(project_id=pid).values().last()['id']
+
+                                                    )
+
+                    except:
+                        return HttpResponse("excel文件或者数据插入错误")
+                return redirect("issue_list",pid)
+            else:
+                return HttpResponse('上传文件类型错误！')
+        else:
+
+            return HttpResponse('请选择上传文件！')
+    else:
+        return redirect("issue_list",pid)
