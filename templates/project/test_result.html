@@ -72,13 +72,16 @@
                     <thead >
                     <tr>
 
-                        <th width="8%">Case_ID</th>
+                        <th width="5%">Case_ID</th>
                         <th width="10%">Case_Name</th>
                         <th width="20%">Procedure</th>
                         <th width="20%">Pass_Criteria</th>
-                        <th width="6%">Attachment</th>
+                        <th width="5%">附件</th>
                         <th width="6%">SKU{{ skunum }}</th>
+                        <th width="5%">Log</th>
                         <th width="10%">Remark</th>
+
+
                     </tr>
                     </thead>
                     <tbody>
@@ -97,7 +100,7 @@
                                 {#                                <form name="result_form" id="{{ cases.id }}_result" method="POST" action="">#}
                                 {% csrf_token %}
                                 {#                                    <select class="form form-control" name="test_result" onchange="add_bug(this,{{ cases.id }});custom(this,{{ cases.id }})">#}
-                                <select id="{{ cases.id }}_result_select" class="form form-control" name="test_result" onchange="this.form.submit(),add_bug(this,{{ cases.id }})">
+                                <select id="{{ cases.id }}_result_select" class="form form-control" name="test_result" onchange="this.form.submit(),add_bug(this,{{ cases.id }}),assign_bug(this,{{ cases.id }})">
                                     <option value="Pass" {% ifequal 'Pass' cases.result %}selected{%endifequal%}>Pass</option>
                                     <option value="Fail" {% ifequal 'Fail' cases.result %}selected{%endifequal%}>Fail</option>
                                     <option value="N/A" {% ifequal 'N/A' cases.result %}selected{%endifequal%}>N/A</option>
@@ -109,10 +112,15 @@
                                     {#                                        <option style='display: none' value=''></option>#}
                                 </select>
                         </form>
-                            {% ifequal 'Fail' cases.result %}<button href="{% url 'assign_bug' pj.id plist.id cases.id sid skunum %}" class="form-control" name="fail_bug_id{{ cases.id }}" type="button" id="fail_bug_id{{ cases.id }}" style="background-color: orange" data-toggle="modal" data-target="#sel_fail">关联issue</button>{%endifequal%}
-                            <button href="{% url 'assign_bug' pj.id plist.id cases.id sid skunum %}" class="form-control" name="fail_bug_id{{ cases.id }}" type="button" id="fail_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail">关联issue</button>
+                            {% ifequal 'Fail' cases.result %}
+                                <a href="{% url 'add_issue' pj.id %}"  name="fail_bug_id{{ cases.id }}" id="fail_bug_id{{ cases.id }}" style="background-color: orange" data-toggle="modal" data-target="#sel_fail" title="新增issue"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
+                                <a href="{% url 'assign_bug' pj.id plist.id cases.id sid skunum %}" name="fail_assign_bug_id{{ cases.id }}" id="fail_assign_bug_id{{ cases.id }}" style="background-color: orange" data-toggle="modal" data-target="#sel_fail" title="关联issue"><span class="glyphicon glyphicon-share"></span></a>
+                            {%endifequal%}
+                            <a href="{% url 'add_issue' pj.id %}"  name="fail_bug_id{{ cases.id }}" id="fail_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail" title="新增issue"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
+                            <a href="{% url 'assign_bug' pj.id plist.id cases.id sid skunum %}"  name="fail_assign_bug_id{{ cases.id }}" id="fail_assign_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail" title="关联issue"><span class="glyphicon glyphicon-share"></span></a>
                             {#                          <textarea spellcheck="false" class="form-control" name="custom-input{{ cases.id }}" id="custom-input{{ cases.id }}" style="display: none;white-space: pre-wrap" ></textarea></td>#}
                             {#                            <input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" onkeyup="this.value=this.value.replace(/[^\r\n0-9\,]/g,'')">#}
+                            <td></td>
                             <form method="POST" action="" target="rfFrame">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ cases.id }}" name="case_id">
@@ -133,7 +141,7 @@
                     </tbody>
                 </table>
                 <a class="btn btn-success pull-right" type="button" href="{% url 'task_table' plist.id %}">返回</a>
-{#                <input class="btn btn-success pull-right" type="button" onclick="javascript:history.back(-1);" value="返回">#}
+                {#                <input class="btn btn-success pull-right" type="button" onclick="javascript:history.back(-1);" value="返回">#}
                 {#                <input class="btn btn-success pull-right" type="submit" value="提交" onclick="HtmlLoad()">#}
             </div>
             {#            </form>#}
@@ -149,6 +157,17 @@
         <script>
             function add_bug(obj,tt) {
                 var sel_id="fail_bug_id"+tt;
+                {#console.log(obj,tt,obj.value);#}
+                if (obj.value === "Fail") {
+                    $("#" + sel_id).css({"display": 'block'});
+
+                }
+                else{
+                    $("#" + sel_id).css({"display": 'none'});
+                }
+            }
+            function assign_bug(obj,tt) {
+                var sel_id="fail_assign_bug_id"+tt;
                 {#console.log(obj,tt,obj.value);#}
                 if (obj.value === "Fail") {
                     $("#" + sel_id).css({"display": 'block'});
@@ -176,7 +195,7 @@
             })
 
         </script>
-         {% if messages %}
+        {% if messages %}
             <script>
                 {% for msg in messages %}
                     alert('{{ msg.message }}');

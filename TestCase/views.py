@@ -349,7 +349,7 @@ def case_moreinfo(request, id):
 def table_of_contents(request):
     j=range(1,3)
     sheets_list = Sheet.objects.all().order_by("sorting")
-    case_list = TestCase.objects.all()
+    case_list = TestCase.objects.filter(case_status='1').all()
     # 计算case_list中每个sheet有多少个case
     sheet_list=[]
     for cases in case_list:
@@ -361,7 +361,7 @@ def table_of_contents(request):
         # print(sheets.attend_time)
         sheets.count = cout[sheets.sheet_name]
         # 计算每个Sheet的attend time
-        cases_by_sheet = TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+        cases_by_sheet = TestCase.objects.filter(sheet_id=sheets.id,case_status='1').values('attend_time')
         attend_time_sum = 0
         for i in cases_by_sheet:
             attend_time_sum += float(i['attend_time'])

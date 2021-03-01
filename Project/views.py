@@ -100,7 +100,7 @@ def add_project_info(request, nid):
             dr_audio=request.POST.get('audio'),
             dr_audio_model=request.POST.get('audio_model'),  #
             dr_intel_wireless=request.POST.get('intel_Wireless'),
-            dr_qca_wireless=request.POST.get('QCA_Wireless'),
+            dr_QCA_wireless=request.POST.get('QCA_Wireless'),
             dr_intel_wireless_model=request.POST.get('intel_Wireless_model'),  #
             dr_qca_wireless_model=request.POST.get('QCA_wireless_model'),  #
             dr_intel_bt=request.POST.get('intel_bt'),
@@ -197,8 +197,8 @@ def project_ct(request,lid):
 
         # 将sheet list以及SKU num数量传给前端画出table
 
-        sheets_list = T.Sheet.objects.all()
-        case_list = T.TestCase.objects.all()
+        sheets_list = T.Sheet.objects.all().order_by('sorting')
+        case_list = T.TestCase.objects.all().filter(case_status='1')
         test_user = U.UserInfo.objects.all().order_by('job_name')
         SKU_Num_list = []
         num = 1
@@ -295,7 +295,7 @@ def update_attendtime(request,nid):
             attend_time_finished = 0
             for k in y:
                 attend_time_finished += float(
-                    T.TestCase.objects.filter(id=k["test_case_id"]).values("attend_time").first()["attend_time"])
+                    T.TestCase.objects.filter(id=k["test_case_id"],case_status='1').values("attend_time").first()["attend_time"])
             models.ControlTableList.objects.filter(id=i["ControlTable_List_id_id"]).update(finished_time=str(attend_time_finished),
                                                                                            attend_time=sum(attend_time_dic.values()))
 
@@ -401,8 +401,8 @@ def project_ct_list(request,nid):
 def project_ct_content(request,lid):
     plist = models.ControlTableList.objects.filter(id=lid).values().first()
     pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
-    sheets_list = T.Sheet.objects.all()
-    case_list = T.TestCase.objects.all()
+    sheets_list = T.Sheet.objects.all().order_by('sorting')
+    case_list = T.TestCase.objects.all().filter(case_status='1')
     test_user = U.UserInfo.objects.all().order_by('job_name')
     SKU_Num_list = []
     num = 1
@@ -477,7 +477,7 @@ def project_ct_content(request,lid):
                 finished_attend_time_dic.update({"sku" + str(k): '0%' })
         # ******************************************************************************************
         count+=1
-        new_dic.update({'sheet_id':i.sheet_id_id,'sheet_name':i.sheet_id.sheet_name,'attend_time':attend_time_dic[i.sheet_id_id],
+        new_dic.update({'sheet_id':i.sheet_id_id,'sheet_name':i.sheet_id.sheet_name,'attend_time':attend_time_dic[i.sheet_id_id],'sorting':i.sheet_id.sorting,
                         'sheet_description':i.sheet_id.sheet_description,"bugid":bugid_dic[i.sheet_id_id]})
         new_dic.update({'sku'+str(count % int(plist['stage_sku_qty'])):i.tester,'sku'+str(count % int(plist['stage_sku_qty']))+'_progress':finished_attend_time_dic['sku'+str(count % int(plist['stage_sku_qty']))]})
 
@@ -487,14 +487,14 @@ def project_ct_content(request,lid):
             # new_list.append(new_dic) # 字典更新会让list同步更新，需要将整个字典赋值
             new_list.append(dict(new_dic))
     return render(request, 'Project/project_ct_content.html', {"test_user":test_user,"pj": pj, "plist": plist,
-                                                               "SKU_Num_list": SKU_Num_list,"new_list":new_list,"SKU_num":int(plist['stage_sku_qty'])})
+                                                               "SKU_Num_list": SKU_Num_list,"new_list":sorted(new_list,key=lambda items:items['sorting']),"SKU_num":int(plist['stage_sku_qty'])})
 
 
 def test_result(request,sid,lid,skunum):  # lid:Controltable_list_id , sid:sheet_id,
     if request.method == "GET":
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
         pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
-        cases = T.TestCase.objects.filter(sheet_id=sid).order_by('case_id')
+        cases = T.TestCase.objects.filter(sheet_id=sid,case_status='1').order_by('case_id')
         name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
 
         for i in cases:
@@ -607,7 +607,7 @@ def task_table(request,lid):
     plist = models.ControlTableList.objects.filter(id=lid).values().first()
     pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
     sheets_list = T.Sheet.objects.all()
-    case_list = T.TestCase.objects.all()
+    case_list = T.TestCase.objects.all().filter(case_status='1')
     SKU_Num_list = []
     num = 1
     while num <= int(plist['stage_sku_qty']):
@@ -658,7 +658,7 @@ def task_table(request,lid):
                 test_sku_num += 1
         test_sku_num_list.update({sheets.id: test_sku_num})
         # *************************************
-        cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+        cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id,case_status='1').values('attend_time')
         attend_time_sum = 0
         for i in cases_by_sheet:
             attend_time_sum += float(i['attend_time'])
@@ -752,7 +752,7 @@ def task_list(request):
         for j in list:
             if j[0] not in tester_list:
                 tester_list.append(j[0])
-            cases_by_sheet = T.TestCase.objects.filter(sheet_id=j[1]).values('attend_time')
+            cases_by_sheet = T.TestCase.objects.filter(sheet_id=j[1],case_status='1').values('attend_time')
             attend_time_sum = 0
             # for k in cases_by_sheet:
             #     attend_time_sum += float(k['attend_time'])
@@ -782,7 +782,7 @@ def result_review(request,lid,sid,skunum):
     plist = models.ControlTableList.objects.filter(id=lid).values().first()
     pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
     name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
-    cases = T.TestCase.objects.filter(sheet_id=sid)
+    cases = T.TestCase.objects.filter(sheet_id=sid,case_status='1')
     result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
     buglist=[]
     if models.sheet_prepared.objects.filter(sheet_id=sid, ControlTable_List_id=lid).values():
@@ -899,7 +899,7 @@ def result_check(request,lid,sid,skunum):
     plist = models.ControlTableList.objects.filter(id=lid).values().first()
     pj = models.Project.objects.filter(id=plist["project_id"]).values().first()
     name = T.Sheet.objects.filter(id=sid).values().first()['sheet_name']
-    cases = T.TestCase.objects.filter(sheet_id=sid)
+    cases = T.TestCase.objects.filter(sheet_id=sid,case_status='1')
     result = models.TestResult.objects.filter(ControlTableList_id=lid, sheet_id=sid, sku_num=skunum, )
     result_list = []
     buglist = []
@@ -1362,6 +1362,26 @@ def export_project_report(request, lid):
                 top THIN,
                 bottom THIN;
             """)
+        style_body_1NA = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            pattern:
+                pattern solid,
+                fore-colour 22
+            """)
 
         style_body_2 = xlwt.easyxf(
             """
@@ -1380,6 +1400,24 @@ def export_project_report(request, lid):
                 top THIN,
                 bottom THIN;
             """)
+        style_body_percent = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index blue,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            """,num_format_str='0.00%')
+
         style_body_3 = xlwt.easyxf(
             """
             font:
@@ -1396,7 +1434,27 @@ def export_project_report(request, lid):
                 right THIN,
                 top THIN,
                 bottom THIN;
-            """,num_format_str='MM/DD')
+            """)
+        style_body_3NA = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index black,
+                bold off,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz left;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            pattern:
+                pattern solid,
+                fore-colour 22 
+            """)
         style_body_4 = xlwt.easyxf(
             """
             font:
@@ -1586,7 +1644,26 @@ def export_project_report(request, lid):
                 pattern solid,
                 fore-colour 1;
             """,num_format_str='YYYY/MM/DD')
-
+        style_body_bugtitle = xlwt.easyxf(
+            """
+            font:
+                name Arial,
+                colour_index white,
+                bold on,
+                height 0xC8;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            borders:
+                left THIN,
+                right THIN,
+                top THIN,
+                bottom THIN;
+            pattern:
+                pattern solid,
+                fore-colour 4 
+            """)
 
 
         # ***********************************************
@@ -1800,9 +1877,73 @@ def export_project_report(request, lid):
         w_c.col(1).width = 12000
         w_c.col(2).width = 8000
 
+
+        # buglist
+        w_c = ws.add_sheet('BugList', cell_overwrite_ok=True)
+        w_c.write(0, 0, 'Id', style_body_bugtitle)
+        w_c.write(0, 1, 'Bugzilla ID', style_body_bugtitle)
+        w_c.write(0, 2, 'UTS ID', style_body_bugtitle)
+        w_c.write(0, 3, 'Category', style_body_bugtitle)
+        w_c.write(0, 4, 'Attribute', style_body_bugtitle)
+        w_c.write(0, 5, 'Attribute Name', style_body_bugtitle)
+        w_c.write(0, 6, 'Severity', style_body_bugtitle)
+        w_c.write(0, 7, 'Impact model', style_body_bugtitle)
+        w_c.write(0, 8, 'Bug Description', style_body_bugtitle)
+        w_c.write(0, 9, 'Reproduce Procedure', style_body_bugtitle)
+        w_c.write(0, 10, 'Comment', style_body_bugtitle)
+        w_c.write(0, 11, 'Root cause', style_body_bugtitle)
+        w_c.write(0, 12, 'Solution', style_body_bugtitle)
+        w_c.write(0, 13, 'Status', style_body_bugtitle)
+        w_c.write(0, 14, 'Solving Type', style_body_bugtitle)
+        w_c.write(0, 15, 'Open Date', style_body_bugtitle) # ************
+        w_c.write(0, 16, 'Verify Date', style_body_bugtitle) # ************
+        w_c.write(0, 17, 'Closed Date', style_body_bugtitle) # ************
+        w_c.write(0, 18, 'Owner', style_body_bugtitle)
+        w_c.write(0, 19, 'MB Ver.', style_body_bugtitle)
+        w_c.write(0, 20, 'BIOS Ver.', style_body_bugtitle)
+        w_c.write(0, 21, 'OS Ver.', style_body_bugtitle)
+        w_c.write(0, 22, 'PIC', style_body_bugtitle)
+        w_c.write(0, 23, 'Remark', style_body_bugtitle)
+        w_c.col(8).width = 12000
+        w_c.col(9).width = 12000
+        w_c.col(10).width = 12000
+        w_c.col(15).width = 3000
+        w_c.col(16).width = 3000
+        w_c.col(17).width = 3000
+        if models.Issue.objects.filter(project_id=project_id,status='open'):
+            issue_list = models.Issue.objects.filter(project_id=project_id,status='open').all().values()
+            excel_row = 1
+            for i in issue_list:
+
+                w_c.write(excel_row, 0, i['issue_id'], style_result_N)
+                w_c.write(excel_row, 1, i['bugzilla_id'], style_result_N)
+                w_c.write(excel_row, 2, i['TRID'], style_result_N)
+                w_c.write(excel_row, 3, i['category'], style_result_N)
+                w_c.write(excel_row, 4, i['attribute'], style_result_N)
+                w_c.write(excel_row, 5, i['attribute_name'], style_result_N)
+                w_c.write(excel_row, 6, i['severity'], style_result_N)
+                w_c.write(excel_row, 7, i['impact_model'], style_result_N)
+                w_c.write(excel_row, 8, i['description'], style_body_3)
+                w_c.write(excel_row, 9, i['procedure'], style_body_3)
+                w_c.write(excel_row, 10, i['comment'], style_body_3)
+                w_c.write(excel_row, 11, i['root_cause'], style_result_N)
+                w_c.write(excel_row, 12, i['solution'], style_result_N)
+                w_c.write(excel_row, 13, i['status'], style_result_N)
+                w_c.write(excel_row, 14, i['solving_type'], style_result_N)
+                w_c.write(excel_row, 15, i['open_date'], style_body_date)  # ************
+                w_c.write(excel_row, 16, i['verify_date'], style_body_date)  # ************
+                w_c.write(excel_row, 17, i['close_date'], style_body_date)  # ************
+                w_c.write(excel_row, 18, i['owner'], style_result_N)
+                w_c.write(excel_row, 19, i['motherboard_version'], style_result_N)
+                w_c.write(excel_row, 20, i['bios_version'], style_result_N)
+                w_c.write(excel_row, 21, i['os_version'], style_result_N)
+                w_c.write(excel_row, 22, U.UserInfo.objects.filter(id=i['submitter_id']).values().first()['last_name'], style_result_N)
+                w_c.write(excel_row, 23, i['remark'], style_result_N)
+                excel_row += 1
+
         # table of contents sheet
         w_c = ws.add_sheet('Table_of_Contents',cell_overwrite_ok=True)
-        w_c.insert_bitmap('../logo.bmp',1,15,scale_x=0.15,scale_y=0.49)
+        # w_c.insert_bitmap('../logo.bmp',1,15,scale_x=0.15,scale_y=0.49)
 
         # w.write(2, 2, project['project_name']+' '+project['project_model']+' '+project_stage+' Compatibility Test Report')
         # w.write(3, 1, 'Project:'+' '+project['project_name']+' '+project['project_model'])
@@ -1852,8 +1993,8 @@ def export_project_report(request, lid):
         w_c.write_merge(4,5,11, 11,'Start',style_heading_2)
         w_c.write_merge(4,5,12, 12,'End',style_heading_2)
         w_c.write_merge(4,5,15, 15,xlwt.Formula(
-                'SUM(P6:P800)/COUNTA(P6:P800)'),style_heading_2)
-        w_c.write_merge(4, 5, 13, 14, xlwt.Formula('SUM(O7:O800)/SUM(N7:N800)'), style_heading_2)
+                'SUM(P6:P800)/COUNTA(P6:P800)'),style_heading_5)
+        w_c.write_merge(4, 5, 13, 14, xlwt.Formula('SUM(O7:O800)/SUM(N7:N800)'), style_heading_5)
         # w.write_merge(2, 3, 0, 0,'',style_title1)
         w_c.write_merge(0, 3, 16, 16 + int(sku_n),'',style_heading)
         # w_c.write_merge(2, 3, 5, 5 + int(sku_n),'',style_heading)
@@ -1899,7 +2040,7 @@ def export_project_report(request, lid):
 
 
             # li=models.TestResult.objects.filter(ControlTableList_id=lid,sheet_id=i.id).values_list('test_case_id').distinct()
-            li = T.TestCase.objects.filter(sheet_id=i.id).values().order_by('case_id')
+            li = T.TestCase.objects.filter(sheet_id=i.id,case_status='1').values().order_by('case_id')
             for x in li:
                 # for j in result_list:
                 # case_id=T.TestCase.objects.filter(id=x[0]).values().first()['case_id']
@@ -1957,6 +2098,7 @@ def export_project_report(request, lid):
                         else:
                             notes=notes+';'+'\n'+ y['remark']
 
+
                     if y['issue'] != '':
                         bug_list = y['issue'].split(',')
                         for b1 in bug_list:
@@ -1964,16 +2106,24 @@ def export_project_report(request, lid):
                                 continue
                             else:
                                 buglist.append(int(b1))
-                        i.buglist = buglist
+                        # i.buglist = buglist
+                        buglist = sorted(buglist)
                         bug_description = {}
                         for d1 in buglist:
                             bug = models.Issue.objects.filter(project_id=plist["project_id"],
                                                               issue_id=d1).all().values().first()
                             bug_description[d1] = bug["description"]
-                            if 'Refer to bug ID ' not in notes:
-                                notes=notes+';'+'\n'+ 'Refer to bug ID '+ str(d1) +': ' + bug_description[d1]
-                            else:
-                                notes = notes + ';' + '\n' + 'bug ID '+ str(d1) +': '  + bug_description[d1]
+                            if bug_description[d1] not in notes:
+                                if 'Refer to bug ID ' not in notes:
+                                    if notes != '':
+                                        notes=notes+';'+'\n'+ 'Refer to bug ID '+ str(d1) +': ' + bug_description[d1]
+                                    else:
+                                        notes ='Refer to bug ID '+ str(d1) +': ' + bug_description[d1]
+                                else:
+                                    if notes != '':
+                                        notes = notes + ';' + '\n' + 'bug ID ' + str(d1) + ': ' + bug_description[d1]
+                                    else:
+                                        notes = 'bug ID '+ str(d1) +': '  + bug_description[d1]
 
 
 
@@ -2015,7 +2165,7 @@ def export_project_report(request, lid):
         # *********************Table of Contents内容********************************
         plist = models.ControlTableList.objects.filter(id=lid).values().first()
         # sheets_list = T.Sheet.objects.all().order_by('sorting')
-        case_list = T.TestCase.objects.all()
+        case_list = T.TestCase.objects.all().filter(case_status='1')
         SKU_Num_list = []
         num = 1
         while num <= int(plist['stage_sku_qty']):
@@ -2073,7 +2223,7 @@ def export_project_report(request, lid):
                     test_sku_num += 1
             test_sku_num_list.update({sheets.id: test_sku_num})
             # 计算每个sheet的case attend time之和
-            cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id).values('attend_time')
+            cases_by_sheet = T.TestCase.objects.filter(sheet_id=sheets.id,case_status='1').values('attend_time')
             attend_time_sum = 0
             for i in cases_by_sheet:
                 attend_time_sum += float(i['attend_time'])
@@ -2127,72 +2277,136 @@ def export_project_report(request, lid):
 
         # *********************************************************
         for i in sorted(new_list,key=lambda items:items['sorting']): # 由于是从content里面抓出来的数据，sheet排序是错乱的。需要重新按照sorting 排序
-
-            w_c.write(excel_row_C, 0,
-                      xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'), style_body_1)
-            # "i['sheet_name'], style_body_1)
-            w_c.write(excel_row_C, 1, i['sheet_evt'], style_body_3)
-            w_c.write(excel_row_C, 2, i['sheet_dvt'], style_body_3)
-            w_c.write(excel_row_C, 3, i['sheet_consumer'], style_body_3)
-            w_c.write(excel_row_C, 4, i['sheet_Commercial'], style_body_3)
-            w_c.write(excel_row_C, 5, xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'), style_body_2)
-            w_c.write(excel_row_C, 6, cout[i['sheet_name']], style_body_1)
-            # 先填结果，方便后面判断是否要灰掉覆盖
-            if i['test_result'] == "Pass":
-                w_c.write(excel_row_C, 8, i['test_result'], style_result_pass)
-            elif i['test_result'] == "Fail":
-                w_c.write(excel_row_C, 8, i['test_result'], style_result_fail)
-            else:
-                w_c.write(excel_row_C, 8, i['test_result'], style_result_N)
-            # Plan时间
-            w_c.write(excel_row_C, 9, i['start_time'],style_body_3)
-            w_c.write(excel_row_C, 10, i['end_time'],style_body_3)
-            w_c.write(excel_row_C, 11, i['start_time'],style_body_3)
-            w_c.write(excel_row_C, 12, i['end_time'],style_body_3)
-
-            # 判断如果sheet没有item 则灰掉后面几栏（大标题）
-            if cout[i['sheet_name']] ==0:
-                w_c.write(excel_row_C, 7, '', style_result_NA)
-                w_c.write(excel_row_C, 8, '', style_result_NA)
-                w_c.write(excel_row_C, 9, '', style_result_NA)
-                w_c.write(excel_row_C, 10, '', style_result_NA)
-                w_c.write(excel_row_C, 11, '', style_result_NA)
-                w_c.write(excel_row_C, 12, '', style_result_NA)
-                w_c.write(excel_row_C, 13, '', style_result_NA)
-                w_c.write(excel_row_C, 14, '', style_result_NA)
-                w_c.write(excel_row_C, 15, '', style_result_NA)
-            else:
-                w_c.write(excel_row_C, 7, '', style_body_2)
-                w_c.write(excel_row_C, 13, i['attend_times'], style_body_2)
-                w_c.write(excel_row_C, 14, i['attend_times'], style_body_2)
-                w_c.write(excel_row_C, 15, xlwt.Formula("'"+i['sheet_name']+"'"+"!D3"), style_body_2)
-
-            k = 0
-            while k < int(sku_n):
-                # w.write(2, 4 + k, '')
-                # if i['sku' + str(k + 1) + '_progress'] == '100%':
-                #     w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_pass)
-                # else:
-                #     w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_fail)
-                if i['sku' + str(k + 1)].last_name == 'N/A':
-                    w_c.write(excel_row_C, 16 + k, '', style_result_NA)
+            if i['attend_time'] != 0.0 and i['attend_time'] != 0:
+                w_c.write(excel_row_C, 0,
+                          xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'), style_body_1)
+                # "i['sheet_name'], style_body_1)
+                w_c.write(excel_row_C, 1, i['sheet_evt'], style_body_3)
+                w_c.write(excel_row_C, 2, i['sheet_dvt'], style_body_3)
+                w_c.write(excel_row_C, 3, i['sheet_consumer'], style_body_3)
+                w_c.write(excel_row_C, 4, i['sheet_Commercial'], style_body_3)
+                w_c.write(excel_row_C, 5, xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'), style_body_2)
+                w_c.write(excel_row_C, 6, cout[i['sheet_name']], style_body_1)
+                # 先填结果，方便后面判断是否要灰掉覆盖
+                if i['test_result'] == "Pass":
+                    w_c.write(excel_row_C, 8, i['test_result'], style_result_pass)
+                elif i['test_result'] == "Fail":
+                    w_c.write(excel_row_C, 8, i['test_result'], style_result_fail)
                 else:
-                    w_c.write(excel_row_C, 16 + k, 'V', style_result_pass)
-                k += 1
-            if i['bugid'] != []:
-                w_c.write(excel_row_C, 16 + int(sku_n), 'Refer to bug ID: ' + str(i['bugid']), style_result_fail_remark)
+                    w_c.write(excel_row_C, 8, i['test_result'], style_result_N)
+                # Plan时间
+                w_c.write(excel_row_C, 9, i['start_time'],style_body_3)
+                w_c.write(excel_row_C, 10, i['end_time'],style_body_3)
+                # Actual时间
+                w_c.write(excel_row_C, 11, i['start_time'],style_body_3)
+                w_c.write(excel_row_C, 12, i['end_time'],style_body_3)
+
+                # 判断如果sheet没有item 则灰掉后面几栏（大标题）
+                if cout[i['sheet_name']] ==0:
+                    w_c.write_merge(excel_row_C,excel_row_C,7,15, '', style_result_NA)
+                    # w_c.write(excel_row_C, 8, '', style_result_NA)
+                    # w_c.write(excel_row_C, 9, '', style_result_NA)
+                    # w_c.write(excel_row_C, 10, '', style_result_NA)
+                    # w_c.write(excel_row_C, 11, '', style_result_NA)
+                    # w_c.write(excel_row_C, 12, '', style_result_NA)
+                    # w_c.write(excel_row_C, 13, '', style_result_NA)
+                    # w_c.write(excel_row_C, 14, '', style_result_NA)
+                    # w_c.write(excel_row_C, 15, '', style_result_NA)
+                else:
+                    w_c.write(excel_row_C, 7, '', style_body_2)
+                    w_c.write(excel_row_C, 13, i['attend_time'], style_body_2)
+                    w_c.write(excel_row_C, 14, i['attend_time'], style_body_2)
+                    w_c.write(excel_row_C, 15, xlwt.Formula("'"+i['sheet_name']+"'"+"!D3"), style_body_percent)
+
+                k = 0
+                while k < int(sku_n):
+                        # w.write(2, 4 + k, '')
+                        # if i['sku' + str(k + 1) + '_progress'] == '100%':
+                        #     w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_pass)
+                        # else:
+                        #     w_c.write(excel_row_C, 16 + k, i['sku' + str(k + 1) + '_progress'], style_result_fail)
+                    if i['sku' + str(k + 1)].last_name == 'N/A':
+                            w_c.write(excel_row_C, 16 + k, '', style_result_NA)
+                    else:
+                            w_c.write(excel_row_C, 16 + k, 'V', style_result_pass)
+                    k += 1
+                if i['bugid'] != []:
+                        w_c.write(excel_row_C, 16 + int(sku_n), 'Refer to bug ID: ' + str(i['bugid']), style_result_fail_remark)
+                else:
+                        w_c.write(excel_row_C, 16 + int(sku_n), '', style_body_3)
+                excel_row_C += 1
             else:
-                w_c.write(excel_row_C, 16 + int(sku_n), '', style_body_3)
-            excel_row_C += 1
+
+                if cout[i['sheet_name']] == 0:
+
+                    w_c.write(excel_row_C, 0,
+                                  xlwt.Formula(
+                                      'HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'),
+                                  style_body_1)
+                    # "i['sheet_name'], style_body_1)
+                    w_c.write(excel_row_C, 1, i['sheet_evt'], style_body_3)
+                    w_c.write(excel_row_C, 2, i['sheet_dvt'], style_body_3)
+                    w_c.write(excel_row_C, 3, i['sheet_consumer'], style_body_3)
+                    w_c.write(excel_row_C, 4, i['sheet_Commercial'], style_body_3)
+                    w_c.write(excel_row_C, 5, xlwt.Formula(
+                            'HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'),
+                                  style_body_2)
+                    w_c.write(excel_row_C, 6, cout[i['sheet_name']], style_body_1)
+                    w_c.write_merge(excel_row_C, excel_row_C, 7, 15, '', style_body_1NA)
+                    k = 0
+                    while k < int(sku_n):
+
+                        if i['sku' + str(k + 1)].last_name == 'N/A':
+
+                            w_c.write(excel_row_C, 16 + k, '', style_result_NA)
+
+                        else:
+                            w_c.write(excel_row_C, 16 + k, 'V', style_result_pass)
+                        k += 1
+                    w_c.write(excel_row_C, 16 + int(sku_n), '', style_result_NA)
+                else:
+
+                    w_c.write(excel_row_C, 0,
+                                  xlwt.Formula('HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i["sheet_name"] + '")'),
+                                  style_body_1NA)
+                    # "i['sheet_name'], style_body_1)
+                    w_c.write(excel_row_C, 1, i['sheet_evt'], style_body_3NA)
+                    w_c.write(excel_row_C, 2, i['sheet_dvt'], style_body_3NA)
+                    w_c.write(excel_row_C, 3, i['sheet_consumer'], style_body_3NA)
+                    w_c.write(excel_row_C, 4, i['sheet_Commercial'], style_body_3NA)
+                    w_c.write(excel_row_C, 5, xlwt.Formula(
+                            'HYPERLINK("#' + i['sheet_name'] + '!B1",' + '"' + i['sheet_description'] + '")'), style_body_3NA)
+                    w_c.write(excel_row_C, 6, cout[i['sheet_name']], style_body_1NA)
+                    w_c.write(excel_row_C, 7, '', style_body_3NA)
+                    w_c.write(excel_row_C, 8, '', style_body_3NA)
+                    w_c.write(excel_row_C, 9, '', style_body_3NA)
+                    w_c.write(excel_row_C, 10, '', style_body_3NA)
+                    w_c.write(excel_row_C, 11, '', style_body_3NA)
+                    w_c.write(excel_row_C, 12, '', style_body_3NA)
+                    w_c.write(excel_row_C, 13, '', style_body_3NA)
+                    w_c.write(excel_row_C, 14, '', style_body_3NA)
+                    w_c.write(excel_row_C, 15, '', style_body_3NA)
+                    k = 0
+                    while k < int(sku_n):
+                        w_c.write(excel_row_C, 16 + k, '', style_body_3NA)
+                        k += 1
+                    w_c.write(excel_row_C, 16 + int(sku_n), '', style_body_3NA)
+                excel_row_C += 1
+
+
         # 写出到IO
         sio = BytesIO()
         ws.save(sio)
         sio.seek(0)
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
+        from urllib import parse
+        response['Content-Disposition'] = 'attachment; filename='+ parse.quote(project['project_name']+' '+project['project_model'].replace(',','_')
+                                          +' '+project_stage+' Compatibility Test Report'+'_'+str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))+'.xls')
 
-        response['Content-Disposition'] = 'attachment; filename='+project['project_name']+' '+project['project_model'].replace(',','_')\
-                                          +' '+project_stage+' Compatibility Test Report'+'_'\
-                                          +str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))+'.xls'
+
+                                          # +project['project_name']+' '+project['project_model'].replace(',','_')\
+                                          # +' '+project_stage+' Compatibility Test Report'+'_'\
+                                          # +str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))+'.xlsx'
         response.write(sio.getvalue())
         return response
             # redirect('project_ct_info', models.ControlTableList.objects.filter(id=lid).values().first()['project_id'])
@@ -2208,7 +2422,7 @@ def test_time_review(request,lid):
     for i in list:
         if i[0] not in tester_list:
             tester_list.append(i[0])
-        cases_by_sheet = T.TestCase.objects.filter(sheet_id=i[1]).values('attend_time')
+        cases_by_sheet = T.TestCase.objects.filter(sheet_id=i[1],case_status='1').values('attend_time')
         attend_time_sum = 0
         for j in cases_by_sheet:
             attend_time_sum += float(j['attend_time'])
@@ -2344,8 +2558,10 @@ def issue_upload(request,pid):
                 rows = table.nrows  # 总行数
 
                 for i in range(1, rows):
+
                     bugzillas_id = ''
                     try:
+
                         rowVlaues = table.row_values(i)
                         if rowVlaues[13] == 'Open':
 
@@ -2389,6 +2605,7 @@ def issue_upload(request,pid):
 
                     except:
                         return HttpResponse("excel文件或者数据插入错误")
+
                 return redirect("issue_list",pid)
             else:
                 return HttpResponse('上传文件类型错误！')

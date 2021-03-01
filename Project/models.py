@@ -241,6 +241,7 @@ class Issue(models.Model):
     #     (3, '4'),
     # )
     severity = models.CharField(max_length=32, verbose_name='severity',default='',blank=True, null=True,)
+    impact_model = models.CharField(max_length=255, verbose_name='impact_model',default='',blank=True, null=True,)
     description = models.TextField(max_length=2048, blank=True, null=True)
     procedure = models.TextField(max_length=2048, blank=True, null=True)
     comment = models.TextField(max_length=2048, blank=True, null=True)

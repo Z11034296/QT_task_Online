@@ -107,7 +107,7 @@
                             <th colspan="2" style="text-align: center" width="200px">SKU{{ j }}</th>
                         {% endfor %}
                         <th style="text-align: center" width="80px">Test Result</th>
-                        <th style="text-align: center" width="40px" title="Test Progress by sheet">SP</th>
+{#                        <th style="text-align: center" width="40px" title="Test Progress by sheet">SP</th>#}
                     </tr>
                     </thead>
 
@@ -336,7 +336,7 @@
                             {% else %}
                                 <td style="text-align: center">{{ i.test_result }}</td>
                             {% endif %}
-                            <td><input type="text" class="btn btn-info" id="TPsheet{{ i.sheet_id }}" style="height: 20px;width: 60px;border:none;outline: none;text-align: center" readonly onclick="aa({{ i.sheet_id }})" value="点击"></td>
+{#                            <td><input type="text" class="btn btn-info" id="TPsheet{{ i.sheet_id }}" style="height: 20px;width: 60px;border:none;outline: none;text-align: center" readonly onclick="aa({{ i.sheet_id }})" value="点击"></td>#}
                         </tr>
                     {% endfor %}
                     <iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>

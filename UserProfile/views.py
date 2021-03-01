@@ -33,6 +33,10 @@ def login(request):
                 permission_list.append(item["permission__url"])
 
             print(permission_list)
+            if user.userinfo.username == '200811026':
+                permission_list.append('/case/add_case')
+                permission_list.append('/case/update_case/(\\d+)')
+            print(permission_list)
             request.session["permission_list"] = permission_list
             request.session["role"] = user.userinfo.role.all().values().first()["name"]
             return redirect("task_list")
