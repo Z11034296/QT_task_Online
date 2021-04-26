@@ -10,6 +10,7 @@
         table{
             table-layout: auto;
         }
+
     </style>
 
     <p>{% if user.is_authenticated %}
@@ -58,8 +59,11 @@
                 </thead>
                 <tbody>
                 {% for i in issue_list %}
-
-                    <tr>
+                    {% if i.status == "closed" %}
+                        <tr style="display: none">
+                            {% else %}
+                        <tr>
+                    {% endif %}
                         <td><a href="{% url 'issue_update' pj.id i.id %}">{{ i.issue_id }} <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
                         <td>{{ i.TRID }}</td>
                         <td>{{ i.bugzilla_id }}</td>
@@ -87,7 +91,7 @@
                         <td>{{ i.os_version }}</td>
                         <td>{{ i.remark }}</td>
                         <td>{{ i.submitter }}</td>
-                    </tr>
+                </tr>
                 {% endfor %}
                 </tbody>
             </table>
@@ -114,5 +118,3 @@
     {% endif %}
     <br><br>
 {% endblock %}
-
-</html>

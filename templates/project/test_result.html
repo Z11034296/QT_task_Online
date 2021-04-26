@@ -93,7 +93,7 @@
                             <td style="white-space:pre-wrap; word-break:break-all;text-align: left;vertical-align: middle">{{ cases.case_name }}</td>
                             <td>{{ cases.procedure|linebreaksbr  }}</td>
                             <td>{{ cases.pass_criteria|linebreaksbr  }}</td>
-                            <td>{% if cases.test_plan_pic_path %}
+                            <td style="text-align: center;vertical-align: middle">{% if cases.test_plan_pic_path %}
                                 <a href="{{ MEDIA_URL }}{{ cases.test_plan_pic_path }}" target="_blank">查看</a>
                             {% endif %}</td>
                             <td style="text-align: center;vertical-align: middle">
@@ -120,7 +120,16 @@
                             <a href="{% url 'assign_bug' pj.id plist.id cases.id sid skunum %}"  name="fail_assign_bug_id{{ cases.id }}" id="fail_assign_bug_id{{ cases.id }}" style="display: none;background-color: orange" data-toggle="modal" data-target="#sel_fail" title="关联issue"><span class="glyphicon glyphicon-share"></span></a>
                             {#                          <textarea spellcheck="false" class="form-control" name="custom-input{{ cases.id }}" id="custom-input{{ cases.id }}" style="display: none;white-space: pre-wrap" ></textarea></td>#}
                             {#                            <input class="form-control" name="fail_bug_id" id="fail_bug_id{{ i.result_id }}" type="text" style="display: none" placeholder="关联bug_ID" onkeyup="this.value=this.value.replace(/[^\r\n0-9\,]/g,'')">#}
-                            <td></td>
+                            <td style="text-align: center;vertical-align: middle">
+                                {% if cases.logpath %}
+                                    <a href="{{ MEDIA_URL }}result/{{ pj.project_name }}_{{ plist.project_stage }}/{{ cases.logpath }}" target="_blank">下载</a>
+                                    </br>
+                                    <a href="{% url 'upload_log' pj.id plist.id cases.id sid skunum %}" id="upload{{ cases.id }}" data-toggle="modal" data-target="#sel_fail">重新上传</a>
+                                {% else %}
+                                    <a href="{% url 'upload_log' pj.id plist.id cases.id sid skunum %}" id="upload{{ cases.id }}" data-toggle="modal" data-target="#sel_fail">上传</a>
+                                {% endif %}
+                            </td>
+
                             <form method="POST" action="" target="rfFrame">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ cases.id }}" name="case_id">

@@ -35,7 +35,7 @@ class CaseForm(Form):
         # max_length=32,
         label="Attend_Time",
         widget=widgets.TextInput(attrs={'class': 'form-control'}),
-        required=False
+        required=True
     )
 
     procedure = fields.CharField(

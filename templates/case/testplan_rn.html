@@ -1,0 +1,74 @@
+{% extends 'index.html' %}
+{% block page-content %}
+    <style>
+        body {
+            background-color: #eeedef;
+            padding-right:0!important;
+        }
+        table {
+            table-layout:  fixed;
+        }
+        th{
+            text-align: center;
+            background: #9d9d9d;
+            font-size: initial;
+        }
+
+    </style>
+
+
+    <p>{% if user.is_authenticated %}
+        <div class="panel panel-primary ">
+            {#        <form action="#" class="navbar-right navbar-form">#}
+            {#            <div class="form-group has-feedback">#}
+            {#                <!--has-feedback样式/反馈控制/ form-control-feedback 增加这两个样式后，span代表的放大镜就可以放在搜索栏里面-->#}
+            {#                <label for="search" class="sr-only">搜索关键字</label>#}
+            {#                <input type="search" placeholder="按照case_name搜索" id="search" class="form-control" title="输入关键字后按enter">#}
+            {#                <span class="glyphicon glyphicon-search  form-control-feedback"></span>#}
+            {#            </div>#}
+            {#        </form>#}
+            <div class="panel-heading">
+                <h2 class="panel-title">Windows Test Plan Change History</h2>
+            </div>
+
+
+
+            <div class="panel-body">
+                <button class="btn btn-success pull-right" data-toggle="modal"
+                        onclick="window.location.href='add_rn'">新增
+                </button>
+                <table class = "table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th width="8%">Date</th>
+                        <th width="8%">Author</th>
+                        <th width="8%">Version</th>
+                        <th >History</th>
+                        <th width="12%">Notes</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for rn in rn_list %}
+                        <tr>
+
+
+                            <td style="text-align: center;vertical-align: middle">{{ rn.rn_date|date:'Y-m-d' }}</td>
+                            <td style="text-align: center;vertical-align: middle">{{ rn.rn_keeper }}</td>
+                            <td style="text-align: center;vertical-align: middle">{{ rn.rn_version }}</td>
+                            <td style="text-align: left;vertical-align: middle">{{ rn.rn_description }}</td>
+                            <td style="text-align: center;vertical-align: middle">{{ rn.rn_mote }}</td>
+
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <a href="/login/"><h1>please login!</h1></a>
+    {% endif %}
+{% endblock %}
+
+<!-- forloop.counter -->

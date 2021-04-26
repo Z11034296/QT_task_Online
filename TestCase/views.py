@@ -393,3 +393,34 @@ def search(request):
                 error_msg = '没有搜索到符合条件的内容！！！'
 
             return render(request, 'case/caseinfo.html',{'case_list': case_list, 'error_msg': error_msg})
+
+
+def rn(request):
+    if request.method == 'GET':
+        rn_list = TestPlan_RN.objects.all()
+        return render(request,'case/testplan_rn.html',{'rn_list':rn_list})
+
+
+def add_rn(request):
+    if request.method == 'GET':
+        return render(request, 'case/add_rn.html')
+    else:
+        if request.POST.get('rn_date'):
+            TestPlan_RN.objects.create(
+                rn_keeper=request.POST.get('rn_keeper'),
+                rn_version=request.POST.get('rn_version'),
+                rn_description =request.POST.get('rn_description'),
+                rn_date =request.POST.get('rn_date'),
+                rn_mote =request.POST.get('rn_note'),
+            )
+        else:
+            TestPlan_RN.objects.create(
+                rn_keeper=request.POST.get('rn_keeper'),
+                rn_version=request.POST.get('rn_version'),
+                rn_description=request.POST.get('rn_description'),
+                rn_mote=request.POST.get('rn_note'),
+            )
+        return redirect('rn')
+
+
+

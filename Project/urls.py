@@ -48,4 +48,7 @@ urlpatterns = [
     path('update_attendtime_all', views.update_attendtime_all, name='update_attendtime_all'),
     # path('upload_issue/<pid>', views.issue_upload, name='issue_upload'),
     path('issue_upload/<pid>', views.issue_upload, name='issue_upload'),
+    path('sheet_note/<lid>-<sid>', views.sheet_note, name='sheet_note'),
+    path('check_box/<lid>-<sid>', views.check_box, name='check_box'),
+    path('upload_log/<pid>-<lid>-<sid>-<cid>-<skunum>', views.upload_log, name='upload_log'),
 ]

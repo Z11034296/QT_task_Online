@@ -54,6 +54,16 @@ class Sheet(models.Model):
     def __str__(self):
         return self.sheet_name
 
+class TestPlan_RN(models.Model):
+    rn_version = models.CharField(max_length=128,null=False,unique=True,verbose_name="rn_version")
+    rn_date = models.DateField(blank=True, null=True)
+    rn_description = models.TextField(blank=True, null=True,verbose_name="rn_description")
+    rn_keeper = models.CharField(max_length=128, unique=False, verbose_name="rn_keeper", null=True,)
+    rn_mote = models.TextField(blank=True, null=True,)
 
+
+
+    def __str__(self):
+        return self.rn_version
 
 

@@ -1,0 +1,37 @@
+{% block page-content %}
+    {% if user.is_authenticated %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-3">
+                    <form action="../upload_log/{{ pid }}-{{ lid }}-{{ cid }}-{{ sid }}-{{ skunum }}" method="POST" NOVALIDATE class="form-horizontal" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                            <table>
+                                <br>
+                                </br>
+                                </br>
+                                <tr>
+                                    <th>
+                                        <label for="id_upload_files">上传log:</label>
+                                    </th>
+                                    <td>
+                                        <input type="file" class="form-control" id="id_upload_log" name="upload_log" >
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </br>
+{#                            <input class="btn btn-success pull-right" type="button" onclick="javascript:history.back(-1);" value="返回">#}
+
+                            <input class="btn btn-success" value="提交" type="submit">
+                            <input type="button" class="btn btn-success" data-dismiss="modal" value="取消">
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <a href="/login/"><H4>please login!</H4></a>
+    {% endif %}
+{% endblock %}
+

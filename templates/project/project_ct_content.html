@@ -30,13 +30,15 @@
             -webkit-appearance:none;
             /*在选择框的最右侧中间显示小箭头图片*/
             background: no-repeat, scroll, right,right,center, transparent;
-            {#http://ourjs.github.io/static/2015/arrow.png#}
+        {#http://ourjs.github.io/static/2015/arrow.png#}
             /*为下拉小箭头留出一点位置，避免被文字覆盖*/
             padding-right: 14px;
         }
         /*清除ie的默认选择框样式清除，隐藏下拉箭头*/
         select::-ms-expand { display: none;
         }
+
+
 
     </style>
     <script>
@@ -69,6 +71,20 @@
 
             })
         })
+
+        function checkboxOnclick(checkbox){
+
+            if ( checkbox.checked == true){
+
+                {#//Action for checked#}
+
+            }else{
+
+                {#//Action for not checked#}
+
+            }
+        }
+
     </script>
 
     <p>{% if user.is_authenticated %}
@@ -107,7 +123,8 @@
                             <th colspan="2" style="text-align: center" width="200px">SKU{{ j }}</th>
                         {% endfor %}
                         <th style="text-align: center" width="80px">Test Result</th>
-{#                        <th style="text-align: center" width="40px" title="Test Progress by sheet">SP</th>#}
+                        <th style="text-align: center" width="80px">Note</th>
+                        {#                        <th style="text-align: center" width="40px" title="Test Progress by sheet">SP</th>#}
                     </tr>
                     </thead>
 
@@ -115,7 +132,16 @@
                     {# by ct content #}
                     {% for i in new_list %}
                         <tr>
-                            <td style="text-align: center;vertical-align: middle">{{ i.sheet_name }}</td>
+                            <form method="POST" action="{% url 'check_box' plist.id i.sheet_id %}" target="rfFrame">
+                                {% csrf_token %}
+                                <td style="text-align: center;vertical-align: middle">
+                                    {% if i.sheet_checkbox == '0' %}
+                                        <input class="pull-left" type="checkbox" name="checkbox" checked="checked" value="0" onblur="this.form.submit()" />
+                                    {% else %}
+                                        <input class="pull-left" type="checkbox" name="checkbox"  value="1" onblur="this.form.submit()" />
+                                    {% endif %}
+                                    {{ i.sheet_name }}</td>
+                            </form>
                             <td style="text-align: left;vertical-align: middle">{{ i.sheet_description }}</td>
                             <td style="text-align: center;vertical-align: middle">{{ i.attend_time }}</td>
                             {% for j in SKU_Num_list %}
@@ -336,7 +362,11 @@
                             {% else %}
                                 <td style="text-align: center">{{ i.test_result }}</td>
                             {% endif %}
-{#                            <td><input type="text" class="btn btn-info" id="TPsheet{{ i.sheet_id }}" style="height: 20px;width: 60px;border:none;outline: none;text-align: center" readonly onclick="aa({{ i.sheet_id }})" value="点击"></td>#}
+                            {#                                                        <td><input type="text" class="btn btn-info" id="TPsheet{{ i.sheet_id }}" style="height: 20px;width: 60px;border:none;outline: none;text-align: center" readonly onclick="aa({{ i.sheet_id }})" value="点击"></td>#}
+                            <td><form method="POST" action="{% url 'sheet_note' plist.id i.sheet_id %}" target="rfFrame">
+                                {% csrf_token %}
+                                <textarea class="form form-control" id="sheet_note_{{ i.sheet_id }}" name='sheet_note' onblur="this.form.submit()">{{ i.sheet_note }}</textarea>
+                            </form></td>
                         </tr>
                     {% endfor %}
                     <iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>

@@ -303,6 +303,7 @@ class TestResult(models.Model):
     remark = models.TextField(max_length=2048, blank=True, null=True,default="",verbose_name="result_remark")
     result_info = models.ForeignKey('ProjectInfo', on_delete=models.CASCADE, blank=True, null=True,default="")
     issue = models.CharField(max_length=128,blank=True, null=True, default="")
+    test_result_log_path = models.FileField(upload_to='result', blank=True, null=True, )  # result log 附件路径
 
     def __str__(self):
         return str(self.test_case)
@@ -347,6 +348,7 @@ class sheet_prepared(models.Model):
     sheet = models.ForeignKey(TestCase.models.Sheet,on_delete=models.CASCADE,unique=False,default="")
     sheet_prepared = models.TextField(blank=True, null=True,)
     ControlTable_List = models.ForeignKey("ControlTableList", on_delete=models.CASCADE, unique=False, default="")
-
+    ControlTable_note = models.TextField(blank=True, null=True,)
+    importyn = models.CharField(max_length=16,blank=True, null=True, default="0")
     def __str__(self):
         return str(self.sheet)
